@@ -1,7 +1,7 @@
 # Dirichlet–multinomial prior for a latent partition
 
-A symmetric Dirichlet prior on group weights, integrated out to give an
-allocation prior.
+Defines a symmetric Dirichlet distribution over a fixed number of
+available groups, integrated out to obtain a prior on item allocations.
 
 ## Usage
 
@@ -17,8 +17,8 @@ dirichlet_multinomial_prior(max_clusters, concentration = 1)
 
 - concentration:
 
-  Positive Dirichlet parameter for each group. Total concentration is
-  `max_clusters * concentration`.
+  Positive Dirichlet parameter for each group; the total concentration
+  is `max_clusters * concentration`.
 
 ## Value
 

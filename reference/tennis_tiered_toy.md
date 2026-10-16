@@ -1,26 +1,31 @@
-# Simulate a tiered tennis league
+# Simulate a clearly separated twenty-player tennis league
 
-Simulate pairwise results from specified block strengths and sizes.
-Default settings give twenty fictional players in four blocks of five. A
-common random permutation shuffles both matrix axes.
+Simulate a complete league with user-specified block strengths and
+sizes. A common random permutation shuffles both axes.
 
 ## Usage
 
 ``` r
-tennis_tiered_toy(matches_per_pair = 20L, seed = 101L,
-  n_blocks = length(latent_strength), latent_strength = c(64, 16, 4, 1),
-  players_per_block = 5L, item_labels = NULL, format = c("data", "edgelist"))
+tennis_tiered_toy(
+  matches_per_pair = 20L,
+  seed = 101L,
+  n_blocks = length(latent_strength),
+  latent_strength = c(64, 16, 4, 1),
+  players_per_block = 5L,
+  item_labels = NULL,
+  format = c("data", "edgelist")
+)
 ```
 
 ## Arguments
 
 - matches_per_pair:
 
-  Positive integer matches per pair.
+  Positive integer number of matches for each pair.
 
 - seed:
 
-  Integer random seed, or NULL.
+  Integer random seed, or NULL to use the current random state.
 
 - n_blocks:
 
@@ -28,11 +33,12 @@ tennis_tiered_toy(matches_per_pair = 20L, seed = 101L,
 
 - latent_strength:
 
-  Positive strength vector with one value per block.
+  Positive vector with one strength per generating block.
 
 - players_per_block:
 
-  Positive integer block sizes: a scalar or one value per block.
+  Positive integer block sizes, either one common size or a vector of
+  length n_blocks.
 
 - item_labels:
 
@@ -40,18 +46,10 @@ tennis_tiered_toy(matches_per_pair = 20L, seed = 101L,
 
 - format:
 
-  Return validated data or an aggregated winner/loser/count edge list.
+  Return validated data (default) or a winner/loser/count edge list.
 
 ## Value
 
-A btsbm_pairwise_data object with a truth attribute, or an edge-list
-data frame.
-
-## Examples
-
-``` r
-edges <- tennis_tiered_toy(n_blocks = 3, latent_strength = c(25, 5, 1),
-                           players_per_block = 4, format = "edgelist")
-as_bt_data(edges, count = "count")
-#> <btsbm_pairwise_data> 12 items and 1320 wins
-```
+A btsbm_pairwise_data object, or an edge-list data frame, with
+generating groups and strengths stored in its truth attribute. All
+observations are synthetic.

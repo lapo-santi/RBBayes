@@ -52,7 +52,7 @@
   : Define a finite-Dirichlet prior for a latent partition
 
 - [`fit_btsbm()`](https://laposanti.github.io/BTSBM/reference/fit_btsbm.md)
-  : Fit a Bayesian Bradley–Terry or Plackett–Luce model
+  : Compatibility entry point for Bayesian preference models
 
 - [`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_model.md)
   : Fit a Bayesian Bradley–Terry or Plackett–Luce model
@@ -108,11 +108,11 @@
 
 - [`as.matrix(`*`<btsbm_fit>`*`)`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
   [`as.array(`*`<btsbm_fit>`*`)`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
+  [`as_draws_array()`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
   [`as.mcmc(`*`<btsbm_fit>`*`)`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
   [`as.mcmc.list(`*`<btsbm_fit>`*`)`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
-  [`as_draws_array()`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
   [`as_mcmc_chains()`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
-  : Convert preference-model fits for coda and bayesplot
+  : Convert a preference fit to a matrix of saved posterior draws
 
 - [`nfl_quarterbacks_2014()`](https://laposanti.github.io/BTSBM/reference/nfl_quarterbacks_2014.md)
   : NFL quarterback rankings with item covariates
@@ -209,7 +209,7 @@
   : Sushi-inspired toy ranking data
 
 - [`tennis_tiered_toy()`](https://laposanti.github.io/BTSBM/reference/tennis_tiered_toy.md)
-  : Simulate a tiered tennis league
+  : Simulate a clearly separated twenty-player tennis league
 
 - [`tennis_toy()`](https://laposanti.github.io/BTSBM/reference/tennis_toy.md)
   : Tennis-league toy paired-comparison data

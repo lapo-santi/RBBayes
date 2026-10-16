@@ -1,48 +1,44 @@
 # Create validated Bradley–Terry pairwise data
 
-Convert a square directed win-count matrix or a directed edge-list data
-frame to the validated pairwise-data format used by fit_model().
-Repeated edges are added and self-comparisons are rejected.
+Converts a square win-count matrix or a directed edge-list data frame
+into the same validated pairwise-data representation used by
+fit_model().
 
 ## Usage
 
 ``` r
-as_bt_data(wins, item_labels = NULL, winner = "winner",
-           loser = "loser", count = NULL)
+as_bt_data(
+  wins,
+  item_labels = NULL,
+  winner = "winner",
+  loser = "loser",
+  count = NULL
+)
 ```
 
 ## Arguments
 
 - wins:
 
-  Numeric square matrix or an edge-list data frame. For a matrix, entry
-  `wins[i, j]` is the number of wins for item `i` over item `j`.
+  Numeric square win-count matrix, or a data frame of directed outcomes
+  with winner and loser columns. Repeated edges are added together.
 
 - item_labels:
 
   Optional character vector of item names. By default, matrix row names
-  are used when available. For an edge list, this specifies the complete
-  item universe and ordering, including unobserved items.
+  are used when available. For an edge list, this is the complete item
+  universe and ordering, including any unobserved items.
 
-- winner,loser:
+- winner, loser:
 
   Names of edge-list columns identifying the winning and losing item.
+  Values are converted to character item identifiers.
 
 - count:
 
-  Optional count-column name. NULL means one win per row. Aggregated
-  counts must be non-negative integers.
+  Optional edge-list count-column name. NULL means one win per row.
+  Counts must be non-negative integers. Self-comparisons are rejected.
 
 ## Value
 
 An object of class `btsbm_pairwise_data`.
-
-## Examples
-
-``` r
-edges <- data.frame(winner = c("A", "B", "A"), loser = c("B", "A", "B"), count = c(2, 1, 3))
-as_bt_data(edges, count = "count")$wins
-#>   A B
-#> A 0 5
-#> B 1 0
-```

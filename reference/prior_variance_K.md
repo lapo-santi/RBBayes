@@ -1,8 +1,8 @@
 # Prior variance of the number of occupied groups
 
-Supports Gnedin and Dirichlet-process priors. Returns NA for Pitman–Yor
-and Dirichlet–multinomial priors; these variance calculations are not
-implemented.
+Compute the variance for Gnedin and Dirichlet-process priors. Variances
+for Pitman–Yor and Dirichlet–multinomial priors are not implemented
+here.
 
 ## Usage
 
@@ -18,8 +18,9 @@ prior_variance_K(n, prior)
 
 - prior:
 
-  A partition prior created by a clustering-prior constructor.
+  A partition prior returned by a clustering-prior constructor.
 
 ## Value
 
-A numeric scalar, or NA for unimplemented variance families.
+A numeric scalar, or `NA_real_` for Pitman–Yor and Dirichlet–multinomial
+priors.

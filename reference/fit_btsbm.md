@@ -1,9 +1,6 @@
-# Fit a Bayesian Bradley–Terry or Plackett–Luce model
+# Compatibility entry point for Bayesian preference models
 
-Compatibility wrapper for
-[`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_model.md).
-New analyses should use
-[`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_model.md).
+Compatibility entry point for Bayesian preference models
 
 ## Usage
 
@@ -31,7 +28,3 @@ fit_btsbm(data, model, control = mcmc_control())
 ## Value
 
 An object of class `btsbm_fit`.
-
-## See also
-
-[`fit_model`](https://laposanti.github.io/BTSBM/reference/fit_model.md)

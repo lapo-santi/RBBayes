@@ -5,7 +5,9 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Fit a Bayesian preference model — fit_preference"><meta name="description" content="Compatibility wrapper for fit_model(). New analyses should use fit_model()."><meta property="og:description" content="Compatibility wrapper for fit_model(). New analyses should use fit_model()."></head><body>
+</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Fit a Bayesian preference model — fit_preference"><meta name="description" content="Use fit_model() for new analyses. This entry point remains available
+for compatibility with earlier development versions."><meta property="og:description" content="Use fit_model() for new analyses. This entry point remains available
+for compatibility with earlier development versions."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -42,12 +44,13 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Fit a Bayesian preference model</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/lapo-santi/RBBayes/blob/main/R/fit_preference.R" class="external-link"><code>R/fit_preference.R</code></a></small>
       <div class="d-none name"><code>fit_preference.Rd</code></div>
     </div>
 
     <div class="ref-description section level2">
-    <p>Compatibility wrapper for <code><a href="fit_model.html">fit_model()</a></code>. New analyses should use <code><a href="fit_model.html">fit_model()</a></code>.</p>
+    <p>Use <code><a href="fit_model.html">fit_model()</a></code> for new analyses. This entry point remains available
+for compatibility with earlier development versions.</p>
     </div>
 
     <div class="section level2">
@@ -60,23 +63,21 @@
 
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>A pairwise-data or ranking-data object created by
-<code><a href="as_bt_data.html">as_bt_data()</a></code> or <code><a href="as_rankings.html">as_rankings()</a></code>.</p></dd>
+<dd><p>A <code>btsbm_pairwise_data</code> or <code>btsbm_ranking_data</code> object created
+by <code><a href="as_bt_data.html">as_bt_data()</a></code> or <code><a href="as_rankings.html">as_rankings()</a></code>.</p></dd>
+
 
 <dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
-<dd><p>A <code>btsbm_model</code> object specifying the likelihood and structure.</p></dd>
+<dd><p>A <code>btsbm_model</code> object.</p></dd>
+
 
 <dt id="arg-control">control<a class="anchor" aria-label="anchor" href="#arg-control"></a></dt>
-<dd><p>MCMC controls created by <code><a href="mcmc_control.html">mcmc_control()</a></code>.</p></dd>
+<dd><p>A <code>btsbm_mcmc_control</code> object.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>An object of class <code>btsbm_fit</code>.</p>
-    </div>
-    <div class="section level2">
-    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="fit_model.html">fit_model</a></code></p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

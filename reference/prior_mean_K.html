@@ -5,7 +5,13 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Prior expected number of occupied groups — prior_mean_K"><meta name="description" content="Supports Gnedin, Dirichlet-process, Pitman–Yor and Dirichlet–multinomial priors. The DM concentration is converted from per-group to total concentration internally."><meta property="og:description" content="Supports Gnedin, Dirichlet-process, Pitman–Yor and Dirichlet–multinomial priors. The DM concentration is converted from per-group to total concentration internally."></head><body>
+</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Prior expected number of occupied groups — prior_mean_K"><meta name="description" content="Compute the expected number of occupied groups among n items under a
+Gnedin, Dirichlet-process, Pitman–Yor or Dirichlet–multinomial prior.
+For the Dirichlet–multinomial, the constructor's concentration is per group;
+the moment calculation uses total concentration internally."><meta property="og:description" content="Compute the expected number of occupied groups among n items under a
+Gnedin, Dirichlet-process, Pitman–Yor or Dirichlet–multinomial prior.
+For the Dirichlet–multinomial, the constructor's concentration is per group;
+the moment calculation uses total concentration internally."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -42,12 +48,15 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Prior expected number of occupied groups</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/lapo-santi/RBBayes/blob/main/R/prior_cluster_moments.R" class="external-link"><code>R/prior_cluster_moments.R</code></a></small>
       <div class="d-none name"><code>prior_mean_K.Rd</code></div>
     </div>
 
     <div class="ref-description section level2">
-    <p>Supports Gnedin, Dirichlet-process, Pitman–Yor and Dirichlet–multinomial priors. The DM concentration is converted from per-group to total concentration internally.</p>
+    <p>Compute the expected number of occupied groups among <code>n</code> items under a
+Gnedin, Dirichlet-process, Pitman–Yor or Dirichlet–multinomial prior.
+For the Dirichlet–multinomial, the constructor's concentration is per group;
+the moment calculation uses total concentration internally.</p>
     </div>
 
     <div class="section level2">
@@ -62,13 +71,22 @@
 <dl><dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
 <dd><p>Positive integer number of items.</p></dd>
 
+
 <dt id="arg-prior">prior<a class="anchor" aria-label="anchor" href="#arg-prior"></a></dt>
-<dd><p>A partition prior created by a clustering-prior constructor.</p></dd>
+<dd><p>A partition prior returned by a clustering-prior constructor.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A numeric scalar.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
+    <p>Legramanti, S., Rigon, T., Durante, D. and Dunson, D. B. (2022).
+Extended stochastic block models with application to criminal networks.
+The Annals of Applied Statistics, 16. The DP/PY/DM mean calculation follows
+the accompanying ESBM expected_cl_py helper.
+<a href="https://github.com/danieledurante/ESBM/blob/master/Source/esbm.R" class="external-link">https://github.com/danieledurante/ESBM/blob/master/Source/esbm.R</a></p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

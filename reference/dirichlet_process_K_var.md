@@ -1,7 +1,8 @@
 # Prior variance of the occupied-group count under a Dirichlet process
 
-Sum the variances of independent Bernoulli new-group indicators with
-probabilities concentration/(concentration+i-1), for i=1,...,n.
+For n items and concentration alpha, new-group indicators are
+independent Bernoulli variables with probabilities alpha/(alpha+i-1),
+i=1,...,n. Their summed variances give the prior variance of K_n.
 
 ## Usage
 
@@ -22,10 +23,3 @@ dirichlet_process_K_var(n, concentration = 1)
 ## Value
 
 A numeric scalar, the prior variance of the occupied-group count.
-
-## Examples
-
-``` r
-dirichlet_process_K_var(20, concentration = 1)
-#> [1] 2.001576
-```
