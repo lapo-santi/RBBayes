@@ -62,7 +62,7 @@ if (knitr::is_latex_output()) {
     "Depends: & R ($\\geq$ 4.3)\\\\\n",
     "Description: & Bayesian inference for paired-comparison and ranking models, with optional latent item blocks, posterior relabelling, diagnostics, and visualisation tools.\\\\\n",
     "License: & MIT\\\\\n",
-    "URL: & \\url{https://github.com/laposanti/BTSBM}\\\\\n",
+    "URL: & \\url{https://github.com/lapo-santi/BTSBM-0b39af08}\\\\\n",
     "Built: & ", format(Sys.Date(), "%Y-%m-%d"), "\\\\\n",
     "\\end{tabularx}\n",
     "\\vspace{1.2em}\n",

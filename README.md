@@ -1,6 +1,6 @@
 # RBBayes
 
-[![R-CMD-check](https://github.com/laposanti/BTSBM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/laposanti/BTSBM/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/lapo-santi/BTSBM-0b39af08/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/lapo-santi/BTSBM-0b39af08/actions/workflows/R-CMD-check.yaml)
 
 Bayesian Bradley--Terry and Plackett--Luce models for paired comparisons and
 rankings, including latent item blocks and respondent-profile mixtures.
@@ -18,7 +18,7 @@ the PLuce C++ kernels remain a planned performance upgrade.
 # install.packages("RBBayes")
 
 # Development version
-remotes::install_github("laposanti/BTSBM")
+remotes::install_github("lapo-santi/BTSBM-0b39af08")
 ```
 
 ## Minimal example

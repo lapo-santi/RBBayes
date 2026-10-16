@@ -1,7 +1,7 @@
 # Package rename
 
 * The installable package is now `RBBayes`. Use `library(RBBayes)` after
-  installing from `laposanti/BTSBM`; the repository address is unchanged.
+  installing from `lapo-santi/BTSBM-0b39af08`; the repository address is unchanged.
 * Existing function names and fitted-object classes remain compatible.
 
 # Pairwise-data workflow updates
