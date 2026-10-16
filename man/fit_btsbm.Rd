@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit.R
 \name{fit_btsbm}
 \alias{fit_btsbm}
-\title{Fit a Bayesian Bradley--Terry or Plackett--Luce model}
+\title{Compatibility entry point for Bayesian preference models}
 \usage{
 fit_btsbm(data, model, control = mcmc_control())
 }
@@ -17,5 +17,6 @@ by \code{\link[=as_bt_data]{as_bt_data()}} or \code{\link[=as_rankings]{as_ranki
 \value{
 An object of class \code{btsbm_fit}.
 }
-\description{Compatibility wrapper for \code{fit_model()}. New analyses should use \code{fit_model()}.}
-\seealso{\code{\link{fit_model}}}
+\description{
+Compatibility entry point for Bayesian preference models
+}

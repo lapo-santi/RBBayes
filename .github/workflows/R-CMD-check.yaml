@@ -61,8 +61,9 @@ jobs:
       - name: Regenerate docs
         shell: Rscript {0}
         run: |
-          roxygen2::roxygenise()
+          # Generate wrappers before roxygen loads the compiled package.
           Rcpp::compileAttributes()
+          roxygen2::roxygenise()
 
       - name: R CMD check
         shell: Rscript {0}

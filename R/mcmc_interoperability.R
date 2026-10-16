@@ -1,18 +1,22 @@
 #' Convert a preference fit to a matrix of saved posterior draws
 #'
-#' Columns q[i] are item strengths divided by their sum in each saved draw.
-#' With normalise = FALSE, theta[i] are the stored, unnormalised strengths.
-#' The index i follows fit$data$item_labels. K_item and K_ranking contain
+#' Columns `q[i]` are item strengths divided by their sum in each saved draw.
+#' With `normalise = FALSE`, `theta[i]` are the stored, unnormalised strengths.
+#' The index i follows `fit$data$item_labels`. K_item and K_ranking contain
 #' occupied-group counts when available. Only retained draws are returned.
 #'
 #' Variable-length block-strength vectors and arbitrary allocation labels are
 #' deliberately excluded. Mixture and LBM fits currently expose group counts
 #' only, because a single profile-independent item-strength vector is absent.
+#' For coda::gelman.diag(), use multivariate = FALSE: sum-to-one strengths
+#' have a singular joint covariance. A constant group-count trace can also
+#' have undefined convergence diagnostics. coda and bayesplot are optional.
 #' @param x A btsbm_fit object.
 #' @param ... Reserved for generic compatibility.
 #' @param normalise Logical; report sum-to-one item strengths by default.
 #' @param pars Optional character vector selecting and ordering columns.
 #' @return A numeric matrix with saved draws in rows and quantities in columns.
+#' @rdname mcmc_interoperability
 #' @export
 as.matrix.btsbm_fit <- function(x, ..., normalise = TRUE, pars = NULL) {
   if (!is.logical(normalise) || length(normalise) != 1L || is.na(normalise)) {
@@ -55,9 +59,9 @@ as.matrix.btsbm_fit <- function(x, ..., normalise = TRUE, pars = NULL) {
 }
 
 #' Convert one fit to a bayesplot-compatible array
-#' @inheritParams as.matrix.btsbm_fit
 #' @return An array with dimensions iteration, chain, parameter. A single fit
 #'   contains one chain. Warm-up is already excluded.
+#' @rdname mcmc_interoperability
 #' @export
 as.array.btsbm_fit <- function(x, ..., normalise = TRUE, pars = NULL) {
   as_draws_array(x, normalise = normalise, pars = pars)
@@ -75,6 +79,7 @@ as.array.btsbm_fit <- function(x, ..., normalise = TRUE, pars = NULL) {
 #' @return as_draws_array returns an iteration by chain by parameter array.
 #'   as_mcmc_chains returns a coda mcmc.list, retaining original iteration
 #'   numbering. Its chains must also have equal warm-up lengths.
+#' @rdname mcmc_interoperability
 #' @export
 as_draws_array <- function(x, normalise = TRUE, pars = NULL) {
   fits <- .compatible_mcmc_fits(x)
@@ -106,8 +111,8 @@ as_draws_array <- function(x, normalise = TRUE, pars = NULL) {
 }
 
 #' Convert a preference fit for coda diagnostics
-#' @inheritParams as.matrix.btsbm_fit
 #' @return A coda mcmc object. Its first iteration is warmup + 1 and thin is 1.
+#' @rdname mcmc_interoperability
 #' @exportS3Method coda::as.mcmc
 as.mcmc.btsbm_fit <- function(x, ..., normalise = TRUE, pars = NULL) {
   if (!requireNamespace("coda", quietly = TRUE)) {
@@ -117,13 +122,13 @@ as.mcmc.btsbm_fit <- function(x, ..., normalise = TRUE, pars = NULL) {
              start = x$control$warmup + 1L, thin = 1L)
 }
 
-#' @rdname as.mcmc.btsbm_fit
+#' @rdname mcmc_interoperability
 #' @exportS3Method coda::as.mcmc.list
 as.mcmc.list.btsbm_fit <- function(x, ..., normalise = TRUE, pars = NULL) {
   as_mcmc_chains(x, normalise = normalise, pars = pars)
 }
 
-#' @rdname as_draws_array
+#' @rdname mcmc_interoperability
 #' @export
 as_mcmc_chains <- function(x, normalise = TRUE, pars = NULL) {
   if (!requireNamespace("coda", quietly = TRUE)) {

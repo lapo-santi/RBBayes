@@ -11,3 +11,5 @@
 ^src/.*\.(o|so|rds)$
 ^vignettes/.*\.(aux|pdf)$
 ^local-presentation$
+# Research reference files are not package sources.
+^paper$

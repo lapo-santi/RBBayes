@@ -1,3 +1,3 @@
-#' @useDynLib BTSBM, .registration = TRUE
+#' @useDynLib RBBayes, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 NULL
