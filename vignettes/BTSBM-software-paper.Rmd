@@ -1,15 +1,21 @@
 ---
-title: "BTSBM: Bayesian Bradley-Terry Stochastic Block Models in R"
+title: "Package 'RBBayes'"
 author: "Lapo Santi and Nial Friel"
 date: "`r format(Sys.Date(), '%Y-%m-%d')`"
+classoption: twoside
+fontsize: 10pt
+geometry: margin=1in
 output:
   rmarkdown::html_vignette:
     toc: true
   rmarkdown::pdf_document:
-    toc: true
-    number_sections: true
+    toc: false
+    number_sections: false
+    highlight: null
+    includes:
+      in_header: manual-style.tex
 vignette: >
-  %\VignetteIndexEntry{BTSBM: Bayesian Bradley-Terry Stochastic Block Models in R}
+  %\VignetteIndexEntry{Package 'RBBayes'}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -25,209 +31,154 @@ knitr::opts_chunk$set(
   warning = FALSE,
   message = FALSE
 )
+
+manual_topic <- function(name, title) {
+  if (knitr::is_latex_output()) {
+    latex_name <- gsub("_", "\\_", name, fixed = TRUE)
+    cat(sprintf("\\manualtopic{%s}{%s}\n\n", latex_name, title))
+  } else {
+    title <- gsub("--", "–", title, fixed = TRUE)
+    cat(sprintf("# `%s`: %s\n\n", name, title))
+  }
+}
+
 set.seed(123)
+library(RBBayes)
 ```
 
-# Abstract {-}
-
-This software paper documents BTSBM, an R package for Bayesian Bradley-Terry stochastic block models in paired comparison problems. The package is built for settings where strict item-by-item ranking is often too brittle, but an ordered block structure is stable and interpretable. We model directed wins \(w_{ij}\), infer latent allocations \(x_i\), infer the number of occupied blocks \(K\), and estimate block intensities \(\lambda_k\). The package provides Gibbs samplers, post-processing for label alignment, visual diagnostics, and model comparison tools based on leave-one-out criteria.
-
-The paper has two aims. The first is methodological: to explain the model and the Markov chain Monte Carlo updates in the notation used across the package. The second is practical: to provide a reproducible workflow with code and output, in the style commonly used in R package vignettes.
-
-```{r lib}
-library(BTSBM)
+```{r manual-title, results='asis', echo=FALSE}
+if (knitr::is_latex_output()) {
+  cat(paste0(
+    "\\thispagestyle{plain}\n",
+    "\\begin{center}\n",
+    "{\\LARGE\\bfseries Package \\texttt{RBBayes}}\\\\[1.2em]\n",
+    "\\end{center}\n",
+    "\\begin{tabularx}{\\textwidth}{@{}>{\\bfseries}p{0.19\\textwidth}X@{}}\n",
+    "Type: & Package\\\\\n",
+    "Title: & Bayesian Bradley--Terry and Plackett--Luce Models with Latent Blocks\\\\\n",
+    "Version: & 0.1.0\\\\\n",
+    "Authors: & Lapo Santi and Nial Friel\\\\\n",
+    "Maintainer: & Lapo Santi (\\texttt{lapo.santi@gmail.com})\\\\\n",
+    "Depends: & R ($\\geq$ 4.3)\\\\\n",
+    "Description: & Bayesian inference for paired-comparison and ranking models, with optional latent item blocks, posterior relabelling, diagnostics, and visualisation tools.\\\\\n",
+    "License: & MIT\\\\\n",
+    "URL: & \\url{https://github.com/laposanti/BTSBM}\\\\\n",
+    "Built: & ", format(Sys.Date(), "%Y-%m-%d"), "\\\\\n",
+    "\\end{tabularx}\n",
+    "\\vspace{1.2em}\n",
+    "\\tableofcontents\n",
+    "\\clearpage\n",
+    "\\pagestyle{manual}\n"
+  ))
+}
 ```
 
-# Introduction
+```{r topic-package, results='asis', echo=FALSE}
+manual_topic("BTSBM-package", "Bayesian paired-comparison and ranking models with latent blocks")
+```
 
-This model is for paired-comparison analyses where the data are directional outcomes between items, such as wins/losses in sport, preference judgements, or expert comparisons. The package expects these data in adjacency-matrix form: a directed count matrix \(\mathbf{W}=(w_{ij})\), where \(w_{ij}\) is how many times \(i\) is preferred to or beats \(j\).
+**Description**
 
-The standard Bradley-Terry model gives a strict item-level ranking. In many applications that resolution is too fine: nearby items are often not credibly separable. BT-SBM keeps the Bradley-Terry comparison structure but ranks latent blocks rather than individuals, so items in the same block are rank-indifferent while blocks remain ordered by strength.
+RBBayes provides Bayesian Bradley--Terry and Plackett--Luce models through one
+data--model--fit interface. This vignette focuses on the Bradley--Terry
+stochastic block model (BT--SBM), in which items with similar competitive
+strength share an ordered latent block. The model learns block membership,
+block strength, and the number of occupied blocks jointly.
 
-## Quick start
+**Details**
+
+Pairwise-comparison data record directional outcomes between items: a player
+defeats an opponent, a judge prefers one object to another, or one system wins
+an evaluation. The classical Bradley--Terry model assigns every item its own
+positive strength and therefore induces a strict order. That resolution can be
+too fine when nearby items are not credibly separable.
+
+The BT--SBM instead assigns item $i$ to a latent block $x_i$. Items in the same
+block share a strength $\lambda_{x_i}$; occupied blocks are ordered by strength.
+The result is a probabilistic tiered ranking rather than a forced item-by-item
+ordering. Posterior output keeps uncertainty visible through a distribution
+over the number of blocks, a block-ordered outcome matrix, conditional
+assignment probabilities, and rank intervals.
+
+The public workflow has four stages: prepare data, specify a model, set MCMC
+controls, and fit. The same fit class is then consumed by summaries, plots,
+diagnostics, and predictive-comparison functions.
+
+**Quick start**
 
 ```{r quick-start, eval=FALSE}
-library(BTSBM)
+wins <- ATP_2000_2025$`2017`$Y_ij
+diag(wins) <- 0L
 
-# Directed win-count matrix (n x n), with zero diagonal
-w_ij <- ATP_2000_2025$`2017`$Y_ij
-diag(w_ij) <- 0L
-
-fit <- gibbs_bt_sbm(
-  w_ij = w_ij,
-  prior = "GN",
-  gamma_GN = 0.8,
-  T_iter = 400,
-  T_burn = 200,
-  verbose = FALSE
+pairwise <- as_bt_data(wins)
+model <- bt_sbm_model(
+  latent_strength = latent_strength(shape = 2, rate = exp(digamma(2))),
+  item_clustering = gnedin_prior(gnedin_hyperparameter = 0.8)
+)
+fit <- fit_model(
+  pairwise,
+  model,
+  mcmc_control(iter = 2000, warmup = 1000, seed = 1)
 )
 
-post <- relabel_by_lambda(fit$x_samples, fit$lambda_samples)
-plot_block_adjacency(fit = post, w_ij = w_ij)
+pretty_table_K_distribution(fit, p_min = 0)
+plot_block_adjacency(fit)
+plot_assignment_probabilities(fit)
 ```
 
-## Data formatting details (optional)
+**Authors**
 
-The required input is a directed \(n\times n\) matrix \(\mathbf{W}=(w_{ij})\): rows are source items, columns are target items, and each cell \(w_{ij}\) records how many times item \(i\) beats, is chosen over, or is preferred to item \(j\).
+Lapo Santi and Nial Friel.
 
-When raw data come with multiple contexts or judges, first aggregate those records to recover \(\mathbf{W}\). Let \(c\in\{1,\ldots,C\}\) index context, \(j\in\{1,\ldots,J\}\) index judge/rater, and \(r\) index repeated pairwise observations. Define
-\[
-y_{ij}^{(c,j,r)}=\mathbf{1}\{\text{in replicate }r,\text{ judge }j\text{ in context }c\text{ prefers }i\text{ to }j\}.
-\]
-Then
-\[
-w_{ij}^{(c,j)} = \sum_r y_{ij}^{(c,j,r)},
-\]
-and aggregate to
-\[
-w_{ij}=\sum_{c=1}^{C}\sum_{j=1}^{J} w_{ij}^{(c,j)}.
-\]
-This gives the directed adjacency matrix \(\mathbf{W}\) used by `gibbs_bt_sbm()`. The match totals \(n_{ij}=w_{ij}+w_{ji}\) are computed internally. If context effects are central, you can repeat the same construction within each context \(c\) and fit context-specific models.
+**References**
 
-# Model and Notation
+Bradley, R. A. and Terry, M. E. (1952). Rank analysis of incomplete block
+designs: I. The method of paired comparisons. *Biometrika*, 39(3/4), 324--345.
 
-We use the same notation as the main BT-SBM paper and keep a one-to-one map to package objects.
+Santi, L. and Friel, N. (2026). The Bradley--Terry stochastic block model.
+*The Annals of Applied Statistics*, 20(2), 1766--1787.
 
-Let \(w_{ij}\) be directed wins, with \(w_{ii}=0\), and define
-\[
- n_{ij}=w_{ij}+w_{ji}.
-\]
-
-Collecting all \(w_{ij}\) gives the directed outcome matrix \(\mathbf{W}\in\mathbb{N}^{n\times n}\), while
-\(\mathbf{N}=\mathbf{W}+\mathbf{W}^\top\) is symmetric with zero diagonal. We also use
-\(E=\{(i,j): n_{ij}>0\}\) for observed pairs.
-
-Each item \(i\) has a latent block label \(x_i \in \{1,\dots,K\}\). Each occupied block \(k\) has intensity \(\lambda_k>0\). The Bradley-Terry map is
-\[
-\theta_{x_i x_j} = \frac{\lambda_{x_i}}{\lambda_{x_i}+\lambda_{x_j}},
-\]
-and outcomes satisfy
-\[
-w_{ij} \mid n_{ij}, x, \lambda \sim \mathrm{Binomial}(n_{ij}, \theta_{x_i x_j}).
-\]
-
-For priors on \(\lambda_k\), BTSBM uses
-\[
-\lambda_k \sim \mathrm{Gamma}(a,b), \qquad b = \exp\{\psi(a)\},
-\]
-so that \(\mathbb{E}[\log \lambda_k]=0\) a priori.
-
-For partitions, the package supports DP, PY, DM, and GN urn-style priors through prior weights in the single-site allocation updates.
-
-To make the translation to code explicit, the paper notation
-\((\mathbf{W},\mathbf{N},x,\lambda,K,E)\) corresponds to
-`(w_ij, w_ij + t(w_ij), x_samples, lambda_samples, K_per_iter, obs_idx)`
-in package outputs.
-
-## Priors on \(x\): what is supported and how to set it
-
-The prior on allocations \(x=(x_1,\ldots,x_n)\) is selected with the `prior` argument in `gibbs_bt_sbm()`. The supported options are:
-
-| `prior` | Hyperparameters | Internal helper | Typical use |
-|---|---|---|---|
-| `"DP"` | `alpha_PY` | `urn_DP` | Baseline CRP-like reinforcement |
-| `"PY"` | `alpha_PY`, `sigma_PY` | `urn_PY` | Heavier-tail clustering than DP |
-| `"DM"` | `beta_DM`, `K_DM` | `urn_DM` | Finite-cap clustering with max `K_DM` |
-| `"GN"` | `gamma_GN` | `urn_GN` | Finite-species Gibbs-type prior (default in examples) |
-
-Below are the corresponding predictive weights (as in Legramanti, Rigon, Durante, and Dunson, 2022):
-
-1. `prior = "DP"` (Dirichlet process / CRP-type weights)
-  Uses `alpha_PY` and ignores `sigma_PY`:
-  \[
-  (v_1,\ldots,v_K,\alpha_{PY}),
-  \]
-  implemented by `urn_DP(v_minus, alpha_PY)`.
-
-2. `prior = "PY"` (Pitman-Yor)
-  Uses `alpha_PY` and `sigma_PY \in (0,1)`:
-  \[
-  (v_1-\sigma_{PY},\ldots,v_K-\sigma_{PY},\alpha_{PY}+K\sigma_{PY}),
-  \]
-  implemented by `urn_PY(v_minus, alpha_PY, sigma_PY)`.
-
-3. `prior = "DM"` (finite Dirichlet-Multinomial)
-  Uses `beta_DM` and a finite cap `K_DM`:
-  \[
-  (v_1+\beta_{DM},\ldots,v_K+\beta_{DM},\beta_{DM}(K_{DM}-K)\mathbf{1}_{K<K_{DM}}),
-  \]
-  implemented by `urn_DM(v_minus, beta_DM, K_DM)`.
-
-4. `prior = "GN"` (Gnedin-type finite-species prior)
-  Uses `gamma_GN`:
-  \[
-  \big((v_1+1)(n-K+\gamma),\ldots,(v_K+1)(n-K+\gamma),K^2-K\gamma\big),
-  \]
-  implemented by `urn_GN(v_minus, gamma_GN)`.
-
-In code, `gibbs_bt_sbm()` validates the needed hyperparameters and then dispatches through
-`urn_fun <- switch(prior, DP = ..., PY = ..., DM = ..., GN = ...)`.
-During each single-site update of \(x_i\), this gives the prior mass for assigning item \(i\) to each existing block and to one candidate new block.
-
-Minimal usage examples:
-
-```{r prior-examples, eval=FALSE}
-# Dirichlet process prior on x
-fit_dp <- gibbs_bt_sbm(w_ij, prior = "DP", alpha_PY = 1.0)
-
-# Pitman-Yor prior on x
-fit_py <- gibbs_bt_sbm(w_ij, prior = "PY", alpha_PY = 1.0, sigma_PY = 0.3)
-
-# Finite Dirichlet-Multinomial prior on x (at most K_DM blocks)
-fit_dm <- gibbs_bt_sbm(w_ij, prior = "DM", beta_DM = 0.5, K_DM = 15)
-
-# Gnedin prior on x
-fit_gn <- gibbs_bt_sbm(w_ij, prior = "GN", gamma_GN = 0.8)
+```{r topic-as-bt-data, results='asis', echo=FALSE}
+manual_topic("as_bt_data", "Create validated Bradley--Terry pairwise data")
 ```
 
-These four choices correspond directly to the helpers `urn_DP`, `urn_PY`, `urn_DM`, and `urn_GN` used internally by the sampler, and are the package-level interface to the partition-prior family discussed in Legramanti, Rigon, Durante, and Dunson (2022).
+**Description**
 
-# Posterior Computation
+`as_bt_data()` converts a square directed win-count matrix into the validated
+pairwise-data representation used by the common fitting interface.
 
-The core sampler in `gibbs_bt_sbm()` alternates three main blocks.
+**Usage**
 
-First, latent variables \(Z_{ij}\) are sampled for observed pairs \((i,j)\) with \(n_{ij}>0\):
-\[
-Z_{ij} \sim \mathrm{Gamma}\!\left(n_{ij}, \frac{1}{\lambda_{x_i}+\lambda_{x_j}}\right),
-\]
-with symmetry \(Z_{ij}=Z_{ji}\). This step is implemented in C++ for speed.
+```r
+as_bt_data(wins, item_labels = NULL)
+```
 
-Second, each label \(x_i\) is updated by single-site Gibbs moves. Existing clusters and one new-cluster option are compared on a log-weight scale:
-\[
-\log p_h \propto \log(\text{prior mass}_h) + \text{likelihood contribution}_h.
-\]
-For existing clusters, the key term is
-\[
-w_i\log\lambda_h - \lambda_h\sum_j Z_{ij}, \qquad w_i = \sum_j w_{ij}.
-\]
-For the new cluster, the package uses the integrated score under the Gamma prior.
+**Arguments**
 
-Third, occupied \(\lambda_k\) are updated conjugately:
-\[
-\lambda_k \mid - \sim \mathrm{Gamma}\left(a + \sum_{i:x_i=k} w_i,\ b + \sum_{i:x_i=k}\sum_j Z_{ij}\right).
-\]
-Then a global geometric-mean rescaling of occupied intensities is applied for numerical stability.
+| Argument | Description |
+|---|---|
+| `wins` | Numeric square matrix. `wins[i, j]` is the number of wins for item $i$ over item $j$. The diagonal must be zero. |
+| `item_labels` | Optional character vector of item names. Matrix row names are used by default when available. |
 
-# Software Design
+**Value**
 
-The implementation separates fitting, utilities, and plotting.
+An object of class `btsbm_pairwise_data`. It contains the validated directed
+win matrix and labels required by the fitting and plotting methods.
 
-- `gibbs_bt_sbm()` is the clustered sampler.
-- `gibbs_bt_simple()` is the item-level Bradley-Terry baseline.
-- `relabel_by_lambda()` aligns labels across MCMC draws and computes posterior partition summaries.
-- `plot_block_adjacency()`, `plot_assignment_probabilities()`, `plot_lambda_uncertainty()`, and `plot_rank_intervals()` provide structured diagnostics.
-- `make_bt_simple_loo()`, `make_bt_cluster_loo()`, and `compare_bt_models_loo()` provide out-of-sample comparison helpers.
+**Details**
 
-The package ships with `ATP_2000_2025`, a yearly list with `Y_ij`, `N_ij`, and player metadata.
+Let $w_{ij}$ be the number of times item $i$ defeats item $j$, with
+$w_{ii}=0$, and define $n_{ij}=w_{ij}+w_{ji}$. RBBayes stores the matrix
+$\mathbf W=(w_{ij})$ in the object returned by `as_bt_data()` and computes
+match totals internally.
 
-# Reproducible Workflow
+**Example**
 
-## Simulation-first example
+This vignette uses one synthetic league throughout. It contains 18 players
+generated from three strength tiers.
 
-To ensure clear multi-cluster structure in a short run, we begin with synthetic paired-comparison data generated from three latent blocks.
-
-```{r sim-data}
-sim <- sample_from_BTSBM(
+```{r simulate-data}
+simulation <- sample_from_BTSBM(
   n_players = 18,
   K = 3,
   mean_matches = 8,
@@ -237,174 +188,552 @@ sim <- sample_from_BTSBM(
   seed = 123
 )
 
-w_ij <- sim$w
-diag(w_ij) <- 0L
-player_ids <- paste0("Player_", seq_len(nrow(w_ij)))
-dimnames(w_ij) <- list(player_ids, player_ids)
-
-w_ij[1:6, 1:6]
+player_labels <- paste0("Player_", seq_len(nrow(simulation$w)))
+pairwise <- as_bt_data(simulation$w, item_labels = player_labels)
+pairwise$wins[1:6, 1:6]
 ```
 
-```{r dims-sim}
-n <- nrow(w_ij)
-S_demo <- 300 - 150
-c(n = n, S = S_demo)
+```{r topic-model, results='asis', echo=FALSE}
+manual_topic("bt_sbm_model", "Define a Bradley--Terry stochastic block model")
 ```
 
-## Fit clustered model
+**Description**
 
-```{r fit-cluster}
-fit <- gibbs_bt_sbm(
-  w_ij = w_ij,
-  a = 2,
-  prior = "GN",
-  gamma_GN = 0.8,
-  T_iter = 300,
-  T_burn = 150,
-  verbose = FALSE
+`bt_sbm_model()` defines a clustered Bradley--Terry model. The simple model is
+defined with `bt_model()`. Both constructors return a `btsbm_model` and are
+fitted by `fit_model()`.
+
+**Usage**
+
+```r
+bt_sbm_model(
+  latent_strength = latent_strength(
+    shape = 4,
+    rate = exp(digamma(4))
+  ),
+  item_clustering = gnedin_prior(
+    gnedin_hyperparameter = 0.5
+  ),
+  ability_prior = NULL,
+  item_prior = NULL
+)
+```
+
+**Arguments**
+
+| Argument | Description |
+|---|---|
+| `latent_strength` | Gamma prior for positive block strengths, created by `latent_strength()`. |
+| `item_clustering` | Prior on the latent item partition. |
+| `ability_prior` | Deprecated alias for `latent_strength`. |
+| `item_prior` | Deprecated alias for `item_clustering`. |
+
+**Value**
+
+A `btsbm_model` specification. It records scientific choices without starting
+the sampler.
+
+**Details**
+
+Each item has a block label $x_i\in\{1,\ldots,K\}$ and each occupied block has
+a positive strength $\lambda_k$. The probability of a win is
+
+\[
+\Pr(i\text{ defeats }j\mid x,\lambda)
+=\frac{\lambda_{x_i}}{\lambda_{x_i}+\lambda_{x_j}},
+\]
+
+so the aggregated observation satisfies
+
+\[
+w_{ij}\mid n_{ij},x,\lambda
+\sim\operatorname{Binomial}\!\left(
+n_{ij},\frac{\lambda_{x_i}}{\lambda_{x_i}+\lambda_{x_j}}
+\right).
+\]
+
+The prior over $x=(x_1,\ldots,x_n)$ is a named model component rather than a
+collection of sampler-specific arguments.
+
+| Scientific choice | Constructor |
+|---|---|
+| Random finite number of blocks | `gnedin_prior(gnedin_hyperparameter = 0.8)` |
+| Dirichlet-process partition | `dirichlet_process_prior(concentration = 1)` |
+| Pitman--Yor partition | `pitman_yor_prior(concentration = 1, discount = 0.2)` |
+| Fixed upper bound | `finite_partition(max_clusters = 4, concentration = 1)` |
+
+**Examples**
+
+```{r prior-examples, eval=FALSE}
+model_gnedin <- bt_sbm_model(
+  latent_strength = latent_strength(shape = 2, rate = exp(digamma(2))),
+  item_clustering = gnedin_prior(gnedin_hyperparameter = 0.8)
 )
 
+model_finite <- bt_sbm_model(
+  item_clustering = finite_partition(max_clusters = 6)
+)
+```
+
+```{r topic-control, results='asis', echo=FALSE}
+manual_topic("mcmc_control", "Set MCMC controls for an RBBayes fit")
+```
+
+**Description**
+
+`mcmc_control()` collects computational settings separately from the model
+specification. This makes it possible to reuse the same scientific model with
+different chain lengths, seeds, or initial states.
+
+**Usage**
+
+```r
+mcmc_control(
+  iter = 2000,
+  warmup = floor(iter / 2),
+  seed = NULL,
+  store = c("minimal", "augmented"),
+  init_item_cluster = NULL,
+  init_ranking_cluster = NULL,
+  verbose = FALSE,
+  progress_every = 1000L,
+  partition_moves = NULL
+)
+```
+
+**Arguments**
+
+| Argument | Description |
+|---|---|
+| `iter` | Total number of MCMC iterations. |
+| `warmup` | Number of initial iterations discarded as warmup. |
+| `seed` | Optional integer seed for reproducibility. |
+| `store` | Store the minimal state or also keep latent augmentations. |
+| `init_item_cluster` | Optional initial item partition. |
+| `init_ranking_cluster` | Optional initial ranking partition for PL mixture and PL--LBM models. |
+| `verbose`, `progress_every` | Control progress reporting. |
+| `partition_moves` | Optional settings created by `partition_moves()`. |
+
+**Value**
+
+An object of class `btsbm_mcmc_control`.
+
+**Example**
+
+```{r control-example, results='hide'}
+control <- mcmc_control(iter = 400, warmup = 200, seed = 124)
+control
+```
+
+```{r topic-fit, results='asis', echo=FALSE}
+manual_topic("fit_btsbm", "Fit a Bayesian Bradley--Terry or Plackett--Luce model")
+```
+
+**Description**
+
+`fit_model()` is the common fitting entry point for the simple and clustered
+Bradley--Terry and Plackett--Luce models.
+
+**Usage**
+
+```r
+fit_model(data, model, control = mcmc_control())
+```
+
+**Arguments**
+
+| Argument | Description |
+|---|---|
+| `data` | A `btsbm_pairwise_data` or `btsbm_ranking_data` object created by `as_bt_data()` or `as_rankings()`. |
+| `model` | A model object created by an RBBayes model constructor. |
+| `control` | An object created by `mcmc_control()`. |
+
+**Value**
+
+An object of class `btsbm_fit`. Its stable draw names allow the same downstream
+summary and diagnostic functions to work across supported models.
+
+**Details**
+
+The internal BT--SBM kernel alternates three updates. A Thurstonian
+augmentation introduces latent $Z_{ij}$ variables for observed pairs. Item
+labels are then updated one at a time using the selected partition prior and
+the augmented likelihood. Finally, occupied strengths have conjugate Gamma
+updates. The number of occupied blocks may change during the label update, so
+$K$ is sampled rather than fixed.
+
+Cluster labels are permutation-invariant. For the summaries in this vignette,
+each draw is relabelled by decreasing occupied strength: block 1 is strongest,
+block 2 is second strongest, and so forth. Users do not need to call a separate
+relabel step when using the `btsbm_fit` functions documented below.
+
+**Example**
+
+```{r fit-cluster}
+model <- bt_sbm_model(
+  latent_strength = latent_strength(shape = 2, rate = exp(digamma(2))),
+  item_clustering = gnedin_prior(gnedin_hyperparameter = 0.8)
+)
+
+fit <- fit_model(pairwise, model, control)
+fit
+```
+
+```{r draw-dimensions}
 str(list(
-  x_samples = dim(fit$x_samples),
-  K_per_iter = length(fit$K_per_iter),
-  lambda_samples = length(fit$lambda_samples)
+  item_cluster = dim(fit$draws$item_cluster),
+  n_item_clusters = length(fit$draws$n_item_clusters),
+  latent_strength = length(fit$draws$latent_strength)
 ))
 ```
 
-```{r K-quick-check}
-head(sort(table(fit$K_per_iter), decreasing = TRUE), 6)
+```{r topic-k-table, results='asis', echo=FALSE}
+manual_topic("pretty_table_K_distribution", "Format the posterior distribution of occupied blocks")
 ```
 
-## Relabel and summarize
+**Description**
 
-```{r relabel}
-post <- relabel_by_lambda(fit$x_samples, fit$lambda_samples)
-if (knitr::is_latex_output()) {
-  knitr::kable(
-    post$block_count_distribution,
-    caption = "Posterior distribution of the number of occupied blocks"
-  )
-} else {
-  pretty_table_K_distribution(post)
-}
+This function produces a compact horizontal table of the posterior
+distribution of $K$, the number of occupied item blocks. A complete
+distribution is usually more informative than its mode alone.
+
+**Usage**
+
+```r
+pretty_table_K_distribution(
+  post,
+  format = "html",
+  p_min = 0,
+  digits = 3,
+  latex_options = "hold_position"
+)
 ```
 
-```{r partitions}
-head(post$block_count_distribution)
+**Arguments**
+
+| Argument | Description |
+|---|---|
+| `post` | A `btsbm_fit` with an item partition, or relabelled output. |
+| `format` | Output format, usually `"html"` or `"latex"`. |
+| `p_min` | Drop probabilities no larger than this threshold. |
+| `digits` | Number of digits used to display probabilities. |
+| `latex_options` | Styling options passed to `kableExtra` for LaTeX output. |
+
+**Value**
+
+A `knitr_kable` object suitable for the requested document format.
+
+**Example**
+
+```{r block-count-table}
+pretty_table_K_distribution(
+  fit,
+  format = if (knitr::is_latex_output()) "latex" else "html",
+  p_min = 0
+)
 ```
 
-```{r cluster-count}
-length(unique(post$minVI_partition))
+```{r topic-adjacency, results='asis', echo=FALSE}
+manual_topic("plot_block_adjacency", "Display outcomes in posterior block order")
 ```
 
-## Visual diagnostics
+**Description**
 
-```{r plot-block, fig.cap="Block-ordered adjacency heatmap. Rows and columns are ordered by inferred blocks, with boundary lines indicating block transitions."}
-plot_block_adjacency(fit = post, w_ij = w_ij)
+`plot_block_adjacency()` draws observed win rates after ordering items by a
+representative posterior partition and then by marginal win proportion within
+each block. Boundary lines and the coloured side band mark block transitions.
+
+**Usage**
+
+```r
+plot_block_adjacency(
+  fit,
+  w_ij = NULL,
+  x_hat = NULL,
+  relabel_blocks = c("none", "avg_lambda"),
+  lambda_hat = NULL,
+  relabel_decreasing = TRUE,
+  clean_fun = clean_players_names,
+  players_df = NULL,
+  players_id_col = NULL,
+  labels = NULL,
+  labels_key_col = NULL,
+  labels_value_col = NULL,
+  clean_display_labels = NULL,
+  order_ids = NULL,
+  palette = NULL,
+  fill_low = "#FFFFCC",
+  fill_high = "#006400",
+  no_match_label = "No match played",
+  no_match_color = "white",
+  mark_unplayed = TRUE,
+  unplayed_mark = "×",
+  unplayed_mark_size = 2.2
+)
 ```
 
-```{r plot-assign, fig.height=6, fig.cap="Posterior assignment probabilities by player and cluster, after relabelling for interpretability."}
-plot_assignment_probabilities(fit = post, w_ij = w_ij, x_hat = post$minVI_partition)
+**Arguments**
+
+| Argument | Description |
+|---|---|
+| `fit` | A BT--SBM `btsbm_fit` object, or compatible relabelled output. |
+| `w_ij`, `x_hat` | Optional win matrix and partition estimate; these are normally obtained from `fit`. |
+| `relabel_blocks`, `lambda_hat`, `relabel_decreasing` | Optional controls for ordering block labels by average strength. |
+| `clean_fun` | Optional function used to tidy display labels. |
+| `labels` | Optional display labels, either named by item ID or aligned with items. |
+| `players_df`, `players_id_col`, `labels_key_col`, `labels_value_col`, `clean_display_labels` | Optional metadata-based label lookup and cleaning controls. |
+| `order_ids` | Optional explicit ordering of item IDs. |
+| `palette` | Optional named vector of block colours. |
+| `fill_low`, `fill_high` | Endpoints of the observed-win-rate colour scale. |
+| `no_match_label`, `no_match_color` | Legend label and colour for pairs with no observed match. |
+| `mark_unplayed`, `unplayed_mark`, `unplayed_mark_size` | Control the optional marker drawn over unplayed pairs. |
+
+**Value**
+
+A `ggplot` object. Each matrix cell is the observed win rate
+$w_{ij}/n_{ij}$, not a posterior fitted probability.
+
+**Example**
+
+```{r block-adjacency, fig.height=6, fig.pos="H", fig.cap="Observed win rates reordered by the representative posterior partition. Boundary lines and the side band mark inferred blocks."}
+plot_block_adjacency(fit, clean_fun = identity)
 ```
 
-```{r plot-lambda, fig.height=6, fig.cap="Posterior uncertainty in block intensity parameters (lambda), summarising relative block strengths."}
-plot_lambda_uncertainty(fit = post, w_ij = w_ij, x_hat = post$minVI_partition)
+```{r topic-assignment, results='asis', echo=FALSE}
+manual_topic("plot_assignment_probabilities", "Display posterior uncertainty over block membership")
 ```
 
-```{r plot-rank, fig.height=6, fig.cap="Posterior rank intervals for the top players, highlighting uncertainty in the induced ranking."}
-plot_rank_intervals(post, max_players = 10)
+**Description**
+
+This heatmap shows item-wise posterior assignment probabilities after ordering
+blocks by decreasing strength. By default, probabilities are conditional on
+the modal sampled value of $K$. This separates uncertainty about which block
+an item occupies from uncertainty about how many blocks exist.
+
+**Usage**
+
+```r
+plot_assignment_probabilities(
+  fit,
+  w_ij = NULL,
+  max_n_clust = NULL,
+  players_df = NULL,
+  players_id_col = NULL,
+  labels = NULL,
+  labels_key_col = NULL,
+  labels_value_col = NULL,
+  clean_display_labels = NULL,
+  clean_fun = clean_players_names,
+  x_hat = NULL,
+  order_ids = NULL,
+  k_show = NULL,
+  fill_low = "#FFFFCC",
+  fill_high = "#006400"
+)
 ```
 
-## Small ATP illustration
+**Arguments**
 
-The simulation above is used for cluster-recovery diagnostics. For a lightweight real-data illustration, we run the same workflow on a small ATP subset.
+| Argument | Description |
+|---|---|
+| `fit` | A BT--SBM `btsbm_fit` object, or compatible relabelled output. |
+| `w_ij` | Optional win matrix used for ordering and annotation; it is normally obtained from `fit`. |
+| `max_n_clust` | Occupied-cluster count on which probabilities are conditioned; the posterior mode is used by default. |
+| `labels`, `clean_fun` | Optional display labels and a function for tidying them. |
+| `players_df`, `players_id_col`, `labels_key_col`, `labels_value_col`, `clean_display_labels` | Optional metadata-based label lookup and cleaning controls. |
+| `x_hat`, `order_ids` | Optional controls for item order. |
+| `k_show` | Compatibility alias for `max_n_clust`. |
+| `fill_low`, `fill_high` | Endpoints of the probability colour scale. |
 
-```{r atp-data}
-w_ij_atp <- ATP_2000_2025$`2017`$Y_ij[1:10, 1:10]
-diag(w_ij_atp) <- 0L
-atp_ids <- rownames(w_ij_atp)
-if (is.null(atp_ids)) {
-  atp_ids <- paste0("ATP_", seq_len(nrow(w_ij_atp)))
-}
-dimnames(w_ij_atp) <- list(atp_ids, atp_ids)
+**Value**
 
-fit_atp <- gibbs_bt_sbm(
-  w_ij = w_ij_atp,
-  a = 2,
-  prior = "GN",
-  gamma_GN = 0.8,
-  T_iter = 180,
-  T_burn = 90,
-  verbose = FALSE
+A `ggplot` object. A diffuse row indicates that an item lies near a posterior
+block boundary.
+
+**Example**
+
+```{r assignment-probabilities, fig.height=6, fig.pos="H", fig.cap="Posterior block-membership probabilities conditional on the modal number of occupied blocks."}
+plot_assignment_probabilities(fit, clean_fun = identity)
+```
+
+```{r topic-ranks, results='asis', echo=FALSE}
+manual_topic("plot_rank_intervals", "Plot posterior rank intervals")
+```
+
+**Description**
+
+Because all items in a block share a strength, their induced ranks are tied.
+`plot_rank_intervals()` summarizes posterior ordering without inventing
+within-block precision.
+
+**Usage**
+
+```r
+plot_rank_intervals(
+  x,
+  max_players = NULL,
+  w_ij = NULL,
+  player_names = NULL,
+  burn_in = 0,
+  thin = 1,
+  ci = 0.95,
+  ties.method = "average",
+  rank_grid_by = 0.5
+)
+```
+
+**Arguments**
+
+| Argument | Description |
+|---|---|
+| `x` | A posterior-rank summary, posterior strength draws, a `btsbm_fit`, or compatible relabelled output. |
+| `max_players` | Optional maximum number of items displayed. |
+| `w_ij`, `player_names` | Optional data and labels used when rank summaries must be computed. |
+| `burn_in`, `thin` | Optional post-processing controls for supplied draws. |
+| `ci` | Posterior interval level. |
+| `ties.method` | Method passed to `base::rank()`. |
+| `rank_grid_by` | Spacing of the posterior-rank probability grid. |
+
+**Value**
+
+A `ggplot` object.
+
+**Example**
+
+```{r rank-intervals, fig.height=6, fig.pos="H"}
+plot_rank_intervals(fit, max_players = 12)
+```
+
+```{r topic-diagnostics, results='asis', echo=FALSE}
+manual_topic("mcmc_diagnostics", "Summarise mixing and inspect saved traces")
+```
+
+**Description**
+
+`mcmc_diagnostics()` computes lightweight scalar diagnostics, while
+`plot_mcmc_traces()` shows whether saved draws move around a stable region.
+Trace plots are an initial diagnostic, not proof of convergence.
+
+**Usage**
+
+```r
+mcmc_diagnostics(fit)
+plot_mcmc_traces(fit, quantities = NULL)
+```
+
+**Arguments**
+
+| Argument | Description |
+|---|---|
+| `fit` | A `btsbm_fit` object. |
+| `quantities` | Optional character vector naming scalar traces to display. |
+
+**Value**
+
+`mcmc_diagnostics()` returns a data frame with effective sample size, Monte
+Carlo standard error, and lag-one autocorrelation for each available scalar
+trace. `plot_mcmc_traces()` returns a `ggplot` object.
+
+**Example**
+
+```{r diagnostics, fig.height=4.5, fig.pos="H"}
+mcmc_diagnostics(fit)
+plot_mcmc_traces(fit)
+```
+
+The short chain used here keeps the vignette quick to build. A scientific
+analysis should use longer independent chains and assess their agreement.
+
+```{r topic-loo, results='asis', echo=FALSE}
+manual_topic("loo_btsbm", "Run predictive comparison for a fitted model")
+```
+
+**Description**
+
+`loo_btsbm()` runs Pareto-smoothed importance-sampling leave-one-out
+cross-validation using the pointwise log likelihood stored by the common fit
+interface.
+
+**Usage**
+
+```r
+loo_btsbm(fit, ...)
+```
+
+**Arguments**
+
+| Argument | Description |
+|---|---|
+| `fit` | A `btsbm_fit` object. |
+| `...` | Additional arguments passed to `loo::loo()`. |
+
+**Value**
+
+A `loo` object. Models can be compared with `loo::loo_compare()` when they use
+the same observations.
+
+**Example**
+
+```{r model-comparison}
+simple_fit <- fit_model(
+  pairwise,
+  bt_model(latent_strength = latent_strength(shape = 2, rate = exp(digamma(2)))),
+  mcmc_control(iter = 400, warmup = 200, seed = 125)
 )
 
-post_atp <- relabel_by_lambda(fit_atp$x_samples, fit_atp$lambda_samples)
-head(post_atp$block_count_distribution)
-```
-
-## Predictive comparison with simple BT
-
-```{r fit-simple}
-fit_simple <- gibbs_bt_simple(
-  w_ij = w_ij,
-  a = 0.01,
-  b = 0.1,
-  T_iter = 300,
-  T_burn = 150,
-  verbose = FALSE
-)
-
-llo_simple <- make_bt_simple_loo(w_ij, fit_simple$lambda_samples)
-llo_cluster <- make_bt_cluster_loo(
-  w_ij,
-  post$lambda_samples_relabel,
-  post$x_samples_relabel
-)
-
-# The compare step requires the suggested package 'loo'.
 if (requireNamespace("loo", quietly = TRUE)) {
-  cmp_out <- tryCatch(
-    compare_bt_models_loo(llo_simple, llo_cluster),
-    error = function(e) e
-  )
-
-  if (inherits(cmp_out, "error")) {
-    paste(
-      "LOO comparison is unavailable in this local setup:",
-      conditionMessage(cmp_out)
-    )
-  } else {
-    cmp_out$comparison
-  }
+  loo::loo_compare(list(
+    simple = loo_btsbm(simple_fit),
+    clustered = loo_btsbm(fit)
+  ))
 } else {
-  "Install 'loo' to run compare_bt_models_loo()."
+  "Install 'loo' to run the predictive comparison."
 }
 ```
 
-# Practical Notes for Package Use
+```{r topic-design, results='asis', echo=FALSE}
+manual_topic("BTSBM-design", "Software architecture, assumptions, and scope")
+```
 
-The object dimensions used by BTSBM are consistent across functions. For \(S=T_{\text{iter}}-T_{\text{burn}}\), `x_samples` has shape \(S \times n\), `K_per_iter` has length \(S\), and relabelled item-level intensities are stored as `lambda_samples_relabel` with shape \(S \times n\).
+**Software design**
 
-The main plotting functions expect relabelled output, not raw labels, because raw cluster indices are permutation-invariant across iterations.
+The public architecture separates five responsibilities:
 
-For computational control, the most important switches are matrix size \(n\), number of saved draws \(S\), and whether latent \(Z\) draws are stored. The `store_z = TRUE` option is useful for diagnostics but substantially increases memory use.
+1. `as_bt_data()` and `as_rankings()` validate observations.
+2. Model constructors state the likelihood and latent structure.
+3. Prior constructors state reusable strength and partition priors.
+4. `mcmc_control()` holds computational settings.
+5. `fit_model()` returns a common fit consumed by summaries, plots,
+   diagnostics, and `log_lik()`.
 
-# Assumptions and Limitations
+This contract also covers the package's Plackett--Luce models. The
+model-specific sampler remains an implementation detail, so analyses do not
+need different extraction and plotting code merely because the likelihood
+changes.
 
-BTSBM is intentionally focused. Outcomes are modelled through Bradley-Terry probabilities determined by latent intensities; pair-specific covariates and dynamic effects are not in the current core model. Partition priors are exchangeable and encoded through urn-style updates. The approach is effective for moderate problem sizes common in sports and ranking applications, but very large dense comparison matrices may require additional engineering.
+**Assumptions and limitations**
 
-# Conclusion
+The Bradley--Terry likelihood assumes one transitive strength dimension and
+conditions on the observed comparison counts. The current core model does not
+include pair-specific covariates, temporal dependence, surface effects, or
+other contextual predictors. Partition priors are exchangeable. These
+assumptions should be checked against the scientific setting before
+interpreting inferred tiers.
 
-BTSBM provides a coherent workflow for Bayesian block-structured ranking from paired comparisons. It combines a model with interpretable latent structure, practical posterior computation, and publication-oriented diagnostics. The package is especially useful when strict total rankings are unstable but tiered structure is statistically and substantively credible.
+**Conclusion**
 
-# References
+RBBayes provides a coherent Bayesian workflow for pairwise outcomes when a
+strict ranking is more precise than the evidence supports. The posterior
+distribution over $K$, the block-ordered adjacency matrix, and conditional
+assignment probabilities jointly show the inferred hierarchy and the
+uncertainty around its resolution and boundaries.
 
-Bradley, R. A. and Terry, M. E. (1952). Rank analysis of incomplete block designs: I. The method of paired comparisons. Biometrika, 39(3/4), 324-345.
+**References**
 
-Ferguson, T. S. (1973). A Bayesian analysis of some nonparametric problems. The Annals of Statistics, 1(2), 209-230.
+Caron, F. and Doucet, A. (2012). Efficient Bayesian inference for generalized
+Bradley--Terry models. *Journal of Computational and Graphical Statistics*,
+21(1), 174--196.
 
-Pitman, J. and Yor, M. (1997). The two-parameter Poisson-Dirichlet distribution derived from a stable subordinator. The Annals of Probability, 25(2), 855-900.
-
-Legramanti, S., Rigon, T., Durante, D., and Dunson, D. B. (2022). Extended stochastic block models with application to criminal networks. The Annals of Applied Statistics, 16(2), 865-891.
-
-Vehtari, A., Gelman, A., and Gabry, J. (2017). Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC. Statistics and Computing, 27, 1413-1432.
+Vehtari, A., Gelman, A., and Gabry, J. (2017). Practical Bayesian model
+evaluation using leave-one-out cross-validation and WAIC. *Statistics and
+Computing*, 27, 1413--1432.

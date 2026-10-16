@@ -2,7 +2,7 @@
 % Please edit documentation in R/data_models.R
 \name{mcmc_control}
 \alias{mcmc_control}
-\title{Set MCMC controls for a BTSBM fit}
+\title{Set MCMC controls for an RBBayes fit}
 \usage{
 mcmc_control(
   iter = 2000,
@@ -40,5 +40,5 @@ and PL--LBM models.}
 An object of class \code{btsbm_mcmc_control}.
 }
 \description{
-Set MCMC controls for a BTSBM fit
+Set MCMC controls for an RBBayes fit
 }

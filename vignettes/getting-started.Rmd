@@ -38,7 +38,7 @@ strength. A BT--SBM additionally lets the data group players with similar
 strengths into latent tiers.
 
 ```{r library}
-library(BTSBM)
+library(RBBayes)
 ```
 
 ## 1. Start with data you can inspect
@@ -88,7 +88,7 @@ uncertainty. The short chain below is suitable for a tutorial. Use longer,
 multiple chains in a real study.
 
 ```{r fit}
-fit <- fit_btsbm(
+fit <- fit_model(
   tennis,
   model,
   mcmc_control(iter = 400, warmup = 200, seed = 2)
@@ -96,33 +96,48 @@ fit <- fit_btsbm(
 fit
 ```
 
-## 4. Read the main result: strengths and uncertainty
+## 4. Keep uncertainty in the number of tiers visible
 
-The point is the posterior mean strength. The horizontal line is a 90% credible
-interval: it describes the remaining uncertainty after seeing the results.
-Intervals that overlap substantially should not be read as a certain ordering.
+The BT--SBM learns the number of occupied tiers in every MCMC draw. The table
+reports the posterior probability of each sampled value of $K$; it is more
+informative than reporting only the most frequent value.
 
-```{r strength-plot, fig.height=4.5}
-plot_strength_summary(fit)
+```{r block-count-table}
+pretty_table_K_distribution(fit, p_min = 0)
 ```
 
-The same information is available as a table, which is useful for reporting.
+Concentrated probability on one value means the data resolve the number of
+tiers clearly. Probability spread across adjacent values means that the broad
+hierarchy is supported but its precise resolution remains uncertain.
 
-```{r strength-table}
-strength_summary(fit)
+## 5. Read the tier structure in the observed results
+
+The next figure follows the analysis in Santi and Friel (2026). It reorders the
+observed win-rate adjacency matrix by a representative posterior partition and,
+within each tier, by marginal win proportion. The horizontal and vertical
+boundaries and the coloured side band mark changes between inferred tiers.
+Mixed colours inside a diagonal block indicate competitive balance within a
+tier; consistently darker upper-right blocks indicate that stronger tiers tend
+to defeat weaker ones.
+
+```{r block-adjacency, fig.height=5.5, fig.cap="Observed win rates reordered by the representative BT--SBM partition. Boundary lines and the side band identify inferred tiers."}
+plot_block_adjacency(fit)
 ```
 
-## 5. Ask whether the data support tiers
+## 6. Separate assignment uncertainty from uncertainty in $K$
 
-The model's cluster labels can switch their names from one MCMC draw to the
-next. Instead, use a posterior similarity plot. A dark cell means the two
-players were frequently placed in the same tier.
+The assignment heatmap conditions on the posterior modal number of tiers by
+default. This mirrors the paper's Figure 4: conditioning on $K$ keeps the
+question focused on *which tier each player belongs to*, rather than mixing it
+with uncertainty about how many tiers exist. Dark cells indicate high
+posterior membership probability; diffuse rows identify uncertain boundary
+players.
 
-```{r similarity-plot, fig.height=5}
-plot_posterior_similarity(fit, target = "item")
+```{r assignment-probabilities, fig.height=5.5, fig.cap="Posterior tier-membership probabilities, conditional on the modal number of tiers."}
+plot_assignment_probabilities(fit)
 ```
 
-## 6. Check the sampler before interpreting it
+## 7. Check the sampler before interpreting it
 
 MCMC draws should move around a stable region. Trace plots are a quick
 screening tool: long trends or a completely stuck trace are reasons to run
@@ -139,3 +154,8 @@ mcmc_diagnostics(fit)
 * Use vignette("pl-ranking-models") when the observations are full or top-m
   rankings rather than wins and losses.
 * Use vignette("toy-data-gallery") for additional worked synthetic examples.
+
+## Reference
+
+Santi, L. and Friel, N. (2026). The Bradley--Terry stochastic block model.
+*The Annals of Applied Statistics*, 20(2), 1766--1787.

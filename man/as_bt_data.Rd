@@ -4,20 +4,23 @@
 \alias{as_bt_data}
 \title{Create validated Bradley--Terry pairwise data}
 \usage{
-as_bt_data(wins, item_labels = NULL)
+as_bt_data(wins, item_labels = NULL, winner = "winner",
+           loser = "loser", count = NULL)
 }
 \arguments{
-\item{wins}{Numeric square matrix.  Entry \code{wins[i, j]} is the number of
+\item{wins}{Numeric square matrix or an edge-list data frame. For a matrix, entry \code{wins[i, j]} is the number of
 wins for item \code{i} over item \code{j}.}
 
 \item{item_labels}{Optional character vector of item names.  By default,
-matrix row names are used when available.}
+matrix row names are used when available. For an edge list, this specifies the complete item universe and ordering, including unobserved items.}
+\item{winner,loser}{Names of edge-list columns identifying the winning and losing item.}
+\item{count}{Optional count-column name. NULL means one win per row. Aggregated counts must be non-negative integers.}
 }
 \value{
 An object of class \code{btsbm_pairwise_data}.
 }
-\description{
-Converts a square directed win-count matrix into the package's validated
-pairwise-data representation.  This is the boundary between the legacy
-matrix API and the common fitting interface.
+\description{Convert a square directed win-count matrix or a directed edge-list data frame to the validated pairwise-data format used by fit_model(). Repeated edges are added and self-comparisons are rejected.}
+\examples{
+edges <- data.frame(winner = c("A", "B", "A"), loser = c("B", "A", "B"), count = c(2, 1, 3))
+as_bt_data(edges, count = "count")$wins
 }

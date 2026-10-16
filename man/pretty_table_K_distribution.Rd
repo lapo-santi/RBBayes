@@ -7,36 +7,37 @@
 pretty_table_K_distribution(
   post,
   format = "html",
-  p_min = 0.05,
+  p_min = 0,
   digits = 3,
-  latex_options = c("striped", "hold_position")
+  latex_options = "hold_position"
 )
 }
 \arguments{
-\item{post}{The output of relabel_by_lambda()}
+\item{post}{A \code{btsbm_fit} with an item partition, or the output of
+\code{\link[=relabel_by_lambda]{relabel_by_lambda()}}.}
 
 \item{format}{Character string. The format of the output table.
 Default is "html". Switch to "latex" for a document-ready table.}
 
 \item{p_min}{Numeric scalar. Probabilities \eqn{\le} this threshold are
-dropped before pivoting. Defaults to \code{0.05}.}
+dropped before pivoting. Defaults to \code{0}, so all sampled values are shown.}
 
 \item{digits}{Integer passed to \code{knitr::kable} for rounding. Defaults to \code{3}.}
 
 \item{latex_options}{Character vector of LaTeX options passed to
-\code{kableExtra::kable_styling}. Defaults to \code{c("striped","hold_position")}.}
+\code{kableExtra::kable_styling}. Defaults to \code{"hold_position"}; add
+\code{"striped"} only when the document loads a table-aware colour package.}
 }
 \value{
 A \code{kableExtra} / \code{knitr_kable} object (suitable for LaTeX or HTML,
 depending on \code{format}).
 }
 \description{
-Given the output of relabel_by_lambda, this function produces a pretty table
-with the posterior distribution of K, the number of blocks induced by the partition x.
+Given a common fit object (or lower-level relabelled output), this function
+produces a horizontal table with the posterior distribution of K, the number
+of occupied item blocks.
 It formats the result with \code{knitr::kable} and \code{kableExtra::kable_styling}.
 }
 \details{
-The function produces a pretty table with the posterior distribution of K,
-the number of blocks induced by the partition x.
-it filters the clusters that have a p(K > \code{p_min}).
+Values whose posterior probability is no larger than \code{p_min} are omitted.
 }

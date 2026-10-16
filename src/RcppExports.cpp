@@ -12,7 +12,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // pl_grouped_augmentation_cpp
 List pl_grouped_augmentation_cpp(const IntegerMatrix& rankings, const IntegerVector& ranking_cluster, const NumericMatrix& latent_strength);
-RcppExport SEXP _BTSBM_pl_grouped_augmentation_cpp(SEXP rankingsSEXP, SEXP ranking_clusterSEXP, SEXP latent_strengthSEXP) {
+RcppExport SEXP _RBBayes_pl_grouped_augmentation_cpp(SEXP rankingsSEXP, SEXP ranking_clusterSEXP, SEXP latent_strengthSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -25,7 +25,7 @@ END_RCPP
 }
 // updateZ_and_rowsums
 Rcpp::List updateZ_and_rowsums(const Rcpp::IntegerMatrix& n_ij, const Rcpp::IntegerVector& x, const Rcpp::NumericVector& lambda);
-RcppExport SEXP _BTSBM_updateZ_and_rowsums(SEXP n_ijSEXP, SEXP xSEXP, SEXP lambdaSEXP) {
+RcppExport SEXP _RBBayes_updateZ_and_rowsums(SEXP n_ijSEXP, SEXP xSEXP, SEXP lambdaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -38,12 +38,12 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_BTSBM_pl_grouped_augmentation_cpp", (DL_FUNC) &_BTSBM_pl_grouped_augmentation_cpp, 3},
-    {"_BTSBM_updateZ_and_rowsums", (DL_FUNC) &_BTSBM_updateZ_and_rowsums, 3},
+    {"_RBBayes_pl_grouped_augmentation_cpp", (DL_FUNC) &_RBBayes_pl_grouped_augmentation_cpp, 3},
+    {"_RBBayes_updateZ_and_rowsums", (DL_FUNC) &_RBBayes_updateZ_and_rowsums, 3},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_BTSBM(DllInfo *dll) {
+RcppExport void R_init_RBBayes(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

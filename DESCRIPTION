@@ -1,4 +1,4 @@
-Package: BTSBM
+Package: RBBayes
 Type: Package
 Title: Bayesian Bradley–Terry and Plackett–Luce Models with Latent Blocks
 Version: 0.1.0
@@ -54,6 +54,7 @@ Suggests:
     rmarkdown,
     pkgdown,
     coda,
+    bayesplot,
     loo,
     lattice,
     reshape2,

@@ -479,8 +479,10 @@ exploratory_adjacency <- function(
 #' Optionally relabels blocks so that Block 1 has the largest mean player
 #' strength \eqn{\lambda} (mean computed across players in the block).
 #'
-#' @param fit Output list from \code{gibbs_BT_SBM()}.
-#' @param w_ij Integer matrix of wins (same players & order used in \code{fit}).
+#' @param fit A BT--SBM `btsbm_fit` object, or relabelled output from
+#'   [relabel_by_lambda()] for compatibility.
+#' @param w_ij Optional integer matrix of wins. It is taken from `fit$data`
+#'   when `fit` is a `btsbm_fit` object.
 #' @param x_hat partition point estimate. One n-length integer vector.
 #' @param relabel_blocks Either `"none"` or `"avg_lambda"`; controls optional relabeling of `x_hat`.
 #' @param lambda_hat Optional lambda draws/vector used when `relabel_blocks = "avg_lambda"`.
@@ -510,7 +512,7 @@ exploratory_adjacency <- function(
 #'
 plot_block_adjacency <- function(
     fit,
-    w_ij,
+    w_ij = NULL,
     x_hat = NULL,
     relabel_blocks = c("none", "avg_lambda"),
     lambda_hat = NULL,
@@ -532,12 +534,33 @@ plot_block_adjacency <- function(
     unplayed_mark = "\u00D7",
     unplayed_mark_size = 2.2
 ){
+  if (inherits(fit, "btsbm_fit")) {
+    common_fit <- fit
+    if (common_fit$model$likelihood != "bt" ||
+        is.null(common_fit$draws$item_cluster)) {
+      stop("`fit` must be a BT--SBM fit with a sampled item partition.", call. = FALSE)
+    }
+    if (is.null(w_ij)) w_ij <- common_fit$data$wins
+    if (is.null(x_hat)) {
+      post <- relabel_by_lambda(
+        common_fit$draws$item_cluster,
+        common_fit$draws$latent_strength
+      )
+      x_hat <- post$minVI_partition
+    } else {
+      post <- list(minVI_partition = x_hat)
+    }
+    post$lambda_samples_relabel <- posterior_strength(common_fit, summary = "draws")
+    fit <- post
+  }
+  if (is.null(w_ij)) {
+    stop("`w_ij` is required when `fit` is not a btsbm_fit object.", call. = FALSE)
+  }
   stopifnot(is.matrix(w_ij))
   relabel_blocks <- match.arg(relabel_blocks)
   if (!requireNamespace("ggplot2", quietly = TRUE)) stop("Package 'ggplot2' is required.")
   if (!requireNamespace("dplyr", quietly = TRUE)) stop("Package 'dplyr' is required.")
   if (!requireNamespace("scales", quietly = TRUE)) stop("Package 'scales' is required.")
-  if (!requireNamespace("reshape2", quietly = TRUE)) stop("Package 'reshape2' is required.")
 
   N_ij <- w_ij + t(w_ij)
   if (is.null(x_hat)) x_hat <- fit$minVI_partition
@@ -717,9 +740,9 @@ plot_block_adjacency <- function(
   order_ids <- unique(order_ids)
   if (length(order_ids) != length(pl_ids)) order_ids <- c(order_ids, setdiff(pl_ids, order_ids))
 
-  Y_long <- reshape2::melt(w_ij)
+  Y_long <- as.data.frame(as.table(w_ij), stringsAsFactors = FALSE)
   colnames(Y_long) <- c("Winner_id", "Loser_id", "Win_Count")
-  Y_long$Matches_Count <- reshape2::melt(N_ij)$value
+  Y_long$Matches_Count <- as.vector(N_ij)
 
   Y_long_plot <- Y_long |>
     dplyr::mutate(
@@ -827,11 +850,13 @@ plot_block_adjacency <- function(
 #' Figure 4 plotting function
 #' Assignment probability heatmap (BT-SBM)
 #'
-#' Heatmap of item-wise posterior assignment probabilities for clusters
-#' (relabeled so that Cluster 1 is the top block by decreasing \eqn{\lambda}).
-#' Items are ordered by their most probable cluster and marginal wins.
+#' Heatmap of item-wise posterior assignment probabilities for clusters,
+#' conditional on a chosen occupied-cluster count. Draws are relabelled so that
+#' Cluster 1 is the strongest block by decreasing \eqn{\lambda}. Items are
+#' ordered by their most probable cluster and marginal wins.
 #'
-#' @param fit Output list from \code{gibbs_BT_SBM()} (must include \code{relabeled$assign_prob}).
+#' @param fit A BT--SBM `btsbm_fit` object, or relabelled sampler output for
+#'   compatibility.
 #' @param w_ij Optional wins matrix to compute marginal wins for ordering and annotation.
 #'   If \code{NULL}, items are ordered by most-probable cluster only.
 #' @param players_df Optional data.frame for label lookup (e.g. season metadata).
@@ -840,9 +865,11 @@ plot_block_adjacency <- function(
 #' @param labels_key_col Optional column name in \code{players_df} to match item IDs.
 #' @param labels_value_col Optional column name in \code{players_df} containing display labels.
 #' @param clean_display_labels If \code{TRUE}, applies \code{clean_fun} to display labels.
-#' @param clean_fun Optional function to prettify names. Default: identity.
-#' @param k_show Optional integer number of clusters to show (defaults to all columns in \code{assign_prob}).
-#' @param max_n_clust Where to filter the mcmc x_t. If not specified we use the modal K
+#' @param clean_fun Optional function to prettify names. Defaults to
+#'   [clean_players_names()].
+#' @param k_show Compatibility alias for `max_n_clust`.
+#' @param max_n_clust Number of occupied clusters on which to condition the
+#'   assignment probabilities. If `NULL`, the posterior modal number is used.
 #' @param x_hat Optional hard partition used to order players by cluster.
 #' @param order_ids Optional character vector specifying explicit item order.
 #' @param fill_low,fill_high Colors for the heatmap gradient low/high.
@@ -870,11 +897,78 @@ plot_assignment_probabilities <- function(
     fill_low = "#FFFFCC",
     fill_high = "#006400"
 ){
+  if (inherits(fit, "btsbm_fit")) {
+    common_fit <- fit
+    if (common_fit$model$likelihood != "bt" ||
+        is.null(common_fit$draws$item_cluster)) {
+      stop("`fit` must be a BT--SBM fit with a sampled item partition.", call. = FALSE)
+    }
+    if (is.null(w_ij)) w_ij <- common_fit$data$wins
+    relabeled <- .relabel_item_clusters_by_strength(
+      common_fit$draws$item_cluster,
+      common_fit$draws$latent_strength
+    )
+    fit <- list(
+      x_samples = relabeled$x_samples_relabel,
+      lambda_samples = relabeled$cluster_lambda_ordered
+    )
+  }
+  if (is.null(fit$x_samples) && !is.null(fit$x_samples_relabel)) {
+    fit$x_samples <- fit$x_samples_relabel
+  }
+  if (is.null(fit$x_samples) || !is.matrix(fit$x_samples)) {
+    stop("`fit` does not contain item-cluster draws.", call. = FALSE)
+  }
+  draw_item_ids <- colnames(fit$x_samples)
+  if (is.null(draw_item_ids) && !is.null(fit$item_cluster_assignment_probs)) {
+    stored_item_ids <- rownames(fit$item_cluster_assignment_probs)
+    default_ids <- as.character(seq_len(nrow(fit$item_cluster_assignment_probs)))
+    if (!identical(stored_item_ids, default_ids)) draw_item_ids <- stored_item_ids
+  }
+  if (!is.null(k_show)) {
+    if (!is.null(max_n_clust) && as.integer(k_show) != as.integer(max_n_clust)) {
+      stop("`k_show` and `max_n_clust` must agree when both are supplied.", call. = FALSE)
+    }
+    max_n_clust <- k_show
+  }
+
+  unique_count <- apply(
+    fit$x_samples, 1L,
+    function(cluster_labels) length(unique(cluster_labels))
+  )
+  modal_K <- as.integer(names(which.max(table(unique_count))))
+  if (is.null(max_n_clust)) max_n_clust <- modal_K
+  if (length(max_n_clust) != 1L || !is.finite(max_n_clust) ||
+      max_n_clust < 1L || max_n_clust != floor(max_n_clust)) {
+    stop("`max_n_clust` must be a positive integer.", call. = FALSE)
+  }
+  max_n_clust <- as.integer(max_n_clust)
+  keep_draws <- which(unique_count == max_n_clust)
+  if (!length(keep_draws)) {
+    stop(
+      "No posterior draws have exactly ", max_n_clust, " occupied clusters.",
+      call. = FALSE
+    )
+  }
+  x_samples_sub <- fit$x_samples[keep_draws, , drop = FALSE]
+  block_prob_mat <- vapply(seq_len(max_n_clust), function(cluster_id) {
+    colMeans(x_samples_sub == cluster_id)
+  }, numeric(ncol(x_samples_sub)))
+  if (max_n_clust == 1L) {
+    block_prob_mat <- matrix(block_prob_mat, ncol = 1L)
+  }
+  colnames(block_prob_mat) <- paste0("Cluster_", seq_len(max_n_clust))
+  if (!is.null(draw_item_ids)) rownames(block_prob_mat) <- draw_item_ids
+  if (is.null(fit$minVI_partition) && is.null(fit$partition_binder)) {
+    fit$minVI_partition <- max.col(block_prob_mat, ties.method = "first")
+  }
+  fit$item_cluster_assignment_probs <- as.data.frame(block_prob_mat)
+
   if (!is.null(w_ij)) {
     item_ids <- rownames(w_ij)
     if (is.null(item_ids)) item_ids <- paste0("Item_", seq_len(nrow(w_ij)))
-  } else if (!is.null(rownames(fit$item_cluster_assignment_probs))) {
-    item_ids <- rownames(fit$item_cluster_assignment_probs)
+  } else if (!is.null(draw_item_ids)) {
+    item_ids <- draw_item_ids
   } else {
     item_ids <- paste0("Item_", seq_len(nrow(fit$item_cluster_assignment_probs)))
   }
@@ -992,24 +1086,7 @@ plot_assignment_probabilities <- function(
     }
   }
 
-  x_samples <- fit$x_samples
-  lambda_samples <- fit$lambda_samples
-
-  unique_count <- apply(x_samples, 1, function(z) length(unique(z)))
-  modal_K <- as.numeric(names(which.max(table(unique_count))))
-  if (is.null(max_n_clust)) max_n_clust <- modal_K
-
-  x_samples_sub <- x_samples[which(unique_count == max_n_clust), , drop = FALSE]
-  lambda_samples_sub <- lambda_samples[which(unique_count == max_n_clust)]
-
-  if (is.null(fit$item_cluster_assignment_probs)) {
-    stop("fit$item_cluster_assignment_probs is NULL.")
-  }
-  if (ncol(fit$item_cluster_assignment_probs) < max_n_clust) {
-    stop("Requested max_n_clust exceeds available columns in item_cluster_assignment_probs.")
-  }
-
-  block_prob_mat <- as.matrix(fit$item_cluster_assignment_probs[, seq_len(max_n_clust), drop = FALSE])
+  block_prob_mat <- as.matrix(fit$item_cluster_assignment_probs)
   rownames(block_prob_mat) <- item_ids
 
   row_mass <- rowSums(block_prob_mat, na.rm = TRUE)
@@ -1681,7 +1758,3 @@ plot_rank_intervals <- function(x,
     ) +
     ggplot2::scale_y_discrete(guide = ggplot2::guide_axis(n.dodge = 2))
 }
-
-
-
-

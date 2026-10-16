@@ -1,17 +1,25 @@
 #' Create validated Bradley--Terry pairwise data
 #'
-#' Converts a square directed win-count matrix into the package's validated
-#' pairwise-data representation.  This is the boundary between the legacy
-#' matrix API and the common fitting interface.
+#' Converts a square win-count matrix or a directed edge-list data frame into
+#' the same validated pairwise-data representation used by fit_model().
 #'
-#' @param wins Numeric square matrix.  Entry `wins[i, j]` is the number of
-#'   wins for item `i` over item `j`.
+#' @param wins Numeric square win-count matrix, or a data frame of directed
+#'   outcomes with winner and loser columns. Repeated edges are added together.
 #' @param item_labels Optional character vector of item names.  By default,
-#'   matrix row names are used when available.
+#'   matrix row names are used when available. For an edge list, this is the
+#'   complete item universe and ordering, including any unobserved items.
+#' @param winner,loser Names of edge-list columns identifying the winning and
+#'   losing item. Values are converted to character item identifiers.
+#' @param count Optional edge-list count-column name. NULL means one win per
+#'   row. Counts must be non-negative integers. Self-comparisons are rejected.
 #'
 #' @return An object of class `btsbm_pairwise_data`.
 #' @export
-as_bt_data <- function(wins, item_labels = NULL) {
+as_bt_data <- function(wins, item_labels = NULL, winner = "winner",
+                       loser = "loser", count = NULL) {
+  if (is.data.frame(wins)) {
+    return(.bt_data_from_edges(wins, item_labels, winner, loser, count))
+  }
   if (!is.matrix(wins) || nrow(wins) != ncol(wins) || nrow(wins) < 2L) {
     stop("`wins` must be a square matrix with at least two items.", call. = FALSE)
   }
@@ -327,7 +335,7 @@ pl_identifiability <- function(method = c("logmean0", "none")) {
   structure(list(method = match.arg(method)), class = "btsbm_pl_identifiability")
 }
 
-#' Set MCMC controls for a BTSBM fit
+#' Set MCMC controls for an RBBayes fit
 #'
 #' @param iter Total MCMC iterations.
 #' @param warmup Number of warmup iterations.

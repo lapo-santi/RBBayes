@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit.R
 \name{log_lik}
 \alias{log_lik}
-\title{Compute pointwise log likelihoods from a BTSBM fit}
+\title{Compute pointwise log likelihoods from an RBBayes fit}
 \usage{
 log_lik(object, ...)
 }
@@ -16,5 +16,5 @@ An \verb{S × R} matrix with one column for each pair-count cell (BT) or
 whole ranking row (PL).  It has a \code{unit_index} attribute.
 }
 \description{
-Compute pointwise log likelihoods from a BTSBM fit
+Compute pointwise log likelihoods from an RBBayes fit
 }

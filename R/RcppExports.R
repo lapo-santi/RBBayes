@@ -2,7 +2,7 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 pl_grouped_augmentation_cpp <- function(rankings, ranking_cluster, latent_strength) {
-    .Call(`_BTSBM_pl_grouped_augmentation_cpp`, rankings, ranking_cluster, latent_strength)
+    .Call(`_RBBayes_pl_grouped_augmentation_cpp`, rankings, ranking_cluster, latent_strength)
 }
 
 #' Update cluster assignments and row sums
@@ -15,6 +15,6 @@ pl_grouped_augmentation_cpp <- function(rankings, ranking_cluster, latent_streng
 #' @param lambda Numeric vector of current item strengths.
 #' @keywords internal
 updateZ_and_rowsums <- function(n_ij, x, lambda) {
-    .Call(`_BTSBM_updateZ_and_rowsums`, n_ij, x, lambda)
+    .Call(`_RBBayes_updateZ_and_rowsums`, n_ij, x, lambda)
 }
 

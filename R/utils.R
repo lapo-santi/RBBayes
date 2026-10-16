@@ -473,6 +473,63 @@ shannon_entropy <- function(p) {
   probs <- probs[probs > 0]  # remove zeros to avoid log(0)
   -sum(probs * log(probs))
 }
+
+.relabel_item_clusters_by_strength <- function(x_samples, lambda_samples) {
+  stopifnot(is.matrix(x_samples))
+  S <- nrow(x_samples)
+  N <- ncol(x_samples)
+  is_list_format <- is.list(lambda_samples)
+  get_lambda_vec <- function(iter) {
+    if (is_list_format) {
+      v <- lambda_samples[[iter]]
+      if (!is.numeric(v)) stop("lambda_samples[[iter]] must be numeric.")
+      v
+    } else {
+      lambda_samples[iter, ]
+    }
+  }
+
+  x_relabeled <- matrix(NA_integer_, S, N)
+  lambda_per_item <- matrix(NA_real_, S, N)
+  cluster_lambda_ordered <- vector("list", S)
+  n_clusters_each_iter <- integer(S)
+  top_block_count_per_iter <- integer(S)
+
+  for (iter in seq_len(S)) {
+    xi <- as.integer(x_samples[iter, ])
+    occ_raw <- sort(unique(xi))
+    xi_seq <- match(xi, occ_raw)
+    K <- max(xi_seq)
+    lam_vec_full <- get_lambda_vec(iter)
+    lam_occ <- rep(NA_real_, length(occ_raw))
+    ok_idx <- occ_raw <= length(lam_vec_full)
+    lam_occ[ok_idx] <- lam_vec_full[occ_raw[ok_idx]]
+    ord <- order(lam_occ, decreasing = TRUE, na.last = TRUE)
+    occ_ord <- occ_raw[ord]
+    lam_ord <- lam_occ[ord]
+    if (anyNA(lam_ord)) lam_ord[is.na(lam_ord)] <- .Machine$double.xmin
+    raw_to_ord_id <- integer(max(occ_ord))
+    raw_to_ord_id[occ_ord] <- seq_len(K)
+    xi_new <- raw_to_ord_id[occ_raw[xi_seq]]
+    x_relabeled[iter, ] <- xi_new
+    lambda_per_item[iter, ] <- lam_ord[xi_new]
+    cluster_lambda_ordered[[iter]] <- lam_ord
+    n_clusters_each_iter[iter] <- K
+    top_block_count_per_iter[iter] <- sum(xi_new == 1L)
+  }
+
+  colnames(x_relabeled) <- colnames(x_samples)
+  colnames(lambda_per_item) <- colnames(x_samples)
+
+  list(
+    x_samples_relabel = x_relabeled,
+    lambda_samples_relabel = lambda_per_item,
+    cluster_lambda_ordered = cluster_lambda_ordered,
+    n_clusters_each_iter = n_clusters_each_iter,
+    top_block_count_per_iter = top_block_count_per_iter
+  )
+}
+
 #' Relabel partitions by decreasing \eqn{\lambda}, compute point estimates, and quantify uncertainty via credible balls
 #'
 #' Given posterior samples of labels \code{x_samples} (S x N) and corresponding
@@ -564,48 +621,12 @@ relabel_by_lambda <- function(x_samples, lambda_samples) {
   stopifnot(is.matrix(x_samples))
   S <- nrow(x_samples)
   N <- ncol(x_samples)
-  is_list_format <- is.list(lambda_samples)
-  get_lambda_vec <- function(iter) {
-    if (is_list_format) {
-      v <- lambda_samples[[iter]]
-      if (!is.numeric(v)) 
-        stop("lambda_samples[[iter]] must be numeric.")
-      v
-    }
-    else {
-      lambda_samples[iter, ]
-    }
-  }
-
-  x_relabeled <- matrix(NA_integer_, S, N)
-  lambda_per_item <- matrix(NA_real_, S, N)
-  cluster_lambda_ordered <- vector("list", S)
-  n_clusters_each_iter <- integer(S)
-  top_block_count_per_iter <- integer(S)
-
-  for (iter in seq_len(S)) {
-    xi <- as.integer(x_samples[iter, ])
-    occ_raw <- sort(unique(xi))
-    xi_seq <- match(xi, occ_raw)
-    K <- max(xi_seq)
-    lam_vec_full <- get_lambda_vec(iter)
-    lam_occ <- rep(NA_real_, length(occ_raw))
-    ok_idx <- occ_raw <= length(lam_vec_full)
-    lam_occ[ok_idx] <- lam_vec_full[occ_raw[ok_idx]]
-    ord <- order(lam_occ, decreasing = TRUE, na.last = TRUE)
-    occ_ord <- occ_raw[ord]
-    lam_ord <- lam_occ[ord]
-    if (anyNA(lam_ord)) 
-      lam_ord[is.na(lam_ord)] <- .Machine$double.xmin
-    raw_to_ord_id <- integer(max(occ_ord))
-    raw_to_ord_id[occ_ord] <- seq_len(K)
-    xi_new <- raw_to_ord_id[occ_raw[xi_seq]]
-    x_relabeled[iter, ] <- xi_new
-    lambda_per_item[iter, ] <- lam_ord[xi_new]
-    cluster_lambda_ordered[[iter]] <- lam_ord
-    n_clusters_each_iter[iter] <- K
-    top_block_count_per_iter[iter] <- sum(xi_new == 1L)
-  }
+  relabeled <- .relabel_item_clusters_by_strength(x_samples, lambda_samples)
+  x_relabeled <- relabeled$x_samples_relabel
+  lambda_per_item <- relabeled$lambda_samples_relabel
+  cluster_lambda_ordered <- relabeled$cluster_lambda_ordered
+  n_clusters_each_iter <- relabeled$n_clusters_each_iter
+  top_block_count_per_iter <- relabeled$top_block_count_per_iter
 
   psm <- mcclust::comp.psm(x_samples)
 
@@ -644,7 +665,9 @@ relabel_by_lambda <- function(x_samples, lambda_samples) {
     assignment_probs[, k] <- colMeans(x_relabeled == k, na.rm = TRUE)
   }
   colnames(assignment_probs) <- paste0("Cluster_", seq_len(Kmax))
-  rownames(assignment_probs) <- paste0("Item_", seq_len(N))
+  item_labels <- colnames(x_samples)
+  if (is.null(item_labels)) item_labels <- paste0("Item_", seq_len(N))
+  rownames(assignment_probs) <- item_labels
   assignment_probs_df <- as.data.frame(assignment_probs)
 
   bc_tab <- table(n_clusters_each_iter)
@@ -695,26 +718,27 @@ lambda_to_theta <- function(lambda) {
 
 #' Format a block-count posterior distribution as a pretty- table
 #'
-#' Given the output of relabel_by_lambda, this function produces a pretty table
-#' with the posterior distribution of K, the number of blocks induced by the partition x.
+#' Given a common fit object (or lower-level relabelled output), this function
+#' produces a horizontal table with the posterior distribution of K, the number
+#' of occupied item blocks.
 #' It formats the result with `knitr::kable` and `kableExtra::kable_styling`.
 #'
-#' @param post The output of relabel_by_lambda()
+#' @param post A `btsbm_fit` with an item partition, or the output of
+#'   [relabel_by_lambda()].
 #' @param p_min Numeric scalar. Probabilities \eqn{\le} this threshold are
-#'   dropped before pivoting. Defaults to \code{0.05}.
+#'   dropped before pivoting. Defaults to `0`, so all sampled values are shown.
 #' @param format Character string. The format of the output table.
 #' Default is "html". Switch to "latex" for a document-ready table.
 #' @param digits Integer passed to \code{knitr::kable} for rounding. Defaults to \code{3}.
 #' @param latex_options Character vector of LaTeX options passed to
-#'   \code{kableExtra::kable_styling}. Defaults to \code{c("striped","hold_position")}.
+#'   \code{kableExtra::kable_styling}. Defaults to `"hold_position"`; add
+#'   `"striped"` only when the document loads a table-aware colour package.
 #'
 #' @return A \code{kableExtra} / \code{knitr_kable} object (suitable for LaTeX or HTML,
 #'   depending on \code{format}).
 #'
 #' @details
-#' The function produces a pretty table with the posterior distribution of K,
-#' the number of blocks induced by the partition x.
-#' it filters the clusters that have a p(K > \code{p_min}).
+#' Values whose posterior probability is no larger than `p_min` are omitted.
 #'
 #'
 #' @importFrom dplyr select filter
@@ -726,11 +750,37 @@ lambda_to_theta <- function(lambda) {
 pretty_table_K_distribution <- function(
     post,
     format = 'html',
-    p_min   = 0.05,
+    p_min   = 0,
     digits     = 3,
-    latex_options = c("striped", "hold_position")
+    latex_options = "hold_position"
 ) {
-  # sanity checks
+  if (inherits(post, "btsbm_fit")) {
+    cluster_count <- post$draws$n_item_clusters
+    if (is.null(cluster_count) && !is.null(post$draws$item_cluster)) {
+      cluster_count <- apply(
+        post$draws$item_cluster, 1L,
+        function(labels) length(unique(labels))
+      )
+    }
+    if (is.null(cluster_count)) {
+      stop("`post` does not contain a sampled item partition.", call. = FALSE)
+    }
+    count_table <- table(cluster_count)
+    post <- list(block_count_distribution = data.frame(
+      num_blocks = as.integer(names(count_table)),
+      count = as.vector(count_table),
+      prob = as.vector(count_table) / sum(count_table)
+    ))
+  }
+  if (!is.list(post) || is.null(post$block_count_distribution)) {
+    stop(
+      "`post` must be a btsbm_fit with item clusters or output from `relabel_by_lambda()`.",
+      call. = FALSE
+    )
+  }
+  if (length(p_min) != 1L || !is.finite(p_min) || p_min < 0 || p_min >= 1) {
+    stop("`p_min` must lie in [0, 1).", call. = FALSE)
+  }
 
   df_wide <-
     post$block_count_distribution |>
@@ -739,7 +789,9 @@ pretty_table_K_distribution <- function(
       prob       = prob
     ) |>
     dplyr::filter(prob > p_min) |>
+    dplyr::mutate(Quantity = "Posterior probability") |>
     tidyr::pivot_wider(
+      id_cols = "Quantity",
       names_from  = num_blocks,
       values_from = prob
     )

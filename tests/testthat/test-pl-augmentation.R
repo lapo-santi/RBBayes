@@ -11,11 +11,11 @@ test_that("C++ grouped augmentation matches the audited R reference", {
   )
 
   set.seed(101)
-  reference <- BTSBM:::.pl_draw_grouped_augmentation_r(
+  reference <- RBBayes:::.pl_draw_grouped_augmentation_r(
     rankings, ranking_cluster, latent_strength
   )
   set.seed(101)
-  accelerated <- BTSBM:::.pl_draw_grouped_augmentation(
+  accelerated <- RBBayes:::.pl_draw_grouped_augmentation(
     rankings, ranking_cluster, latent_strength
   )
 
@@ -25,7 +25,7 @@ test_that("C++ grouped augmentation matches the audited R reference", {
 test_that("grouped augmentation rejects invalid strength state", {
   rankings <- matrix(c(1L, 2L), nrow = 1L)
   expect_error(
-    BTSBM:::pl_grouped_augmentation_cpp(rankings, 1L, matrix(c(1, 0), nrow = 1L)),
+    RBBayes:::pl_grouped_augmentation_cpp(rankings, 1L, matrix(c(1, 0), nrow = 1L)),
     "strictly positive"
   )
 })

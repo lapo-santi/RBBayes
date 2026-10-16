@@ -1,0 +1,48 @@
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{needspace}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{xcolor}
+
+\definecolor{manualblue}{RGB}{0,0,170}
+\AtBeginDocument{%
+  \hypersetup{%
+    colorlinks=true,
+    linkcolor=manualblue,
+    urlcolor=manualblue,
+    citecolor=manualblue
+  }%
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+\setlength{\headheight}{13pt}
+\raggedbottom
+
+\fancypagestyle{manual}{%
+  \fancyhf{}%
+  \fancyhead[LE,RO]{\small\thepage}%
+  \fancyhead[LO,RE]{\small\nouppercase{\rightmark}}%
+  \renewcommand{\headrulewidth}{0pt}%
+}
+
+\newcommand{\manualtopic}[2]{%
+  \Needspace{7\baselineskip}%
+  \phantomsection%
+  \addcontentsline{toc}{section}{\protect\texttt{#1}}%
+  \markboth{\texttt{#1}}{\texttt{#1}}%
+  \noindent
+  \begin{tabularx}{\textwidth}{@{}lX@{}}
+    \toprule
+    \texttt{\bfseries #1} &
+      \raggedleft\arraybackslash\textit{#2}\\
+    \bottomrule
+  \end{tabularx}%
+  \par\vspace{0.6\baselineskip}%
+}
+
+\makeatletter
+\renewcommand{\maketitle}{}
+\makeatother

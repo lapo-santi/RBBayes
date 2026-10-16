@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit.R
 \name{print.btsbm_fit}
 \alias{print.btsbm_fit}
-\title{Print a BTSBM fit}
+\title{Print an RBBayes fit}
 \usage{
 \method{print}{btsbm_fit}(x, ...)
 }
@@ -15,5 +15,5 @@
 The input object, invisibly.
 }
 \description{
-Print a BTSBM fit
+Print an RBBayes fit
 }

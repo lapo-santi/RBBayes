@@ -38,11 +38,11 @@ test_that("registered augmentation is no slower than the R reference workload", 
 
   set.seed(32)
   r_elapsed <- system.time(
-    BTSBM:::.pl_draw_grouped_augmentation_r(rankings, ranking_cluster, latent_strength)
+    RBBayes:::.pl_draw_grouped_augmentation_r(rankings, ranking_cluster, latent_strength)
   )[["elapsed"]]
   set.seed(32)
   cpp_elapsed <- system.time(
-    BTSBM:::.pl_draw_grouped_augmentation(rankings, ranking_cluster, latent_strength)
+    RBBayes:::.pl_draw_grouped_augmentation(rankings, ranking_cluster, latent_strength)
   )[["elapsed"]]
 
   # A generous multiplier accommodates noisy shared CI while detecting a

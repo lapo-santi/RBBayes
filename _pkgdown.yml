@@ -1,6 +1,6 @@
 # _pkgdown.yml
-package: BTSBM
-title: "BTSBM: Bayesian paired-comparison and ranking models"
+package: RBBayes
+title: "RBBayes: Bayesian paired-comparison and ranking models"
 authors:
   Lapo Santi:
     href: https://github.com/laposanti

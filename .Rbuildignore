@@ -10,3 +10,4 @@
 ^Meta$
 ^src/.*\.(o|so|rds)$
 ^vignettes/.*\.(aux|pdf)$
+^local-presentation$

@@ -24,12 +24,14 @@ plot_assignment_probabilities(
 )
 }
 \arguments{
-\item{fit}{Output list from \code{gibbs_BT_SBM()} (must include \code{relabeled$assign_prob}).}
+\item{fit}{A BT--SBM \code{btsbm_fit} object, or relabelled sampler output for
+compatibility.}
 
 \item{w_ij}{Optional wins matrix to compute marginal wins for ordering and annotation.
 If \code{NULL}, items are ordered by most-probable cluster only.}
 
-\item{max_n_clust}{Where to filter the mcmc x_t. If not specified we use the modal K}
+\item{max_n_clust}{Number of occupied clusters on which to condition the
+assignment probabilities. If \code{NULL}, the posterior modal number is used.}
 
 \item{players_df}{Optional data.frame for label lookup (e.g. season metadata).}
 
@@ -43,13 +45,14 @@ If \code{NULL}, items are ordered by most-probable cluster only.}
 
 \item{clean_display_labels}{If \code{TRUE}, applies \code{clean_fun} to display labels.}
 
-\item{clean_fun}{Optional function to prettify names. Default: identity.}
+\item{clean_fun}{Optional function to prettify names. Defaults to
+\code{\link[=clean_players_names]{clean_players_names()}}.}
 
 \item{x_hat}{Optional hard partition used to order players by cluster.}
 
 \item{order_ids}{Optional character vector specifying explicit item order.}
 
-\item{k_show}{Optional integer number of clusters to show (defaults to all columns in \code{assign_prob}).}
+\item{k_show}{Compatibility alias for \code{max_n_clust}.}
 
 \item{fill_low, fill_high}{Colors for the heatmap gradient low/high.}
 }
@@ -57,9 +60,10 @@ If \code{NULL}, items are ordered by most-probable cluster only.}
 A \code{ggplot} object.
 }
 \description{
-Heatmap of item-wise posterior assignment probabilities for clusters
-(relabeled so that Cluster 1 is the top block by decreasing \eqn{\lambda}).
-Items are ordered by their most probable cluster and marginal wins.
+Heatmap of item-wise posterior assignment probabilities for clusters,
+conditional on a chosen occupied-cluster count. Draws are relabelled so that
+Cluster 1 is the strongest block by decreasing \eqn{\lambda}. Items are
+ordered by their most probable cluster and marginal wins.
 }
 \examples{
 \dontrun{

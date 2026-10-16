@@ -7,7 +7,7 @@ Block-ordered adjacency heatmap (BT-SBM)}
 \usage{
 plot_block_adjacency(
   fit,
-  w_ij,
+  w_ij = NULL,
   x_hat = NULL,
   relabel_blocks = c("none", "avg_lambda"),
   lambda_hat = NULL,
@@ -31,9 +31,11 @@ plot_block_adjacency(
 )
 }
 \arguments{
-\item{fit}{Output list from \code{gibbs_BT_SBM()}.}
+\item{fit}{A BT--SBM \code{btsbm_fit} object, or relabelled output from
+\code{\link[=relabel_by_lambda]{relabel_by_lambda()}} for compatibility.}
 
-\item{w_ij}{Integer matrix of wins (same players & order used in \code{fit}).}
+\item{w_ij}{Optional integer matrix of wins. It is taken from \code{fit$data}
+when \code{fit} is a \code{btsbm_fit} object.}
 
 \item{x_hat}{partition point estimate. One n-length integer vector.}
 

@@ -17,16 +17,5 @@ by \code{\link[=as_bt_data]{as_bt_data()}} or \code{\link[=as_rankings]{as_ranki
 \value{
 An object of class \code{btsbm_fit}.
 }
-\description{
-\code{fit_btsbm()} is the common fitting entry point.  This first implementation
-supports simple BT, BT--SBM, simple PL, PL--SBM, PL ranking mixtures, and
-PL--LBM. The latter two start with readable R Gibbs kernels derived from the
-PLuce exponential-race architecture; their high-performance C++ kernels are
-a later parity-tested optimisation.
-}
-\references{
-Caron, F. and Doucet, A. (2012). Efficient Bayesian inference
-for generalized Bradley--Terry models. \emph{Journal of Computational and
-Graphical Statistics}, 21(1), 174--196.
-\doi{10.1080/10618600.2012.638220}
-}
+\description{Compatibility wrapper for \code{fit_model()}. New analyses should use \code{fit_model()}.}
+\seealso{\code{\link{fit_model}}}

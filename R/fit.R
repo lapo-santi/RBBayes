@@ -1,6 +1,6 @@
 #' Fit a Bayesian Bradley--Terry or Plackett--Luce model
 #'
-#' `fit_btsbm()` is the common fitting entry point.  This first implementation
+#' `fit_model()` is the common fitting entry point.  This first implementation
 #' supports simple BT, BT--SBM, simple PL, PL--SBM, PL ranking mixtures, and
 #' PL--LBM. The latter two start with readable R Gibbs kernels derived from the
 #' PLuce exponential-race architecture; their high-performance C++ kernels are
@@ -17,7 +17,7 @@
 #'   Graphical Statistics*, 21(1), 174--196.
 #'   \doi{10.1080/10618600.2012.638220}
 #' @export
-fit_btsbm <- function(data, model, control = mcmc_control()) {
+fit_model <- function(data, model, control = mcmc_control()) {
   if (!inherits(model, "btsbm_model")) {
     stop("`model` must be created by a model constructor such as `pl_model()`.", call. = FALSE)
   }
@@ -132,7 +132,7 @@ fit_btsbm <- function(data, model, control = mcmc_control()) {
   out
 }
 
-#' Print a BTSBM fit
+#' Print an RBBayes fit
 #' @param x A `btsbm_fit` object.
 #' @param ... Unused.
 #' @return The input object, invisibly.
@@ -144,13 +144,20 @@ print.btsbm_fit <- function(x, ...) {
   invisible(x)
 }
 
-#' Summarise a BTSBM fit
+#' Summarise an RBBayes fit
 #' @param object A `btsbm_fit` object.
 #' @param ... Unused.
 #' @return A list containing model and sampler summaries.
 #' @export
 summary.btsbm_fit <- function(object, ...) {
+  model_name <- if (object$model$likelihood == "bt") {
+    if (object$model$structure == "none") "BT" else "BT-SBM"
+  } else {
+    switch(object$model$structure, none = "PL", item_sbm = "PL-SBM",
+           ranking_mixture = "PL mixture", lbm = "PL-LBM", object$model$structure)
+  }
   list(
+    model = model_name,
     likelihood = object$model$likelihood,
     structure = object$model$structure,
     n_items = object$data$n_items,
@@ -183,7 +190,7 @@ summary.btsbm_fit <- function(object, ...) {
   out
 }
 
-#' Compute pointwise log likelihoods from a BTSBM fit
+#' Compute pointwise log likelihoods from an RBBayes fit
 #'
 #' @param object A `btsbm_fit` object.
 #' @param ... Unused.
@@ -395,4 +402,14 @@ mcmc_diagnostics <- function(fit) {
       row.names = NULL
     )
   }))
+}
+
+#' Compatibility entry point for Bayesian preference models
+#' @inheritParams fit_model
+#' @return An object of class `btsbm_fit`.
+#' @export
+fit_btsbm <- function(data, model, control = mcmc_control()) {
+  fit <- fit_model(data, model, control)
+  fit$call <- match.call()
+  fit
 }

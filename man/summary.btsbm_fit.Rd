@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit.R
 \name{summary.btsbm_fit}
 \alias{summary.btsbm_fit}
-\title{Summarise a BTSBM fit}
+\title{Summarise an RBBayes fit}
 \usage{
 \method{summary}{btsbm_fit}(object, ...)
 }
@@ -15,5 +15,5 @@
 A list containing model and sampler summaries.
 }
 \description{
-Summarise a BTSBM fit
+Summarise an RBBayes fit
 }
