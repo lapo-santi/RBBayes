@@ -33,6 +33,12 @@
 - [`compute_expected_wins_rank_posterior()`](https://laposanti.github.io/BTSBM/reference/compute_expected_wins_rank_posterior.md)
   : Posterior rank summaries from player-strength draws
 
+- [`dirichlet_multinomial_prior()`](https://laposanti.github.io/BTSBM/reference/dirichlet_multinomial_prior.md)
+  : Dirichlet–multinomial prior for a latent partition
+
+- [`dirichlet_process_K_var()`](https://laposanti.github.io/BTSBM/reference/dirichlet_process_K_var.md)
+  : Prior variance of the occupied-group count under a Dirichlet process
+
 - [`dirichlet_process_prior()`](https://laposanti.github.io/BTSBM/reference/dirichlet_process_prior.md)
   : Dirichlet-process prior for a latent partition
 
@@ -47,6 +53,12 @@
 
 - [`fit_btsbm()`](https://laposanti.github.io/BTSBM/reference/fit_btsbm.md)
   : Fit a Bayesian Bradley–Terry or Plackett–Luce model
+
+- [`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_model.md)
+  : Fit a Bayesian Bradley–Terry or Plackett–Luce model
+
+- [`fit_preference()`](https://laposanti.github.io/BTSBM/reference/fit_preference.md)
+  : Fit a Bayesian preference model
 
 - [`gibbs_bt_sbm()`](https://laposanti.github.io/BTSBM/reference/gibbs_bt_sbm.md)
   : Gibbs sampler for the Bradley–Terry Stochastic Block Model (BT–SBM)
@@ -75,7 +87,7 @@
   : Define a Gamma prior for positive latent strengths
 
 - [`log_lik()`](https://laposanti.github.io/BTSBM/reference/log_lik.md)
-  : Compute pointwise log likelihoods from a BTSBM fit
+  : Compute pointwise log likelihoods from an RBBayes fit
 
 - [`loo_btsbm()`](https://laposanti.github.io/BTSBM/reference/loo_btsbm.md)
   : Run Pareto-smoothed importance-sampling LOO for a fit
@@ -89,10 +101,24 @@
   Log-likelihood matrix for the *simple* Bradley–Terry model
 
 - [`mcmc_control()`](https://laposanti.github.io/BTSBM/reference/mcmc_control.md)
-  : Set MCMC controls for a BTSBM fit
+  : Set MCMC controls for an RBBayes fit
 
 - [`mcmc_diagnostics()`](https://laposanti.github.io/BTSBM/reference/mcmc_diagnostics.md)
   : Summarise MCMC mixing diagnostics
+
+- [`as.matrix(`*`<btsbm_fit>`*`)`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
+  [`as.array(`*`<btsbm_fit>`*`)`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
+  [`as.mcmc(`*`<btsbm_fit>`*`)`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
+  [`as.mcmc.list(`*`<btsbm_fit>`*`)`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
+  [`as_draws_array()`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
+  [`as_mcmc_chains()`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
+  : Convert preference-model fits for coda and bayesplot
+
+- [`nfl_quarterbacks_2014()`](https://laposanti.github.io/BTSBM/reference/nfl_quarterbacks_2014.md)
+  : NFL quarterback rankings with item covariates
+
+- [`orthodontics_excerpt_2009()`](https://laposanti.github.io/BTSBM/reference/orthodontics_excerpt_2009.md)
+  : Orthodontics ranking-and-covariate excerpt
 
 - [`partition_moves()`](https://laposanti.github.io/BTSBM/reference/partition_moves.md)
   : Set partition-move controls
@@ -158,7 +184,13 @@
   : Format a block-count posterior distribution as a pretty- table
 
 - [`print(`*`<btsbm_fit>`*`)`](https://laposanti.github.io/BTSBM/reference/print.btsbm_fit.md)
-  : Print a BTSBM fit
+  : Print an RBBayes fit
+
+- [`prior_mean_K()`](https://laposanti.github.io/BTSBM/reference/prior_mean_K.md)
+  : Prior expected number of occupied groups
+
+- [`prior_variance_K()`](https://laposanti.github.io/BTSBM/reference/prior_variance_K.md)
+  : Prior variance of the number of occupied groups
 
 - [`relabel_by_lambda()`](https://laposanti.github.io/BTSBM/reference/relabel_by_lambda.md)
   : Relabel partitions by decreasing \\\lambda\\, compute point
@@ -171,10 +203,13 @@
   : Summarise posterior item strengths with credible intervals
 
 - [`summary(`*`<btsbm_fit>`*`)`](https://laposanti.github.io/BTSBM/reference/summary.btsbm_fit.md)
-  : Summarise a BTSBM fit
+  : Summarise an RBBayes fit
 
 - [`sushi_toy()`](https://laposanti.github.io/BTSBM/reference/sushi_toy.md)
   : Sushi-inspired toy ranking data
+
+- [`tennis_tiered_toy()`](https://laposanti.github.io/BTSBM/reference/tennis_tiered_toy.md)
+  : Simulate a tiered tennis league
 
 - [`tennis_toy()`](https://laposanti.github.io/BTSBM/reference/tennis_toy.md)
   : Tennis-league toy paired-comparison data

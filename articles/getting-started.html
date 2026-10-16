@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Getting started: from results to a Bradley--Terry analysis • BTSBM: Bayesian paired-comparison and ranking models</title>
+<title>Getting started: from results to a Bradley--Terry analysis • RBBayes: Bayesian paired-comparison and ranking models</title>
 <!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
   window.MathJax = {
     chtml: {
@@ -24,7 +24,7 @@
 
     <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="../index.html">BTSBM: Bayesian paired-comparison and ranking models</a>
+    <a class="navbar-brand me-2" href="../index.html">RBBayes: Bayesian paired-comparison and ranking models</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
@@ -61,7 +61,7 @@
 
 
 
-
+<script src="getting-started_files/kePrint-0.0.1/kePrint.js"></script><link href="getting-started_files/lightable-0.0.1/lightable.css" rel="stylesheet">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
@@ -91,7 +91,7 @@ A larger strength means a greater probability of winning against a
 player with a smaller strength. A BT–SBM additionally lets the data
 group players with similar strengths into latent tiers.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/laposanti/BTSBM" class="external-link">BTSBM</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/laposanti/BTSBM" class="external-link">RBBayes</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="start-with-data-you-can-inspect">1. Start with data you can inspect<a class="anchor" aria-label="anchor" href="#start-with-data-you-can-inspect"></a>
@@ -145,7 +145,7 @@ answer. warmup draws are discarded; the remaining draws represent
 posterior uncertainty. The short chain below is suitable for a tutorial.
 Use longer, multiple chains in a real study.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_btsbm.html">fit_btsbm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span></span>
 <span>  <span class="va">tennis</span>,</span>
 <span>  <span class="va">model</span>,</span>
 <span>  <span class="fu"><a href="../reference/mcmc_control.html">mcmc_control</a></span><span class="op">(</span>iter <span class="op">=</span> <span class="fl">400</span>, warmup <span class="op">=</span> <span class="fl">200</span>, seed <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
@@ -154,39 +154,90 @@ Use longer, multiple chains in a real study.</p>
 <span><span class="co">#&gt; &lt;btsbm_fit&gt; bt / item_sbm with 200 saved draws</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="read-the-main-result-strengths-and-uncertainty">4. Read the main result: strengths and uncertainty<a class="anchor" aria-label="anchor" href="#read-the-main-result-strengths-and-uncertainty"></a>
+<h2 id="keep-uncertainty-in-the-number-of-tiers-visible">4. Keep uncertainty in the number of tiers visible<a class="anchor" aria-label="anchor" href="#keep-uncertainty-in-the-number-of-tiers-visible"></a>
 </h2>
-<p>The point is the posterior mean strength. The horizontal line is a
-90% credible interval: it describes the remaining uncertainty after
-seeing the results. Intervals that overlap substantially should not be
-read as a certain ordering.</p>
+<p>The BT–SBM learns the number of occupied tiers in every MCMC draw.
+The table reports the posterior probability of each sampled value of
+<span class="math inline">\(K\)</span>; it is more informative than
+reporting only the most frequent value.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_strength_summary.html">plot_strength_summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
-<p><img src="getting-started_files/figure-html/strength-plot-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<p>The same information is available as a table, which is useful for
-reporting.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/strength_summary.html">strength_summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
-<span><span class="co">#&gt;         item      mean    median     lower    upper</span></span>
-<span><span class="co">#&gt; 1        Ace 1.6482758 1.6820440 1.0000000 2.150828</span></span>
-<span><span class="co">#&gt; 3 Crosscourt 1.6215289 1.6737805 1.0000000 2.146159</span></span>
-<span><span class="co">#&gt; 2   Baseline 1.1710874 1.2384788 0.4858528 1.967910</span></span>
-<span><span class="co">#&gt; 4   Dropshot 0.7962691 0.6177404 0.4798787 1.780272</span></span>
-<span><span class="co">#&gt; 5      Elite 0.6479440 0.5967778 0.4668456 1.000000</span></span>
-<span><span class="co">#&gt; 6   Forehand 0.6309056 0.5936463 0.4623794 1.000000</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/pretty_table_K_distribution.html">pretty_table_K_distribution</a></span><span class="op">(</span><span class="va">fit</span>, p_min <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<table class="table table" style="margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;">
+Quantity
+</th>
+<th style="text-align:right;">
+1
+</th>
+<th style="text-align:right;">
+2
+</th>
+<th style="text-align:right;">
+3
+</th>
+</tr></thead>
+<tbody><tr>
+<td style="text-align:left;">
+Posterior probability
+</td>
+<td style="text-align:right;">
+0.09
+</td>
+<td style="text-align:right;">
+0.885
+</td>
+<td style="text-align:right;">
+0.025
+</td>
+</tr></tbody>
+</table>
+<p>Concentrated probability on one value means the data resolve the
+number of tiers clearly. Probability spread across adjacent values means
+that the broad hierarchy is supported but its precise resolution remains
+uncertain.</p>
 </div>
 <div class="section level2">
-<h2 id="ask-whether-the-data-support-tiers">5. Ask whether the data support tiers<a class="anchor" aria-label="anchor" href="#ask-whether-the-data-support-tiers"></a>
+<h2 id="read-the-tier-structure-in-the-observed-results">5. Read the tier structure in the observed results<a class="anchor" aria-label="anchor" href="#read-the-tier-structure-in-the-observed-results"></a>
 </h2>
-<p>The model’s cluster labels can switch their names from one MCMC draw
-to the next. Instead, use a posterior similarity plot. A dark cell means
-the two players were frequently placed in the same tier.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_posterior_similarity.html">plot_posterior_similarity</a></span><span class="op">(</span><span class="va">fit</span>, target <span class="op">=</span> <span class="st">"item"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="getting-started_files/figure-html/similarity-plot-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
+<p>The next figure follows the analysis in Santi and Friel (2026). It
+reorders the observed win-rate adjacency matrix by a representative
+posterior partition and, within each tier, by marginal win proportion.
+The horizontal and vertical boundaries and the coloured side band mark
+changes between inferred tiers. Mixed colours inside a diagonal block
+indicate competitive balance within a tier; consistently darker
+upper-right blocks indicate that stronger tiers tend to defeat weaker
+ones.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_block_adjacency.html">plot_block_adjacency</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<img src="getting-started_files/figure-html/block-adjacency-1.png" class="r-plt" alt="Observed win rates reordered by the representative BT--SBM partition. Boundary lines and the side band identify inferred tiers." width="672"><p class="caption">
+Observed win rates reordered by the representative BT–SBM partition.
+Boundary lines and the side band identify inferred tiers.
+</p>
+</div>
 </div>
 <div class="section level2">
-<h2 id="check-the-sampler-before-interpreting-it">6. Check the sampler before interpreting it<a class="anchor" aria-label="anchor" href="#check-the-sampler-before-interpreting-it"></a>
+<h2 id="separate-assignment-uncertainty-from-uncertainty-in-k">6. Separate assignment uncertainty from uncertainty in <span class="math inline">\(K\)</span><a class="anchor" aria-label="anchor" href="#separate-assignment-uncertainty-from-uncertainty-in-k"></a>
+</h2>
+<p>The assignment heatmap conditions on the posterior modal number of
+tiers by default. This mirrors the paper’s Figure 4: conditioning on
+<span class="math inline">\(K\)</span> keeps the question focused on
+<em>which tier each player belongs to</em>, rather than mixing it with
+uncertainty about how many tiers exist. Dark cells indicate high
+posterior membership probability; diffuse rows identify uncertain
+boundary players.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_assignment_probabilities.html">plot_assignment_probabilities</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<img src="getting-started_files/figure-html/assignment-probabilities-1.png" class="r-plt" alt="Posterior tier-membership probabilities, conditional on the modal number of tiers." width="672"><p class="caption">
+Posterior tier-membership probabilities, conditional on the modal number
+of tiers.
+</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="check-the-sampler-before-interpreting-it">7. Check the sampler before interpreting it<a class="anchor" aria-label="anchor" href="#check-the-sampler-before-interpreting-it"></a>
 </h2>
 <p>MCMC draws should move around a stable region. Trace plots are a
 quick screening tool: long trends or a completely stuck trace are
@@ -210,6 +261,12 @@ top-m rankings rather than wins and losses.</li>
 <li>Use vignette(“toy-data-gallery”) for additional worked synthetic
 examples.</li>
 </ul>
+</div>
+<div class="section level2">
+<h2 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
+</h2>
+<p>Santi, L. and Friel, N. (2026). The Bradley–Terry stochastic block
+model. <em>The Annals of Applied Statistics</em>, 20(2), 1766–1787.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

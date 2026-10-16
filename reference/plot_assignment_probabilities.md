@@ -1,9 +1,9 @@
 # Figure 4 plotting function Assignment probability heatmap (BT-SBM)
 
-Heatmap of item-wise posterior assignment probabilities for clusters
-(relabeled so that Cluster 1 is the top block by decreasing
-\\\lambda\\). Items are ordered by their most probable cluster and
-marginal wins.
+Heatmap of item-wise posterior assignment probabilities for clusters,
+conditional on a chosen occupied-cluster count. Draws are relabelled so
+that Cluster 1 is the strongest block by decreasing \\\lambda\\. Items
+are ordered by their most probable cluster and marginal wins.
 
 ## Usage
 
@@ -31,8 +31,8 @@ plot_assignment_probabilities(
 
 - fit:
 
-  Output list from `gibbs_BT_SBM()` (must include
-  `relabeled$assign_prob`).
+  A BT–SBM `btsbm_fit` object, or relabelled sampler output for
+  compatibility.
 
 - w_ij:
 
@@ -42,7 +42,8 @@ plot_assignment_probabilities(
 
 - max_n_clust:
 
-  Where to filter the mcmc x_t. If not specified we use the modal K
+  Number of occupied clusters on which to condition the assignment
+  probabilities. If `NULL`, the posterior modal number is used.
 
 - players_df:
 
@@ -71,7 +72,8 @@ plot_assignment_probabilities(
 
 - clean_fun:
 
-  Optional function to prettify names. Default: identity.
+  Optional function to prettify names. Defaults to
+  [`clean_players_names()`](https://laposanti.github.io/BTSBM/reference/clean_players_names.md).
 
 - x_hat:
 
@@ -83,8 +85,7 @@ plot_assignment_probabilities(
 
 - k_show:
 
-  Optional integer number of clusters to show (defaults to all columns
-  in `assign_prob`).
+  Compatibility alias for `max_n_clust`.
 
 - fill_low, fill_high:
 

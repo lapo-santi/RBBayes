@@ -1,18 +1,20 @@
 ## Overview
 
-**BTSBM** implements Bayesian inference for the *Bradley–Terry
-Stochastic Block Model* (BT–SBM),  
-combining **pairwise comparison data** with **latent block clustering**
-of items.
+**RBBayes** provides one public architecture for Bayesian Bradley–Terry
+(BT) models for paired comparisons and Plackett–Luce (PL) models for
+rankings. Both likelihoods can be combined with latent block structures.
 
 The package provides:
 
-1.  ⚙️ Gibbs-type MCMC samplers for posterior inference
+1.  Validated pairwise and ranking data objects
 
-2.  🎯 Posterior relabeling, point estimates and uncertainty
-    quantification
+2.  Explicit BT, PL, prior, and MCMC-control constructors
 
-3.  🌐 Visualization tools for clusters and block interactions
+3.  A common
+    [`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_model.md)
+    entry point and `btsbm_fit` result
+
+4.  Fit-level uncertainty summaries, diagnostics, and visualizations
 
 Applications include, among the others, **sports analytics**,
 **psychometrics**, and **ranking problems** with hidden group structure.
@@ -29,10 +31,10 @@ Vignette](https://laposanti.github.io/BTSBM/articles/getting-started.html)
 
 ------------------------------------------------------------------------
 
-## When to Use BTSBM
+## When to Use RBBayes
 
-Use this model whenever outcomes can be summarized as *pairwise
-preferences* (`i` beats `j`). Below are a few illustrative examples:
+Use the BT models when outcomes can be summarized as pairwise
+preferences (`i` beats `j`). Below are a few illustrative examples:
 
 | Domain                   | Example                              |
 |:-------------------------|:-------------------------------------|
@@ -41,23 +43,22 @@ preferences* (`i` beats `j`). Below are a few illustrative examples:
 | 🧠 Psychometrics         | Stimulus `i` chosen over `j`         |
 | 🧪 A/B testing           | Variant `i` performs better than `j` |
 
-Only a binary outcome per pair (“i over j”) is required, which can
-optionally be aggregated into counts (positive integers). For the sake
-of exposition, we will use a sports-related terminology throughout,
-though the same framework naturally extends to all the settings listed
-above and beyond.
+The data can contain one binary result per comparison or aggregated
+non-negative win counts. This page uses sports terminology for the
+pairwise workflow; the ranking vignette presents the corresponding PL
+workflow using the same data–model–fit architecture.
 
 ## Required Inputs
 
-To fit the model, you need one object:
+To fit the model, first create one validated pairwise-data object:
 
-### `w`: pairwise interaction matrix
+### `wins`: pairwise interaction matrix
 
 *It is as a directed weighted/binary adjacency matrix.*
 
-- Square matrix (`n × n`), where `w[i, j]` = number of times player *i*
-  beats *j*  
-- Diagonal must be 0 (`w[i, i] = 0`)  
+- Square matrix (`n × n`), where `wins[i, j]` = number of times player
+  *i* beats *j*
+- Diagonal must be 0 (`wins[i, i] = 0`)
 - For each unordered pair `{i,j}`:  
   ( n\_{ij} = w\_{ij} + w\_{ji} )
 
@@ -71,7 +72,7 @@ To fit the model, you need one object:
 
 # items: A, B, C, D
 # w[i, j] = number of times i beat j
-w <- matrix(
+wins <- matrix(
 c( 0, 3, 0, 2,
 1, 0, 4, 0,
 2, 0, 0, 1,
@@ -87,7 +88,7 @@ dimnames = list(c("A","B","C","D"), c("A","B","C","D"))
 
 # one comparison per pair observed (0/1 wins)
 # w[i, j] is binary
-w_bin <- matrix(
+binary_wins <- matrix(
 c( 0, 1, 0, 1,
 0, 0, 1, 0,
 1, 0, 0, 0,
@@ -109,7 +110,7 @@ Install the development version from GitHub:
 
 # install.packages("devtools")
 devtools::install_github("laposanti/BTSBM")
-library(BTSBM)
+library(RBBayes)
 ```
 
 ------------------------------------------------------------------------
@@ -120,59 +121,55 @@ Let’s fit the BT–SBM with a Gnedin prior on 2017 ATP season data:
 
 ``` r
 
-# choosing the 2017 season
-w_ij <- ATP_2000_2022$`2017`$Y_ij
+# prepare the 2017 season
+wins <- ATP_2000_2025$`2017`$Y_ij
+pairwise <- as_bt_data(wins)
 
-# fit the model
-fit <- gibbs_bt_sbm(
-w_ij,
-a = 4,
-prior = "GN",
-n_iter = 500,
-burnin = 250,
-verbose = FALSE
+# specify and fit the model
+fit <- fit_model(
+  pairwise,
+  bt_sbm_model(
+    latent_strength = latent_strength(shape = 4, rate = exp(digamma(4))),
+    item_clustering = gnedin_prior(gnedin_hyperparameter = 0.8)
+  ),
+  mcmc_control(iter = 500, warmup = 250, seed = 1)
 )
 
-# relabel output
-post <- BTSBM::relabel_by_lambda(fit$x_samples, fit$lambda_samples)
-
-# plot adjacency matrix
-plot_block_adjacency(fit = post, w_ij = w_ij)
+# keep uncertainty in K and block membership visible
+pretty_table_K_distribution(fit, p_min = 0)
+plot_block_adjacency(fit)
+plot_assignment_probabilities(fit)
 ```
 
-The following probabilities of K are supported:
-
-![Posterior probability of K](reference/figures/p_one_season_table.png)
-
-Posterior probability of K
-
-We can use a single point estimate to order the pairwise interaction
-heatmap as follows:
-
-![Reordered Adjacency
-matrix](reference/figures/geom_adjacency_fixed.png)
-
-Reordered Adjacency matrix
+Together, these outputs show posterior uncertainty in the number of
+blocks, the observed win-rate matrix reordered by a representative block
+partition, and assignment uncertainty conditional on a chosen number of
+blocks.
 
 ------------------------------------------------------------------------
 
 ## Workflow at a Glance
 
-1.  **Prepare input matrix** `w`
+1.  **Prepare data** with `as_bt_data(wins)`
 
 2.  **Inspect prior** using
     [`gnedin_K_mean()`](https://laposanti.github.io/BTSBM/reference/gnedin_K_mean.html)
     and
     [`gnedin_K_var()`](https://laposanti.github.io/BTSBM/reference/gnedin_K_var.html)
 
-3.  **Fit the model** via
-    [`gibbs_bt_sbm()`](https://laposanti.github.io/BTSBM/reference/gibbs_bt_sbm.html)
+3.  **Specify a model** with
+    [`bt_model()`](https://laposanti.github.io/BTSBM/reference/bt_model.md)
+    or
+    [`bt_sbm_model()`](https://laposanti.github.io/BTSBM/reference/bt_sbm_model.md)
 
-4.  **Relabel samples** with
-    [`relabel_by_lambda()`](https://laposanti.github.io/BTSBM/reference/relabel_by_lambda.html)
+4.  **Fit the model** with
+    [`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_btsbm.html)
 
-5.️ **Visualize clusters** using
-[`plot_block_adjacency()`](https://laposanti.github.io/BTSBM/reference/plot_block_adjacency.html)
+5.  **Report block uncertainty** with
+    [`pretty_table_K_distribution()`](https://laposanti.github.io/BTSBM/reference/pretty_table_K_distribution.md),
+    [`plot_block_adjacency()`](https://laposanti.github.io/BTSBM/reference/plot_block_adjacency.md),
+    and
+    [`plot_assignment_probabilities()`](https://laposanti.github.io/BTSBM/reference/plot_assignment_probabilities.md)
 
 ------------------------------------------------------------------------
 
@@ -188,7 +185,7 @@ Vignette](https://laposanti.github.io/BTSBM/articles/getting-started.html)
 
 ## Citation
 
-Santi, L., & Friel, N. (2025). *The Bradley–Terry Stochastic Block
-Model.* Working paper, University College Dublin.
+Santi, L., & Friel, N. (2026). *The Bradley–Terry stochastic block
+model.* *The Annals of Applied Statistics*, 20(2), 1766–1787.
 
 ------------------------------------------------------------------------

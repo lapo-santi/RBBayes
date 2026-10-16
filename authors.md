@@ -14,12 +14,12 @@
 Source:
 [`DESCRIPTION`](https://github.com/laposanti/BTSBM/blob/main/DESCRIPTION)
 
-Santi L, Friel N (2026). *BTSBM: Bayesian Bradley–Terry and
+Santi L, Friel N (2026). *RBBayes: Bayesian Bradley–Terry and
 Plackett–Luce Models with Latent Blocks*. R package version 0.1.0,
 <https://github.com/laposanti/BTSBM>.
 
     @Manual{,
-      title = {BTSBM: Bayesian Bradley–Terry and Plackett–Luce Models with Latent Blocks},
+      title = {RBBayes: Bayesian Bradley–Terry and Plackett–Luce Models with Latent Blocks},
       author = {Lapo Santi and Nial Friel},
       year = {2026},
       note = {R package version 0.1.0},

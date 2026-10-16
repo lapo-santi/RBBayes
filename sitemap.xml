@@ -1,6 +1,7 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://laposanti.github.io/BTSBM/404.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/ARCHITECTURE.html</loc></url>
+<url><loc>https://laposanti.github.io/BTSBM/COVARIATE_ROADMAP.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/IMPLEMENTATION_STATUS.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/LICENSE-text.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/LICENSE.html</loc></url>
@@ -24,6 +25,8 @@
 <url><loc>https://laposanti.github.io/BTSBM/reference/clustering_prior.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/compare_bt_models_loo.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/compute_expected_wins_rank_posterior.html</loc></url>
+<url><loc>https://laposanti.github.io/BTSBM/reference/dirichlet_multinomial_prior.html</loc></url>
+<url><loc>https://laposanti.github.io/BTSBM/reference/dirichlet_process_K_var.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/dirichlet_process_prior.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/dot-new_cluster_integral_log.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/dot-new_cluster_integral_log_anchored.html</loc></url>
@@ -35,6 +38,8 @@
 <url><loc>https://laposanti.github.io/BTSBM/reference/exploratory_adjacency.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/finite_partition.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/fit_btsbm.html</loc></url>
+<url><loc>https://laposanti.github.io/BTSBM/reference/fit_model.html</loc></url>
+<url><loc>https://laposanti.github.io/BTSBM/reference/fit_preference.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/gibbs_bt_sbm.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/gibbs_bt_simple.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/gnedin_K_mean.html</loc></url>
@@ -51,6 +56,9 @@
 <url><loc>https://laposanti.github.io/BTSBM/reference/make_bt_simple_loo.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/mcmc_control.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/mcmc_diagnostics.html</loc></url>
+<url><loc>https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.html</loc></url>
+<url><loc>https://laposanti.github.io/BTSBM/reference/nfl_quarterbacks_2014.html</loc></url>
+<url><loc>https://laposanti.github.io/BTSBM/reference/orthodontics_excerpt_2009.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/partition_moves.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/partition_prior.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/pitman_yor_prior.html</loc></url>
@@ -73,12 +81,15 @@
 <url><loc>https://laposanti.github.io/BTSBM/reference/posterior_strength.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/pretty_table_K_distribution.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/print.btsbm_fit.html</loc></url>
+<url><loc>https://laposanti.github.io/BTSBM/reference/prior_mean_K.html</loc></url>
+<url><loc>https://laposanti.github.io/BTSBM/reference/prior_variance_K.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/relabel_by_lambda.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/sample_from_BTSBM.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/shannon_entropy.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/strength_summary.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/summary.btsbm_fit.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/sushi_toy.html</loc></url>
+<url><loc>https://laposanti.github.io/BTSBM/reference/tennis_tiered_toy.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/tennis_toy.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/updateZ_and_rowsums.html</loc></url>
 <url><loc>https://laposanti.github.io/BTSBM/reference/urn_DM.html</loc></url>

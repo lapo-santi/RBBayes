@@ -1,6 +1,6 @@
-# Print a BTSBM fit
+# Print an RBBayes fit
 
-Print a BTSBM fit
+Print an RBBayes fit
 
 ## Usage
 

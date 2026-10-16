@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Bayesian BT and PL models • BTSBM: Bayesian paired-comparison and ranking models</title>
+<title>Bayesian BT and PL models • RBBayes: Bayesian paired-comparison and ranking models</title>
 <!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
   window.MathJax = {
     chtml: {
@@ -28,7 +28,7 @@
 
     <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="index.html">BTSBM: Bayesian paired-comparison and ranking models</a>
+    <a class="navbar-brand me-2" href="index.html">RBBayes: Bayesian paired-comparison and ranking models</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
@@ -66,13 +66,13 @@
   <main id="main" class="col-md-9"><div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p><strong>BTSBM</strong> implements Bayesian inference for the <em>Bradley–Terry Stochastic Block Model</em> (BT–SBM),<br>
-combining <strong>pairwise comparison data</strong> with <strong>latent block clustering</strong> of items.</p>
+<p><strong>RBBayes</strong> provides one public architecture for Bayesian Bradley–Terry (BT) models for paired comparisons and Plackett–Luce (PL) models for rankings. Both likelihoods can be combined with latent block structures.</p>
 <p>The package provides:</p>
 <ol style="list-style-type: decimal">
-<li><p>⚙️ Gibbs-type MCMC samplers for posterior inference</p></li>
-<li><p>🎯 Posterior relabeling, point estimates and uncertainty quantification</p></li>
-<li><p>🌐 Visualization tools for clusters and block interactions</p></li>
+<li><p>Validated pairwise and ranking data objects</p></li>
+<li><p>Explicit BT, PL, prior, and MCMC-control constructors</p></li>
+<li><p>A common <code><a href="reference/fit_model.html">fit_model()</a></code> entry point and <code>btsbm_fit</code> result</p></li>
+<li><p>Fit-level uncertainty summaries, diagnostics, and visualizations</p></li>
 </ol>
 <p>Applications include, among the others, <strong>sports analytics</strong>, <strong>psychometrics</strong>, and <strong>ranking problems</strong> with hidden group structure.</p>
 <hr>
@@ -85,9 +85,9 @@ For a step-by-step example using tennis data, visit the 👉 <a href="https://la
 </div>
 </div>
 <div class="section level2">
-<h2 id="when-to-use-btsbm">When to Use BTSBM<a class="anchor" aria-label="anchor" href="#when-to-use-btsbm"></a>
+<h2 id="when-to-use-rbbayes">When to Use RBBayes<a class="anchor" aria-label="anchor" href="#when-to-use-rbbayes"></a>
 </h2>
-<p>Use this model whenever outcomes can be summarized as <em>pairwise preferences</em> (<code>i</code> beats <code>j</code>). Below are a few illustrative examples:</p>
+<p>Use the BT models when outcomes can be summarized as pairwise preferences (<code>i</code> beats <code>j</code>). Below are a few illustrative examples:</p>
 <table class="table">
 <thead><tr>
 <th align="left">Domain</th>
@@ -116,22 +116,21 @@ For a step-by-step example using tennis data, visit the 👉 <a href="https://la
 </tr>
 </tbody>
 </table>
-<p>Only a binary outcome per pair (“i over j”) is required, which can optionally be aggregated into counts (positive integers). For the sake of exposition, we will use a sports-related terminology throughout, though the same framework naturally extends to all the settings listed above and beyond.</p>
+<p>The data can contain one binary result per comparison or aggregated non-negative win counts. This page uses sports terminology for the pairwise workflow; the ranking vignette presents the corresponding PL workflow using the same data–model–fit architecture.</p>
 </div>
 <div class="section level2">
 <h2 id="required-inputs">Required Inputs<a class="anchor" aria-label="anchor" href="#required-inputs"></a>
 </h2>
-<p>To fit the model, you need one object:</p>
+<p>To fit the model, first create one validated pairwise-data object:</p>
 <div class="section level3">
-<h3 id="w-pairwise-interaction-matrix">
-<code>w</code>: pairwise interaction matrix<a class="anchor" aria-label="anchor" href="#w-pairwise-interaction-matrix"></a>
+<h3 id="wins-pairwise-interaction-matrix">
+<code>wins</code>: pairwise interaction matrix<a class="anchor" aria-label="anchor" href="#wins-pairwise-interaction-matrix"></a>
 </h3>
 <p><em>It is as a directed weighted/binary adjacency matrix.</em></p>
 <ul>
-<li>Square matrix (<code>n × n</code>), where <code>w[i, j]</code> = number of times player <em>i</em> beats <em>j</em><br>
+<li>Square matrix (<code>n × n</code>), where <code>wins[i, j]</code> = number of times player <em>i</em> beats <em>j</em>
 </li>
-<li>Diagonal must be 0 (<code>w[i, i] = 0</code>)<br>
-</li>
+<li>Diagonal must be 0 (<code>wins[i, i] = 0</code>)</li>
 <li>For each unordered pair <code>{i,j}</code>:<br>
 ( n_{ij} = w_{ij} + w_{ji} )</li>
 </ul>
@@ -146,7 +145,7 @@ For a step-by-step example using tennis data, visit the 👉 <a href="https://la
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># items: A, B, C, D</span></span>
 <span><span class="co"># w[i, j] = number of times i beat j</span></span>
-<span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span>
+<span><span class="va">wins</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> <span class="fl">0</span>, <span class="fl">3</span>, <span class="fl">0</span>, <span class="fl">2</span>,</span>
 <span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">4</span>, <span class="fl">0</span>,</span>
 <span><span class="fl">2</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>,</span>
@@ -160,7 +159,7 @@ For a step-by-step example using tennis data, visit the 👉 <a href="https://la
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># one comparison per pair observed (0/1 wins)</span></span>
 <span><span class="co"># w[i, j] is binary</span></span>
-<span><span class="va">w_bin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span>
+<span><span class="va">binary_wins</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>,</span>
 <span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>,</span>
 <span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>,</span>
@@ -181,7 +180,7 @@ For a step-by-step example using tennis data, visit the 👉 <a href="https://la
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"laposanti/BTSBM"</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/laposanti/BTSBM" class="external-link">BTSBM</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/laposanti/BTSBM" class="external-link">RBBayes</a></span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">
@@ -189,44 +188,37 @@ For a step-by-step example using tennis data, visit the 👉 <a href="https://la
 </h2>
 <p>Let’s fit the BT–SBM with a Gnedin prior on 2017 ATP season data:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># choosing the 2017 season</span></span>
-<span><span class="va">w_ij</span> <span class="op">&lt;-</span> <span class="va">ATP_2000_2022</span><span class="op">$</span><span class="va">`2017`</span><span class="op">$</span><span class="va">Y_ij</span></span>
+<code class="sourceCode R"><span><span class="co"># prepare the 2017 season</span></span>
+<span><span class="va">wins</span> <span class="op">&lt;-</span> <span class="va">ATP_2000_2025</span><span class="op">$</span><span class="va">`2017`</span><span class="op">$</span><span class="va">Y_ij</span></span>
+<span><span class="va">pairwise</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/as_bt_data.html">as_bt_data</a></span><span class="op">(</span><span class="va">wins</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># fit the model</span></span>
-<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/gibbs_bt_sbm.html">gibbs_bt_sbm</a></span><span class="op">(</span></span>
-<span><span class="va">w_ij</span>,</span>
-<span>a <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>prior <span class="op">=</span> <span class="st">"GN"</span>,</span>
-<span>n_iter <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>burnin <span class="op">=</span> <span class="fl">250</span>,</span>
-<span>verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="co"># specify and fit the model</span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fit_model.html">fit_model</a></span><span class="op">(</span></span>
+<span>  <span class="va">pairwise</span>,</span>
+<span>  <span class="fu"><a href="reference/bt_sbm_model.html">bt_sbm_model</a></span><span class="op">(</span></span>
+<span>    latent_strength <span class="op">=</span> <span class="fu"><a href="reference/latent_strength.html">latent_strength</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">4</span>, rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    item_clustering <span class="op">=</span> <span class="fu"><a href="reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyperparameter <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/mcmc_control.html">mcmc_control</a></span><span class="op">(</span>iter <span class="op">=</span> <span class="fl">500</span>, warmup <span class="op">=</span> <span class="fl">250</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># relabel output</span></span>
-<span><span class="va">post</span> <span class="op">&lt;-</span> <span class="fu">BTSBM</span><span class="fu">::</span><span class="fu"><a href="reference/relabel_by_lambda.html">relabel_by_lambda</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">x_samples</span>, <span class="va">fit</span><span class="op">$</span><span class="va">lambda_samples</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># plot adjacency matrix</span></span>
-<span><span class="fu"><a href="reference/plot_block_adjacency.html">plot_block_adjacency</a></span><span class="op">(</span>fit <span class="op">=</span> <span class="va">post</span>, w_ij <span class="op">=</span> <span class="va">w_ij</span><span class="op">)</span></span></code></pre></div>
-<p>The following probabilities of K are supported:</p>
-<div class="float">
-<img src="reference/figures/p_one_season_table.png" alt="Posterior probability of K"><div class="figcaption">Posterior probability of K</div>
-</div>
-<p>We can use a single point estimate to order the pairwise interaction heatmap as follows:</p>
-<div class="float">
-<img src="reference/figures/geom_adjacency_fixed.png" alt="Reordered Adjacency matrix"><div class="figcaption">Reordered Adjacency matrix</div>
-</div>
+<span><span class="co"># keep uncertainty in K and block membership visible</span></span>
+<span><span class="fu"><a href="reference/pretty_table_K_distribution.html">pretty_table_K_distribution</a></span><span class="op">(</span><span class="va">fit</span>, p_min <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/plot_block_adjacency.html">plot_block_adjacency</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/plot_assignment_probabilities.html">plot_assignment_probabilities</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
+<p>Together, these outputs show posterior uncertainty in the number of blocks, the observed win-rate matrix reordered by a representative block partition, and assignment uncertainty conditional on a chosen number of blocks.</p>
 <hr>
 </div>
 <div class="section level2">
 <h2 id="workflow-at-a-glance">Workflow at a Glance<a class="anchor" aria-label="anchor" href="#workflow-at-a-glance"></a>
 </h2>
 <ol style="list-style-type: decimal">
-<li><p><strong>Prepare input matrix</strong> <code>w</code></p></li>
+<li><p><strong>Prepare data</strong> with <code>as_bt_data(wins)</code></p></li>
 <li><p><strong>Inspect prior</strong> using <a href="https://laposanti.github.io/BTSBM/reference/gnedin_K_mean.html"><code>gnedin_K_mean()</code></a> and <a href="https://laposanti.github.io/BTSBM/reference/gnedin_K_var.html"><code>gnedin_K_var()</code></a></p></li>
-<li><p><strong>Fit the model</strong> via <a href="https://laposanti.github.io/BTSBM/reference/gibbs_bt_sbm.html"><code>gibbs_bt_sbm()</code></a></p></li>
-<li><p><strong>Relabel samples</strong> with <a href="https://laposanti.github.io/BTSBM/reference/relabel_by_lambda.html"><code>relabel_by_lambda()</code></a></p></li>
+<li><p><strong>Specify a model</strong> with <code><a href="reference/bt_model.html">bt_model()</a></code> or <code><a href="reference/bt_sbm_model.html">bt_sbm_model()</a></code></p></li>
+<li><p><strong>Fit the model</strong> with <a href="https://laposanti.github.io/BTSBM/reference/fit_btsbm.html"><code>fit_model()</code></a></p></li>
+<li><p><strong>Report block uncertainty</strong> with <code><a href="reference/pretty_table_K_distribution.html">pretty_table_K_distribution()</a></code>, <code><a href="reference/plot_block_adjacency.html">plot_block_adjacency()</a></code>, and <code><a href="reference/plot_assignment_probabilities.html">plot_assignment_probabilities()</a></code></p></li>
 </ol>
-<p>5.️ <strong>Visualize clusters</strong> using <a href="https://laposanti.github.io/BTSBM/reference/plot_block_adjacency.html"><code>plot_block_adjacency()</code></a></p>
 <hr>
 </div>
 <div class="section level2">
@@ -239,7 +231,7 @@ For a step-by-step example using tennis data, visit the 👉 <a href="https://la
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
-<p>Santi, L., &amp; Friel, N. (2025). <em>The Bradley–Terry Stochastic Block Model.</em> Working paper, University College Dublin.</p>
+<p>Santi, L., &amp; Friel, N. (2026). <em>The Bradley–Terry stochastic block model.</em> <em>The Annals of Applied Statistics</em>, 20(2), 1766–1787.</p>
 <hr>
 </div>
 

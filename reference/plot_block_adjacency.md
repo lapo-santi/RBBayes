@@ -12,7 +12,7 @@ computed across players in the block).
 ``` r
 plot_block_adjacency(
   fit,
-  w_ij,
+  w_ij = NULL,
   x_hat = NULL,
   relabel_blocks = c("none", "avg_lambda"),
   lambda_hat = NULL,
@@ -40,11 +40,14 @@ plot_block_adjacency(
 
 - fit:
 
-  Output list from `gibbs_BT_SBM()`.
+  A BT–SBM `btsbm_fit` object, or relabelled output from
+  [`relabel_by_lambda()`](https://laposanti.github.io/BTSBM/reference/relabel_by_lambda.md)
+  for compatibility.
 
 - w_ij:
 
-  Integer matrix of wins (same players & order used in `fit`).
+  Optional integer matrix of wins. It is taken from `fit$data` when
+  `fit` is a `btsbm_fit` object.
 
 - x_hat:
 

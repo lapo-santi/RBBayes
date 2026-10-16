@@ -1,6 +1,6 @@
-# Set MCMC controls for a BTSBM fit
+# Set MCMC controls for an RBBayes fit
 
-Set MCMC controls for a BTSBM fit
+Set MCMC controls for an RBBayes fit
 
 ## Usage
 

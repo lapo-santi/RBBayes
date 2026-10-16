@@ -1,6 +1,6 @@
-# Compute pointwise log likelihoods from a BTSBM fit
+# Compute pointwise log likelihoods from an RBBayes fit
 
-Compute pointwise log likelihoods from a BTSBM fit
+Compute pointwise log likelihoods from an RBBayes fit
 
 ## Usage
 

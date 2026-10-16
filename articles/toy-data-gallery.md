@@ -7,7 +7,7 @@ match data.
 
 ``` r
 
-library(BTSBM)
+library(RBBayes)
 ```
 
 ## If you have win/loss counts: tennis
@@ -28,7 +28,7 @@ Fit a BT–SBM if players may belong to broad tiers.
 
 ``` r
 
-tennis_fit <- fit_btsbm(
+tennis_fit <- fit_model(
   tennis,
   bt_sbm_model(
     item_clustering = finite_partition(max_clusters = 3)
@@ -71,7 +71,7 @@ Then estimate item strengths and their uncertainty.
 
 ``` r
 
-sushi_fit <- fit_btsbm(
+sushi_fit <- fit_model(
   sushi,
   pl_model(),
   mcmc_control(iter = 300, warmup = 150, seed = 4)
@@ -111,7 +111,7 @@ plot_ranking_positions(votes)
 
 ``` r
 
-mixture_fit <- fit_btsbm(
+mixture_fit <- fit_model(
   votes,
   pl_mixture_model(
     ranking_clustering = dirichlet_process_prior(concentration = 1)
@@ -140,7 +140,7 @@ workflow.
 ``` r
 
 structured_rankings <- pl_lbm_toy(n_rankings = 20, rank_length = 4, seed = 7)
-lbm_fit <- fit_btsbm(
+lbm_fit <- fit_model(
   structured_rankings,
   pl_lbm_model(
     ranking_clustering = finite_partition(max_clusters = 3),

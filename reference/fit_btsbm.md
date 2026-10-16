@@ -1,10 +1,9 @@
 # Fit a Bayesian Bradley–Terry or Plackett–Luce model
 
-`fit_btsbm()` is the common fitting entry point. This first
-implementation supports simple BT, BT–SBM, simple PL, PL–SBM, PL ranking
-mixtures, and PL–LBM. The latter two start with readable R Gibbs kernels
-derived from the PLuce exponential-race architecture; their
-high-performance C++ kernels are a later parity-tested optimisation.
+Compatibility wrapper for
+[`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_model.md).
+New analyses should use
+[`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_model.md).
 
 ## Usage
 
@@ -33,9 +32,6 @@ fit_btsbm(data, model, control = mcmc_control())
 
 An object of class `btsbm_fit`.
 
-## References
+## See also
 
-Caron, F. and Doucet, A. (2012). Efficient Bayesian inference for
-generalized Bradley–Terry models. *Journal of Computational and
-Graphical Statistics*, 21(1), 174–196.
-[doi:10.1080/10618600.2012.638220](https://doi.org/10.1080/10618600.2012.638220)
+[`fit_model`](https://laposanti.github.io/BTSBM/reference/fit_model.md)

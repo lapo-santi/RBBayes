@@ -1,6 +1,6 @@
-# Summarise a BTSBM fit
+# Summarise an RBBayes fit
 
-Summarise a BTSBM fit
+Summarise an RBBayes fit
 
 ## Usage
 

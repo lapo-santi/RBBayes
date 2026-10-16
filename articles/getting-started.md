@@ -19,7 +19,7 @@ players with similar strengths into latent tiers.
 
 ``` r
 
-library(BTSBM)
+library(RBBayes)
 ```
 
 ## 1. Start with data you can inspect
@@ -85,7 +85,7 @@ Use longer, multiple chains in a real study.
 
 ``` r
 
-fit <- fit_btsbm(
+fit <- fit_model(
   tennis,
   model,
   mcmc_control(iter = 400, warmup = 200, seed = 2)
@@ -94,49 +94,71 @@ fit
 #> <btsbm_fit> bt / item_sbm with 200 saved draws
 ```
 
-## 4. Read the main result: strengths and uncertainty
+## 4. Keep uncertainty in the number of tiers visible
 
-The point is the posterior mean strength. The horizontal line is a 90%
-credible interval: it describes the remaining uncertainty after seeing
-the results. Intervals that overlap substantially should not be read as
-a certain ordering.
-
-``` r
-
-plot_strength_summary(fit)
-```
-
-![](getting-started_files/figure-html/strength-plot-1.png)
-
-The same information is available as a table, which is useful for
-reporting.
+The BT–SBM learns the number of occupied tiers in every MCMC draw. The
+table reports the posterior probability of each sampled value of \\K\\;
+it is more informative than reporting only the most frequent value.
 
 ``` r
 
-strength_summary(fit)
-#>         item      mean    median     lower    upper
-#> 1        Ace 1.6482758 1.6820440 1.0000000 2.150828
-#> 3 Crosscourt 1.6215289 1.6737805 1.0000000 2.146159
-#> 2   Baseline 1.1710874 1.2384788 0.4858528 1.967910
-#> 4   Dropshot 0.7962691 0.6177404 0.4798787 1.780272
-#> 5      Elite 0.6479440 0.5967778 0.4668456 1.000000
-#> 6   Forehand 0.6309056 0.5936463 0.4623794 1.000000
+pretty_table_K_distribution(fit, p_min = 0)
 ```
 
-## 5. Ask whether the data support tiers
+| Quantity              |    1 |     2 |     3 |
+|:----------------------|-----:|------:|------:|
+| Posterior probability | 0.09 | 0.885 | 0.025 |
 
-The model’s cluster labels can switch their names from one MCMC draw to
-the next. Instead, use a posterior similarity plot. A dark cell means
-the two players were frequently placed in the same tier.
+Concentrated probability on one value means the data resolve the number
+of tiers clearly. Probability spread across adjacent values means that
+the broad hierarchy is supported but its precise resolution remains
+uncertain.
+
+## 5. Read the tier structure in the observed results
+
+The next figure follows the analysis in Santi and Friel (2026). It
+reorders the observed win-rate adjacency matrix by a representative
+posterior partition and, within each tier, by marginal win proportion.
+The horizontal and vertical boundaries and the coloured side band mark
+changes between inferred tiers. Mixed colours inside a diagonal block
+indicate competitive balance within a tier; consistently darker
+upper-right blocks indicate that stronger tiers tend to defeat weaker
+ones.
 
 ``` r
 
-plot_posterior_similarity(fit, target = "item")
+plot_block_adjacency(fit)
 ```
 
-![](getting-started_files/figure-html/similarity-plot-1.png)
+![Observed win rates reordered by the representative BT--SBM partition.
+Boundary lines and the side band identify inferred
+tiers.](getting-started_files/figure-html/block-adjacency-1.png)
 
-## 6. Check the sampler before interpreting it
+Observed win rates reordered by the representative BT–SBM partition.
+Boundary lines and the side band identify inferred tiers.
+
+## 6. Separate assignment uncertainty from uncertainty in \\K\\
+
+The assignment heatmap conditions on the posterior modal number of tiers
+by default. This mirrors the paper’s Figure 4: conditioning on \\K\\
+keeps the question focused on *which tier each player belongs to*,
+rather than mixing it with uncertainty about how many tiers exist. Dark
+cells indicate high posterior membership probability; diffuse rows
+identify uncertain boundary players.
+
+``` r
+
+plot_assignment_probabilities(fit)
+```
+
+![Posterior tier-membership probabilities, conditional on the modal
+number of
+tiers.](getting-started_files/figure-html/assignment-probabilities-1.png)
+
+Posterior tier-membership probabilities, conditional on the modal number
+of tiers.
+
+## 7. Check the sampler before interpreting it
 
 MCMC draws should move around a stable region. Trace plots are a quick
 screening tool: long trends or a completely stuck trace are reasons to
@@ -164,3 +186,8 @@ mcmc_diagnostics(fit)
   top-m rankings rather than wins and losses.
 - Use vignette(“toy-data-gallery”) for additional worked synthetic
   examples.
+
+## Reference
+
+Santi, L. and Friel, N. (2026). The Bradley–Terry stochastic block
+model. *The Annals of Applied Statistics*, 20(2), 1766–1787.

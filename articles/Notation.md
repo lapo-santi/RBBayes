@@ -1,299 +1,213 @@
-# Notation and Object Dimensions for the Bradley–Terry Stochastic Block Model
+# Notation and object dimensions for the common BTSBM interface
 
 ## Overview
 
-We consider a set of \\n\\ items/players with observed directed wins
-\\w\_{ij}\\. We collect these counts in the outcome matrix
-\\\mathbf{W}=(w\_{ij})\in\mathbb{N}^{n\times n}\\, with \\w\_{ii}=0\\.
-The total number of encounters is \\n\_{ij}=w\_{ij}+w\_{ji}\\, collected
-in the symmetric matrix \\\mathbf{N}=\mathbf{W}+\mathbf{W}^\top\\, and
-we denote observed pairs by \\E=\\(i,j): n\_{ij}\>0\\\\. In the
-clustered Bradley–Terry–SBM (BT–SBM), each item \\i\\ belongs to a
-latent block \\x_i \in \\1,\dots,K\\\\, and blocks have intensities
-\\\lambda_k\>0\\. The simple BT model corresponds to \\K=n\\ with
-item-specific intensities.
-
-This vignette documents **symbols**, **R object names**, and
-**dimensions** used throughout the package.
-
-## Symbols and R names
-
-| Meaning | Math symbol | Constraints / Type | R name | Dimensions |
-|----|----|----|----|----|
-| Number of items | \\n\\ | integer (\>0) | `n` (derived) | scalar |
-| Saved iterations | \\S = T\_{\text{iter}} - T\_{\text{burn}}\\ | integer (≥ 1) | `S` (implicit) | scalar |
-| Directed outcome matrix | \\\mathbf{W}=(w\_{ij})\\ | non-negative, diag = 0 | `w_ij` | `n × n` matrix |
-| Match-count matrix | \\\mathbf{N}=\mathbf{W}+\mathbf{W}^\top\\ | symmetric, diag = 0 | computed internally | `n × n` matrix |
-| Observed edge set | \\E=\\(i,j): n\_{ij}\>0\\\\ | directed observed pairs | `obs_idx` (in LOO outputs) | `D × 2` index matrix |
-| Wins (i over j) | \\w\_{ij}\\ | ≥ 0, diag = 0 | `w_ij` | `n × n` matrix |
-| Encounters | \\n\_{ij} = w\_{ij} + w\_{ji}\\ | symmetric, diag = 0 | computed internally | `n × n` matrix |
-| Total iterations | \\T\_{\text{iter}}\\ | integer (\>0) | `T_iter` | scalar |
-| Burn-in | \\T\_{\text{burn}}\\ | \\0 \le T\_{\text{burn}} \< T\_{\text{iter}}\\ | `T_burn` | scalar |
-| Occupied clusters per draw | \\K\\ | 1..n | `K_per_iter` | length `S` vector |
-| Label capacity (allocated ids) | \\L\_{\text{cap}}\\ | \\K \le L\_{\text{cap}} \le n\\ (or ≤ \\K\_{DM}\\) | `L_cap_per_iter` | length `S` vector |
-| Max allowed clusters (finite prior) | \\K\_{DM}\\ | 1..n or ∞ | `K_DM` | scalar |
-| Observed pairs count | \\D\\ | \\D = \\\\(i,j): i\<j,\\ n\_{ij}\>0\\\\, \\0 \le D \le \tfrac{n(n-1)}{2}\\ | implicit | scalar |
-| Cluster label of item i | \\x_i\\ | in {1..K} | `x_samples` | `S × n` integer matrix |
-| Cluster intensities | \\\lambda_k\\ | \> 0 | `lambda_list[[s]]` | ragged numeric, length `L_cap[s]` |
-| Item intensity (post relabel) | \\\lambda\_{x_i}\\ | \> 0 | `lambda_samples_relabel` | `S × n` numeric matrix |
-| Latent auxiliaries | \\Z\_{ij}\\ | ≥ 0 | `z_samples` | `S × n × n` array or `NULL` |
-| DP concentration | \\\alpha\\ | \> 0 | `alpha_PY` | scalar |
-| PY discount | \\\sigma\\ | \[0,1) | `sigma_PY` | scalar |
-| DM concentration | \\\beta\\ | \> 0 | `beta_DM` | scalar |
-| GN parameter | \\\gamma\\ | \> 0 | `gamma_GN` | scalar |
-| Gamma prior on λ | \\\lambda \sim \mathrm{Gamma}(a,b)\\ | a\>0, b\>0 | `a`, `b` (default `exp(ψ(a))`) | scalars |
-
-Notes:
-
-- We **never** require the user to pass `n_ij`; it is constructed and
-  validated internally.
-- After relabeling by decreasing (\\\lambda\\), cluster ids are
-  canonicalized as (\\1...K\\) with cluster 1 the largest (\\\lambda\\).
-
-## Dimensions at a glance
-
-Let (\\S = T\_{\text{iter}} - T\_{\text{burn}}\\).
-
-- `w_ij`: `n x n`
-- internally computed `n_ij`: `n x n`
-- `x_samples`: `S x n`
-- `lambda_list`: length `S`, element `s` has length `L_cap[s]`, with
-  `NA` at empty labels
-- `lambda_samples_relabel`: `S x n`
-- `z_samples` (if stored): `S x n x n`
-- `K_per_iter`, `L_cap_per_iter`: length `S`
-- LOO log-likelihood matrices: `ll` is `S x D`, where
-  `D = # {(i,j): i<j, n_ij[i,j]>0}` and `obs_idx` is `D x 2`
-
-### Gibbs samplers
+All supported models use the same public workflow:
 
 ``` r
 
-# Clustered BT–SBM
-gibbs_bt_sbm(
-  w_ij,
-  prior   = c("DP","PY","DM","GN"),
-  a       = 4,
-  b       = exp(digamma(a)),
-  alpha_PY = NA_real_,
-  sigma_PY = NA_real_,
-  beta_DM  = NA_real_,
-  K_DM    = NA_integer_,
-  gamma_GN = NA_real_,
-  T_iter = 2000,
-  T_burn = 1000,
-  init_x = NULL,
-  store_z = FALSE,
-  verbose = TRUE
-)
+data <- as_bt_data(wins) # or as_rankings(rankings)
+model <- bt_sbm_model()  # or another BT/PL model constructor
+fit <- fit_model(data, model, mcmc_control())
 ```
 
-**Returns** (sizes in terms of `n` and `S`):
+The data object validates the observations, the model object states the
+likelihood and latent structure, and
+[`mcmc_control()`](https://laposanti.github.io/BTSBM/reference/mcmc_control.md)
+contains computational settings.
+[`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_model.md)
+always returns a `btsbm_fit` object. The lower-level `gibbs_bt_*()`
+functions remain available for compatibility, but new analyses should
+use this common architecture.
 
-``` r
-list(
-  x_samples            = integer matrix [S x n],
-  lambda_samples       = list length S; each numeric vector length L_cap[s], NA for empty labels,
-  K_per_iter           = integer vector [S],
-  L_cap_per_iter       = integer vector [S],
-  z_samples            = NULL or numeric array [S x n x n]
-)
-```
+## Data notation
 
-``` r
+### Pairwise outcomes
 
-# Simple BT (no clustering)
-gibbs_bt_simple(
-  w_ij,
-  a = 0.01,
-  b = 1,
-  T_iter = 5000,
-  T_burn = 1000,
-  verbose = TRUE
-)
-```
+For \\n\\ items, let \\w\_{ij}\\ be the number of times item \\i\\
+defeats item \\j\\. The directed win matrix is
 
-**Returns**:
+\\ \mathbf W=(w\_{ij})\in\mathbb N^{n\times n}, \qquad w\_{ii}=0, \\
 
-``` r
-list(lambda_samples = numeric matrix [S x n])
-```
+and the number of comparisons for an unordered pair is
 
-### Relabeling and summaries
+\\ n\_{ij}=w\_{ij}+w\_{ji}. \\
 
-``` r
+[`as_bt_data()`](https://laposanti.github.io/BTSBM/reference/as_bt_data.md)
+stores these quantities as `data$wins`, `data$n_items`, and
+`data$item_labels`. Users do not supply \\\mathbf N\\; it is computed
+when needed.
 
-relabel_by_lambda(x_samples, lambda_samples)
-```
+### Ranking outcomes
 
-- `x_samples`: integer matrix `[S x n]` (raw ids per draw)
-- `lambda_samples`: either a list length `S` of per-label vectors
-  (ragged, `NA` for empties), or a matrix `[S x L_cap_max]` with `NA`s.
+For \\L\\ observed rankings of length \\m\\, row \\\ell\\ of the integer
+matrix \\\boldsymbol\rho\\ lists item identifiers from most to least
+preferred. A row may be a complete ranking or a top-\\m\\ prefix from
+one common universe of \\n\\ available items.
 
-**Returns**:
+[`as_rankings()`](https://laposanti.github.io/BTSBM/reference/as_rankings.md)
+stores `data$rankings` with dimension `L x m`, together with
+`data$n_rankings`, `data$rank_length`, `data$n_items`, and stable item
+and ranking labels.
 
-``` r
-list(
-  x_samples_relabel              = integer matrix [S x n],
-  lambda_samples_relabel         = numeric matrix  [S x n],
-  item_cluster_assignment_probs  = data.frame [n x K_max] (columns named "Cluster_k"),
-  block_count_distribution       = data.frame with columns {num_blocks, count, prob},
-  avg_top_block_count            = numeric(1),
-  co_clustering                  = numeric matrix [n x n],
-  minVI_partition                = integer vector length n,
-  partition_binder               = integer vector length n,
-  n_clusters_each_iter           = integer vector length S,
-  top_block_count_per_iter       = integer vector length S,
-  cluster_lambda_ordered         = list length S; numeric vectors length K[s]
-)
-```
+## Model notation
 
-### LOO log-likelihood builders
+The package separates the observation likelihood from the latent
+structure.
+
+| Constructor | Likelihood | Sampled partition | Strength used by an observation |
+|----|----|----|----|
+| [`bt_model()`](https://laposanti.github.io/BTSBM/reference/bt_model.md) | Bradley–Terry | none | item strength \\\lambda_i\\ |
+| [`bt_sbm_model()`](https://laposanti.github.io/BTSBM/reference/bt_sbm_model.md) | Bradley–Terry | item labels \\x_i\\ | block strength \\\lambda\_{x_i}\\ |
+| [`pl_model()`](https://laposanti.github.io/BTSBM/reference/pl_model.md) | Plackett–Luce | none | item strength \\\lambda_i\\ |
+| [`pl_sbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_sbm_model.md) | Plackett–Luce | item labels \\x_i\\ | block strength \\\lambda\_{x_i}\\ |
+| [`pl_mixture_model()`](https://laposanti.github.io/BTSBM/reference/pl_mixture_model.md) | Plackett–Luce | ranking labels \\z\_\ell\\ | profile-specific strength \\\lambda\_{z\_\ell i}\\ |
+| [`pl_lbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_lbm_model.md) | Plackett–Luce | \\x_i\\ and \\z\_\ell\\ | profile-by-item-block strength \\\lambda\_{z\_\ell x_i}\\ |
+
+For Bradley–Terry models,
+
+\\ \Pr(i\text{ defeats }j)=\frac{\lambda_i}{\lambda_i+\lambda_j}, \\
+
+with \\\lambda_i\\ replaced by \\\lambda\_{x_i}\\ in a BT–SBM. For a
+Plackett–Luce ranking, the probability of the item selected at each
+position is its positive strength divided by the total strength of the
+remaining risk set.
+
+## Prior and control objects
+
+Positive strengths use `latent_strength(shape, rate)`. Latent partitions
+use one of the following common constructors:
 
 ``` r
 
-make_bt_simple_loo(w_ij, lambda_samples)
-make_bt_cluster_loo(w_ij, lambda_samples, x_samples)
+gnedin_prior(gnedin_hyperparameter = 0.5)
+dirichlet_process_prior(concentration = 1)
+pitman_yor_prior(concentration = 1, discount = 0.2)
+finite_partition(max_clusters = 4, concentration = 1)
 ```
 
-**Both return**:
+If `iter` is the total number of iterations and `warmup` is the
+discarded prefix, the number of saved draws is
+
+\\ S=\texttt{iter}-\texttt{warmup}. \\
+
+These names are shared by BT and PL models through
+`mcmc_control(iter, warmup, seed, ...)`.
+
+## The `btsbm_fit` object
+
+Every fit has the same top-level components:
 
 ``` r
-list(
-  ll = numeric matrix [S x D],
-  obs_idx = integer matrix [D x 2]  # i,j pairs with n_ij[i,j] > 0
-)
+
+fit$data
+fit$model
+fit$control
+fit$draws
+fit$diagnostics
+fit$elapsed
 ```
 
-### Model comparison
+The contents of `fit$draws` depend on the selected structure.
+
+| Draw component | Meaning | Dimension or form |
+|----|----|----|
+| `item_cluster` | sampled \\x_i\\ | `S x n` integer matrix |
+| `ranking_cluster` | sampled \\z\_\ell\\ | `S x L` integer matrix |
+| `n_item_clusters` | occupied item blocks | length `S` |
+| `n_ranking_clusters` | occupied ranking profiles | length `S` |
+| `latent_strength` | sampler-scale strengths | matrix for simple models; list of length `S` for variable-dimensional models |
+| `item_strength` | item-level reported strengths | `S x n` when defined |
+| `component_strength` | PL-mixture profile strengths | list of length `S` |
+| `cell_strength` | PL–LBM profile-by-block strengths | list of length `S` |
+
+Raw cluster numbers have no meaning across MCMC draws. Paper-style
+BT–SBM summaries relabel each draw by decreasing block strength, so
+cluster 1 is the strongest occupied block. Pairwise co-clustering
+summaries, such as
+[`posterior_similarity()`](https://laposanti.github.io/BTSBM/reference/posterior_similarity.md),
+are label-invariant and do not require this step.
+
+## Posterior summaries and plots
+
+The public summaries consume the `btsbm_fit` object directly:
 
 ``` r
 
-compare_bt_models_loo(simple_llo, cluster_llo)
+posterior_strength(fit)
+strength_summary(fit)
+posterior_similarity(fit, target = "item")
+log_lik(fit)
+mcmc_diagnostics(fit)
 ```
 
-**Returns** a list with `simple`, `cluster` (both `loo` objects) and
-`comparison` (from `loo::compare_models`).
+For a BT–SBM, the paper-oriented outputs use the same fit object:
 
-### Plotting helpers (selected)
+``` r
 
-- `plot_block_adjacency(fit, w_ij, ...)` – square heatmap ordered by
-  block and marginal wins.
-- `plot_assignment_probabilities(fit, w_ij = NULL, ...)` –
-  item-by-cluster assignment heatmap.
-- `plot_lambda_uncertainty(fit, w_ij, ...)` – forest plot of per-item ()
-  intervals (on log scale).
-- `block_winprob_table_from_lambdas(lambda_item, z, ...)` –
-  block-by-block Bradley-Terry win probabilities from player-level
-  strengths.
-- `plot_rank_intervals(x, ...)` – posterior rank intervals derived from
-  relabelled player-strength draws.
+pretty_table_K_distribution(fit)
+plot_block_adjacency(fit)
+plot_assignment_probabilities(fit)
+plot_rank_intervals(fit)
+```
 
-These accept `w_ij` to recover names and marginal summaries. They do
-**not** require `n_ij`.
+[`plot_assignment_probabilities()`](https://laposanti.github.io/BTSBM/reference/plot_assignment_probabilities.md)
+conditions on the posterior modal number of item blocks by default.
+Supply `max_n_clust = K` to condition on another sampled value. This
+separates uncertainty in item membership from uncertainty in the number
+of blocks.
 
-## Internal bookkeeping: `L_cap` vs `K`
+## Log-likelihood dimensions
 
-We distinguish:
+`log_lik(fit)` returns one contribution per observational unit:
 
-- `K` – number of occupied clusters in a draw (size of
-  `{k: csize[k] > 0}`).
-- `L_cap` – **label capacity**, the current size of the allocated label
-  id space. It satisfies `K ≤ L_cap ≤ min(n, K_max)` and is used to size
-  arrays such as `lambda_curr`. Empty labels have `NA` intensity.
+- for BT models, an `S x D` matrix, where \\D\\ is the number of
+  observed unordered pairs \\(i,j)\\ with \\i\<j\\ and \\n\_{ij}\>0\\;
+- for PL models, an `S x L` matrix, with one contribution per complete
+  ranking row.
 
-Diagnostics stored per saved draw: `K_per_iter` and `L_cap_per_iter`.
-
-## Validation rules
-
-- `w_ij` must be a square non-negative integer/numeric matrix with zero
-  diagonal.
-- Internally computed `n_ij = w_ij + t(w_ij)` is symmetric with zero
-  diagonal; we error if not.
-- For finite-cap priors, we enforce `K ≤ K_max` in both the urn weight
-  and capacity growth.
+If `loo` is installed, `loo_btsbm(fit)` uses this same observation-level
+definition.
 
 ## Minimal end-to-end example
 
 ``` r
 
-set.seed(1)
-n <- 6L
-w <- matrix(0L, n, n)
-w[lower.tri(w)] <- rpois(sum(lower.tri(w)), 2)
-w <- w + t(w) - diag(diag(w + t(w)))  # keep diag 0, symmetric wins implied through n_ij
-rownames(w) <- colnames(w) <- paste0("P", seq_len(n))
+library(RBBayes)
 
-fit <- gibbs_bt_sbm(
-  w_ij = w,
-  prior = "GN",
-  gamma_GN = 0.5,
-  T_iter = 300,
-  T_burn = 150,
-  verbose = FALSE
+pairwise <- tennis_toy(matches_per_pair = 8, seed = 1)
+model <- bt_sbm_model(
+  latent_strength = latent_strength(shape = 4, rate = exp(digamma(4))),
+  item_clustering = gnedin_prior(gnedin_hyperparameter = 0.5)
+)
+fit <- fit_model(
+  pairwise,
+  model,
+  mcmc_control(iter = 400, warmup = 200, seed = 2)
 )
 
-rel <- relabel_by_lambda(fit$x_samples, fit$lambda_samples)
-loo_simple  <- make_bt_simple_loo(w, lambda_samples = gibbs_bt_simple(w, T_iter=200, T_burn=100, verbose=FALSE)$lambda_samples)
-loo_cluster <- make_bt_cluster_loo(w, rel$cluster_lambda_ordered, rel$x_samples_relabel)
-comp <- compare_bt_models_loo(loo_simple, loo_cluster)
+dim(fit$draws$item_cluster)       # S x n
+length(fit$draws$n_item_clusters) # S
+dim(log_lik(fit))                 # S x D
+
+pretty_table_K_distribution(fit, p_min = 0)
+plot_block_adjacency(fit)
+plot_assignment_probabilities(fit)
 ```
 
-## Package documentation style
+## Validation rules
 
-- Arguments use **snake_case**.
-- Matrices with indexed entries use the `_ij` suffix.
-- Iteration counts are `T_iter` and `T_burn`.
-- Finite-cap prior parameter is `K_max`.
-- Roxygen: use `@param w_ij` (wins), state that `n_ij` is computed
-  internally.
-- Equations in roxygen use `\eqn{}` and `\deqn{}`; in articles use
-  inline `\( \)` and display `\[ \]`.
+- Pairwise wins must form a square, finite, non-negative matrix with
+  zero diagonal and unique item labels.
+- Ranking rows must contain distinct integer item identifiers in
+  `1:item_count`.
+- BT models require data from
+  [`as_bt_data()`](https://laposanti.github.io/BTSBM/reference/as_bt_data.md);
+  PL models require data from
+  [`as_rankings()`](https://laposanti.github.io/BTSBM/reference/as_rankings.md).
+- `warmup` must be smaller than `iter`, and partition priors must
+  satisfy their documented parameter constraints.
 
-## Linking this vignette in pkgdown
-
-Add to `_pkgdown.yml`:
-
-``` yaml
-articles:
-  - title: Concepts
-    contents:
-      - notation
-navbar:
-  structure:
-    left: [reference, articles]
-  components:
-    articles:
-      text: Articles
-      menu:
-        - text: "Notation & Conventions"
-          href: articles/notation.html
-```
-
-Ensure the vignette file is saved as `vignettes/notation.Rmd` and that
-`DESCRIPTION` contains:
-
-``` text
-Suggests: knitr, rmarkdown, pkgdown
-VignetteBuilder: knitr
-```
-
-## Appendix: Probability parameterizations
-
-- **Bradley–Terry mapping**: given item-level rates (), define \[\_{ij}
-  = \] The helper `lambda_to_theta(lambda)` returns the full (nn) matrix
-  with (\_{ii}=1/2).
-
-- **Gamma prior centering**: we use rate parameter (b\_ = ((a))) so that
-  (\[\] = 0) a priori, aiding identifiability via global rescaling.
-
-- **Relabeling convention**: in each saved draw we order occupied
-  clusters by decreasing () and remap labels to (1..K). Item-level
-  intensities after relabeling are stored as `lambda_samples_relabel`
-  with shape `S x n`.
-
-------------------------------------------------------------------------
-
-**Version note.** If you previously used `n_iter`, `burnin`, or `H_DM`
-in earlier versions, these are now `T_iter`, `T_burn`, and `K_max`.
-Backward-compatibility shims may emit deprecation warnings.
+This interface keeps data preparation, model specification, computation,
+and posterior interpretation separate while using the same function
+architecture throughout the package.

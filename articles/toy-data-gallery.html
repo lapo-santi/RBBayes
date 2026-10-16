@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Toy datasets: choose a model and read its output • BTSBM: Bayesian paired-comparison and ranking models</title>
+<title>Toy datasets: choose a model and read its output • RBBayes: Bayesian paired-comparison and ranking models</title>
 <!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
   window.MathJax = {
     chtml: {
@@ -24,7 +24,7 @@
 
     <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="../index.html">BTSBM: Bayesian paired-comparison and ranking models</a>
+    <a class="navbar-brand me-2" href="../index.html">RBBayes: Bayesian paired-comparison and ranking models</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
@@ -79,7 +79,7 @@ small enough to run quickly, and designed around one practical question.
 They are for learning and testing; they are not real contest, survey, or
 match data.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/laposanti/BTSBM" class="external-link">BTSBM</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/laposanti/BTSBM" class="external-link">RBBayes</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="if-you-have-winloss-counts-tennis">If you have win/loss counts: tennis<a class="anchor" aria-label="anchor" href="#if-you-have-winloss-counts-tennis"></a>
 </h2>
@@ -92,7 +92,7 @@ most often?</p>
 <p><img src="toy-data-gallery_files/figure-html/tennis-data-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
 <p>Fit a BT–SBM if players may belong to broad tiers.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tennis_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_btsbm.html">fit_btsbm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">tennis_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span></span>
 <span>  <span class="va">tennis</span>,</span>
 <span>  <span class="fu"><a href="../reference/bt_sbm_model.html">bt_sbm_model</a></span><span class="op">(</span></span>
 <span>    item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/finite_partition.html">finite_partition</a></span><span class="op">(</span>max_clusters <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
@@ -120,7 +120,7 @@ items occur near the top of the reported rankings.</p>
 <p><img src="toy-data-gallery_files/figure-html/sushi-data-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
 <p>Then estimate item strengths and their uncertainty.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sushi_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_btsbm.html">fit_btsbm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">sushi_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span></span>
 <span>  <span class="va">sushi</span>,</span>
 <span>  <span class="fu"><a href="../reference/pl_model.html">pl_model</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/mcmc_control.html">mcmc_control</a></span><span class="op">(</span>iter <span class="op">=</span> <span class="fl">300</span>, warmup <span class="op">=</span> <span class="fl">150</span>, seed <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
@@ -146,7 +146,7 @@ is about groups of ranking rows rather than groups of items.</p>
 <span><span class="fu"><a href="../reference/plot_ranking_positions.html">plot_ranking_positions</a></span><span class="op">(</span><span class="va">votes</span><span class="op">)</span></span></code></pre></div>
 <p><img src="toy-data-gallery_files/figure-html/eurovision-data-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mixture_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_btsbm.html">fit_btsbm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">mixture_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span></span>
 <span>  <span class="va">votes</span>,</span>
 <span>  <span class="fu"><a href="../reference/pl_mixture_model.html">pl_mixture_model</a></span><span class="op">(</span></span>
 <span>    ranking_clustering <span class="op">=</span> <span class="fu"><a href="../reference/dirichlet_process_prior.html">dirichlet_process_prior</a></span><span class="op">(</span>concentration <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
@@ -169,7 +169,7 @@ fixture below has known generating groups, so it is a safe place to
 learn the workflow.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">structured_rankings</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pl_lbm_toy.html">pl_lbm_toy</a></span><span class="op">(</span>n_rankings <span class="op">=</span> <span class="fl">20</span>, rank_length <span class="op">=</span> <span class="fl">4</span>, seed <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span>
-<span><span class="va">lbm_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_btsbm.html">fit_btsbm</a></span><span class="op">(</span></span>
+<span><span class="va">lbm_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span></span>
 <span>  <span class="va">structured_rankings</span>,</span>
 <span>  <span class="fu"><a href="../reference/pl_lbm_model.html">pl_lbm_model</a></span><span class="op">(</span></span>
 <span>    ranking_clustering <span class="op">=</span> <span class="fu"><a href="../reference/finite_partition.html">finite_partition</a></span><span class="op">(</span>max_clusters <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span>

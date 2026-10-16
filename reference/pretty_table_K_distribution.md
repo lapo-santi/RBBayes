@@ -1,8 +1,8 @@
 # Format a block-count posterior distribution as a pretty- table
 
-Given the output of relabel_by_lambda, this function produces a pretty
-table with the posterior distribution of K, the number of blocks induced
-by the partition x. It formats the result with
+Given a common fit object (or lower-level relabelled output), this
+function produces a horizontal table with the posterior distribution of
+K, the number of occupied item blocks. It formats the result with
 [`knitr::kable`](https://rdrr.io/pkg/knitr/man/kable.html) and
 [`kableExtra::kable_styling`](https://rdrr.io/pkg/kableExtra/man/kable_styling.html).
 
@@ -12,9 +12,9 @@ by the partition x. It formats the result with
 pretty_table_K_distribution(
   post,
   format = "html",
-  p_min = 0.05,
+  p_min = 0,
   digits = 3,
-  latex_options = c("striped", "hold_position")
+  latex_options = "hold_position"
 )
 ```
 
@@ -22,7 +22,8 @@ pretty_table_K_distribution(
 
 - post:
 
-  The output of relabel_by_lambda()
+  A `btsbm_fit` with an item partition, or the output of
+  [`relabel_by_lambda()`](https://laposanti.github.io/BTSBM/reference/relabel_by_lambda.md).
 
 - format:
 
@@ -32,7 +33,7 @@ pretty_table_K_distribution(
 - p_min:
 
   Numeric scalar. Probabilities \\\le\\ this threshold are dropped
-  before pivoting. Defaults to `0.05`.
+  before pivoting. Defaults to `0`, so all sampled values are shown.
 
 - digits:
 
@@ -44,7 +45,8 @@ pretty_table_K_distribution(
 
   Character vector of LaTeX options passed to
   [`kableExtra::kable_styling`](https://rdrr.io/pkg/kableExtra/man/kable_styling.html).
-  Defaults to `c("striped","hold_position")`.
+  Defaults to `"hold_position"`; add `"striped"` only when the document
+  loads a table-aware colour package.
 
 ## Value
 
@@ -53,6 +55,5 @@ depending on `format`).
 
 ## Details
 
-The function produces a pretty table with the posterior distribution of
-K, the number of blocks induced by the partition x. it filters the
-clusters that have a p(K \> `p_min`).
+Values whose posterior probability is no larger than `p_min` are
+omitted.

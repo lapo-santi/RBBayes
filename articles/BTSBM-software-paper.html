@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>BTSBM: Bayesian Bradley-Terry Stochastic Block Models in R • BTSBM: Bayesian paired-comparison and ranking models</title>
+<title>Package 'RBBayes' • RBBayes: Bayesian paired-comparison and ranking models</title>
 <!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
   window.MathJax = {
     chtml: {
@@ -16,7 +16,7 @@
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="BTSBM: Bayesian Bradley-Terry Stochastic Block Models in R">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Package 'RBBayes'">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -24,7 +24,7 @@
 
     <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="../index.html">BTSBM: Bayesian paired-comparison and ranking models</a>
+    <a class="navbar-brand me-2" href="../index.html">RBBayes: Bayesian paired-comparison and ranking models</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
@@ -65,11 +65,11 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>BTSBM: Bayesian Bradley-Terry Stochastic Block Models in R</h1>
+      <h1>Package 'RBBayes'</h1>
                         <h4 data-toc-skip class="author">Lapo Santi and
 Nial Friel</h4>
             
-            <h4 data-toc-skip class="date">2026-08-12</h4>
+            <h4 data-toc-skip class="date">2026-10-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/laposanti/BTSBM/blob/main/vignettes/BTSBM-software-paper.Rmd" class="external-link"><code>vignettes/BTSBM-software-paper.Rmd</code></a></small>
       <div class="d-none name"><code>BTSBM-software-paper.Rmd</code></div>
@@ -78,286 +78,112 @@ Nial Friel</h4>
     
     
 <div class="section level2">
-<h2 class="unnumbered" id="abstract">Abstract<a class="anchor" aria-label="anchor" href="#abstract"></a>
+<h2 id="btsbm-package-bayesian-paired-comparison-and-ranking-models-with-latent-blocks">
+<code>BTSBM-package</code>: Bayesian paired-comparison and ranking
+models with latent blocks<a class="anchor" aria-label="anchor" href="#btsbm-package-bayesian-paired-comparison-and-ranking-models-with-latent-blocks"></a>
 </h2>
-<p>This software paper documents BTSBM, an R package for Bayesian
-Bradley-Terry stochastic block models in paired comparison problems. The
-package is built for settings where strict item-by-item ranking is often
-too brittle, but an ordered block structure is stable and interpretable.
-We model directed wins <span class="math inline">\(w_{ij}\)</span>,
-infer latent allocations <span class="math inline">\(x_i\)</span>, infer
-the number of occupied blocks <span class="math inline">\(K\)</span>,
-and estimate block intensities <span class="math inline">\(\lambda_k\)</span>. The package provides Gibbs
-samplers, post-processing for label alignment, visual diagnostics, and
-model comparison tools based on leave-one-out criteria.</p>
-<p>The paper has two aims. The first is methodological: to explain the
-model and the Markov chain Monte Carlo updates in the notation used
-across the package. The second is practical: to provide a reproducible
-workflow with code and output, in the style commonly used in R package
-vignettes.</p>
+<p><strong>Description</strong></p>
+<p>RBBayes provides Bayesian Bradley–Terry and Plackett–Luce models
+through one data–model–fit interface. This vignette focuses on the
+Bradley–Terry stochastic block model (BT–SBM), in which items with
+similar competitive strength share an ordered latent block. The model
+learns block membership, block strength, and the number of occupied
+blocks jointly.</p>
+<p><strong>Details</strong></p>
+<p>Pairwise-comparison data record directional outcomes between items: a
+player defeats an opponent, a judge prefers one object to another, or
+one system wins an evaluation. The classical Bradley–Terry model assigns
+every item its own positive strength and therefore induces a strict
+order. That resolution can be too fine when nearby items are not
+credibly separable.</p>
+<p>The BT–SBM instead assigns item <span class="math inline">\(i\)</span> to a latent block <span class="math inline">\(x_i\)</span>. Items in the same block share a
+strength <span class="math inline">\(\lambda_{x_i}\)</span>; occupied
+blocks are ordered by strength. The result is a probabilistic tiered
+ranking rather than a forced item-by-item ordering. Posterior output
+keeps uncertainty visible through a distribution over the number of
+blocks, a block-ordered outcome matrix, conditional assignment
+probabilities, and rank intervals.</p>
+<p>The public workflow has four stages: prepare data, specify a model,
+set MCMC controls, and fit. The same fit class is then consumed by
+summaries, plots, diagnostics, and predictive-comparison functions.</p>
+<p><strong>Quick start</strong></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/laposanti/BTSBM" class="external-link">BTSBM</a></span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
-</h2>
-<p>This model is for paired-comparison analyses where the data are
-directional outcomes between items, such as wins/losses in sport,
-preference judgements, or expert comparisons. The package expects these
-data in adjacency-matrix form: a directed count matrix <span class="math inline">\(\mathbf{W}=(w_{ij})\)</span>, where <span class="math inline">\(w_{ij}\)</span> is how many times <span class="math inline">\(i\)</span> is preferred to or beats <span class="math inline">\(j\)</span>.</p>
-<p>The standard Bradley-Terry model gives a strict item-level ranking.
-In many applications that resolution is too fine: nearby items are often
-not credibly separable. BT-SBM keeps the Bradley-Terry comparison
-structure but ranks latent blocks rather than individuals, so items in
-the same block are rank-indifferent while blocks remain ordered by
-strength.</p>
-<div class="section level3">
-<h3 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
-</h3>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/laposanti/BTSBM" class="external-link">BTSBM</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">wins</span> <span class="op">&lt;-</span> <span class="va">ATP_2000_2025</span><span class="op">$</span><span class="va">`2017`</span><span class="op">$</span><span class="va">Y_ij</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">wins</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0L</span></span>
 <span></span>
-<span><span class="co"># Directed win-count matrix (n x n), with zero diagonal</span></span>
-<span><span class="va">w_ij</span> <span class="op">&lt;-</span> <span class="va">ATP_2000_2025</span><span class="op">$</span><span class="va">`2017`</span><span class="op">$</span><span class="va">Y_ij</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">w_ij</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0L</span></span>
-<span></span>
-<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gibbs_bt_sbm.html">gibbs_bt_sbm</a></span><span class="op">(</span></span>
-<span>  w_ij <span class="op">=</span> <span class="va">w_ij</span>,</span>
-<span>  prior <span class="op">=</span> <span class="st">"GN"</span>,</span>
-<span>  gamma_GN <span class="op">=</span> <span class="fl">0.8</span>,</span>
-<span>  T_iter <span class="op">=</span> <span class="fl">400</span>,</span>
-<span>  T_burn <span class="op">=</span> <span class="fl">200</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="va">pairwise</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_bt_data.html">as_bt_data</a></span><span class="op">(</span><span class="va">wins</span><span class="op">)</span></span>
+<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bt_sbm_model.html">bt_sbm_model</a></span><span class="op">(</span></span>
+<span>  latent_strength <span class="op">=</span> <span class="fu"><a href="../reference/latent_strength.html">latent_strength</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">2</span>, rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyperparameter <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span></span>
+<span>  <span class="va">pairwise</span>,</span>
+<span>  <span class="va">model</span>,</span>
+<span>  <span class="fu"><a href="../reference/mcmc_control.html">mcmc_control</a></span><span class="op">(</span>iter <span class="op">=</span> <span class="fl">2000</span>, warmup <span class="op">=</span> <span class="fl">1000</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">post</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/relabel_by_lambda.html">relabel_by_lambda</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">x_samples</span>, <span class="va">fit</span><span class="op">$</span><span class="va">lambda_samples</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_block_adjacency.html">plot_block_adjacency</a></span><span class="op">(</span>fit <span class="op">=</span> <span class="va">post</span>, w_ij <span class="op">=</span> <span class="va">w_ij</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="data-formatting-details-optional">Data formatting details (optional)<a class="anchor" aria-label="anchor" href="#data-formatting-details-optional"></a>
-</h3>
-<p>The required input is a directed <span class="math inline">\(n\times
-n\)</span> matrix <span class="math inline">\(\mathbf{W}=(w_{ij})\)</span>: rows are source
-items, columns are target items, and each cell <span class="math inline">\(w_{ij}\)</span> records how many times item <span class="math inline">\(i\)</span> beats, is chosen over, or is preferred
-to item <span class="math inline">\(j\)</span>.</p>
-<p>When raw data come with multiple contexts or judges, first aggregate
-those records to recover <span class="math inline">\(\mathbf{W}\)</span>. Let <span class="math inline">\(c\in\{1,\ldots,C\}\)</span> index context, <span class="math inline">\(j\in\{1,\ldots,J\}\)</span> index judge/rater, and
-<span class="math inline">\(r\)</span> index repeated pairwise
-observations. Define <span class="math display">\[
-y_{ij}^{(c,j,r)}=\mathbf{1}\{\text{in replicate }r,\text{ judge }j\text{
-in context }c\text{ prefers }i\text{ to }j\}.
-\]</span> Then <span class="math display">\[
-w_{ij}^{(c,j)} = \sum_r y_{ij}^{(c,j,r)},
-\]</span> and aggregate to <span class="math display">\[
-w_{ij}=\sum_{c=1}^{C}\sum_{j=1}^{J} w_{ij}^{(c,j)}.
-\]</span> This gives the directed adjacency matrix <span class="math inline">\(\mathbf{W}\)</span> used by
-<code><a href="../reference/gibbs_bt_sbm.html">gibbs_bt_sbm()</a></code>. The match totals <span class="math inline">\(n_{ij}=w_{ij}+w_{ji}\)</span> are computed
-internally. If context effects are central, you can repeat the same
-construction within each context <span class="math inline">\(c\)</span>
-and fit context-specific models.</p>
-</div>
+<span><span class="fu"><a href="../reference/pretty_table_K_distribution.html">pretty_table_K_distribution</a></span><span class="op">(</span><span class="va">fit</span>, p_min <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plot_block_adjacency.html">plot_block_adjacency</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plot_assignment_probabilities.html">plot_assignment_probabilities</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Authors</strong></p>
+<p>Lapo Santi and Nial Friel.</p>
+<p><strong>References</strong></p>
+<p>Bradley, R. A. and Terry, M. E. (1952). Rank analysis of incomplete
+block designs: I. The method of paired comparisons. <em>Biometrika</em>,
+39(3/4), 324–345.</p>
+<p>Santi, L. and Friel, N. (2026). The Bradley–Terry stochastic block
+model. <em>The Annals of Applied Statistics</em>, 20(2), 1766–1787.</p>
 </div>
 <div class="section level2">
-<h2 id="model-and-notation">Model and Notation<a class="anchor" aria-label="anchor" href="#model-and-notation"></a>
+<h2 id="as_bt_data-create-validated-bradleyterry-pairwise-data">
+<code>as_bt_data</code>: Create validated Bradley–Terry pairwise
+data<a class="anchor" aria-label="anchor" href="#as_bt_data-create-validated-bradleyterry-pairwise-data"></a>
 </h2>
-<p>We use the same notation as the main BT-SBM paper and keep a
-one-to-one map to package objects.</p>
-<p>Let <span class="math inline">\(w_{ij}\)</span> be directed wins,
-with <span class="math inline">\(w_{ii}=0\)</span>, and define <span class="math display">\[
-n_{ij}=w_{ij}+w_{ji}.
-\]</span></p>
-<p>Collecting all <span class="math inline">\(w_{ij}\)</span> gives the
-directed outcome matrix <span class="math inline">\(\mathbf{W}\in\mathbb{N}^{n\times n}\)</span>,
-while <span class="math inline">\(\mathbf{N}=\mathbf{W}+\mathbf{W}^\top\)</span> is
-symmetric with zero diagonal. We also use <span class="math inline">\(E=\{(i,j): n_{ij}&gt;0\}\)</span> for observed
-pairs.</p>
-<p>Each item <span class="math inline">\(i\)</span> has a latent block
-label <span class="math inline">\(x_i \in \{1,\dots,K\}\)</span>. Each
-occupied block <span class="math inline">\(k\)</span> has intensity
-<span class="math inline">\(\lambda_k&gt;0\)</span>. The Bradley-Terry
-map is <span class="math display">\[
-\theta_{x_i x_j} = \frac{\lambda_{x_i}}{\lambda_{x_i}+\lambda_{x_j}},
-\]</span> and outcomes satisfy <span class="math display">\[
-w_{ij} \mid n_{ij}, x, \lambda \sim \mathrm{Binomial}(n_{ij},
-\theta_{x_i x_j}).
-\]</span></p>
-<p>For priors on <span class="math inline">\(\lambda_k\)</span>, BTSBM
-uses <span class="math display">\[
-\lambda_k \sim \mathrm{Gamma}(a,b), \qquad b = \exp\{\psi(a)\},
-\]</span> so that <span class="math inline">\(\mathbb{E}[\log
-\lambda_k]=0\)</span> a priori.</p>
-<p>For partitions, the package supports DP, PY, DM, and GN urn-style
-priors through prior weights in the single-site allocation updates.</p>
-<p>To make the translation to code explicit, the paper notation <span class="math inline">\((\mathbf{W},\mathbf{N},x,\lambda,K,E)\)</span>
-corresponds to
-<code>(w_ij, w_ij + t(w_ij), x_samples, lambda_samples, K_per_iter, obs_idx)</code>
-in package outputs.</p>
-<div class="section level3">
-<h3 id="priors-on-x-what-is-supported-and-how-to-set-it">Priors on <span class="math inline">\(x\)</span>: what is supported
-and how to set it<a class="anchor" aria-label="anchor" href="#priors-on-x-what-is-supported-and-how-to-set-it"></a>
-</h3>
-<p>The prior on allocations <span class="math inline">\(x=(x_1,\ldots,x_n)\)</span> is selected with the
-<code>prior</code> argument in <code><a href="../reference/gibbs_bt_sbm.html">gibbs_bt_sbm()</a></code>. The
-supported options are:</p>
+<p><strong>Description</strong></p>
+<p><code><a href="../reference/as_bt_data.html">as_bt_data()</a></code> converts a square directed win-count matrix
+into the validated pairwise-data representation used by the common
+fitting interface.</p>
+<p><strong>Usage</strong></p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/as_bt_data.html">as_bt_data</a></span><span class="op">(</span><span class="va">wins</span>, item_labels <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Arguments</strong></p>
 <table class="table">
 <colgroup>
-<col width="25%">
-<col width="25%">
-<col width="25%">
-<col width="25%">
+<col width="50%">
+<col width="50%">
 </colgroup>
 <thead><tr class="header">
-<th><code>prior</code></th>
-<th>Hyperparameters</th>
-<th>Internal helper</th>
-<th>Typical use</th>
+<th>Argument</th>
+<th>Description</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><code>"DP"</code></td>
-<td><code>alpha_PY</code></td>
-<td><code>urn_DP</code></td>
-<td>Baseline CRP-like reinforcement</td>
+<td><code>wins</code></td>
+<td>Numeric square matrix. <code>wins[i, j]</code> is the number of wins
+for item <span class="math inline">\(i\)</span> over item <span class="math inline">\(j\)</span>. The diagonal must be zero.</td>
 </tr>
 <tr class="even">
-<td><code>"PY"</code></td>
-<td>
-<code>alpha_PY</code>, <code>sigma_PY</code>
-</td>
-<td><code>urn_PY</code></td>
-<td>Heavier-tail clustering than DP</td>
-</tr>
-<tr class="odd">
-<td><code>"DM"</code></td>
-<td>
-<code>beta_DM</code>, <code>K_DM</code>
-</td>
-<td><code>urn_DM</code></td>
-<td>Finite-cap clustering with max <code>K_DM</code>
-</td>
-</tr>
-<tr class="even">
-<td><code>"GN"</code></td>
-<td><code>gamma_GN</code></td>
-<td><code>urn_GN</code></td>
-<td>Finite-species Gibbs-type prior (default in examples)</td>
+<td><code>item_labels</code></td>
+<td>Optional character vector of item names. Matrix row names are used
+by default when available.</td>
 </tr>
 </tbody>
 </table>
-<p>Below are the corresponding predictive weights (as in Legramanti,
-Rigon, Durante, and Dunson, 2022):</p>
-<ol style="list-style-type: decimal">
-<li><p><code>prior = "DP"</code> (Dirichlet process / CRP-type weights)
-Uses <code>alpha_PY</code> and ignores <code>sigma_PY</code>: <span class="math display">\[
-  (v_1,\ldots,v_K,\alpha_{PY}),
-  \]</span> implemented by
-<code>urn_DP(v_minus, alpha_PY)</code>.</p></li>
-<li><p><code>prior = "PY"</code> (Pitman-Yor) Uses <code>alpha_PY</code>
-and <code>sigma_PY \in (0,1)</code>: <span class="math display">\[
-  (v_1-\sigma_{PY},\ldots,v_K-\sigma_{PY},\alpha_{PY}+K\sigma_{PY}),
-  \]</span> implemented by
-<code>urn_PY(v_minus, alpha_PY, sigma_PY)</code>.</p></li>
-<li><p><code>prior = "DM"</code> (finite Dirichlet-Multinomial) Uses
-<code>beta_DM</code> and a finite cap <code>K_DM</code>: <span class="math display">\[
-  (v_1+\beta_{DM},\ldots,v_K+\beta_{DM},\beta_{DM}(K_{DM}-K)\mathbf{1}_{K&lt;K_{DM}}),
-  \]</span> implemented by
-<code>urn_DM(v_minus, beta_DM, K_DM)</code>.</p></li>
-<li><p><code>prior = "GN"</code> (Gnedin-type finite-species prior) Uses
-<code>gamma_GN</code>: <span class="math display">\[
-  \big((v_1+1)(n-K+\gamma),\ldots,(v_K+1)(n-K+\gamma),K^2-K\gamma\big),
-  \]</span> implemented by
-<code>urn_GN(v_minus, gamma_GN)</code>.</p></li>
-</ol>
-<p>In code, <code><a href="../reference/gibbs_bt_sbm.html">gibbs_bt_sbm()</a></code> validates the needed
-hyperparameters and then dispatches through
-<code>urn_fun &lt;- switch(prior, DP = ..., PY = ..., DM = ..., GN = ...)</code>.
-During each single-site update of <span class="math inline">\(x_i\)</span>, this gives the prior mass for
-assigning item <span class="math inline">\(i\)</span> to each existing
-block and to one candidate new block.</p>
-<p>Minimal usage examples:</p>
+<p><strong>Value</strong></p>
+<p>An object of class <code>btsbm_pairwise_data</code>. It contains the
+validated directed win matrix and labels required by the fitting and
+plotting methods.</p>
+<p><strong>Details</strong></p>
+<p>Let <span class="math inline">\(w_{ij}\)</span> be the number of
+times item <span class="math inline">\(i\)</span> defeats item <span class="math inline">\(j\)</span>, with <span class="math inline">\(w_{ii}=0\)</span>, and define <span class="math inline">\(n_{ij}=w_{ij}+w_{ji}\)</span>. RBBayes stores the
+matrix <span class="math inline">\(\mathbf W=(w_{ij})\)</span> in the
+object returned by <code><a href="../reference/as_bt_data.html">as_bt_data()</a></code> and computes match totals
+internally.</p>
+<p><strong>Example</strong></p>
+<p>This vignette uses one synthetic league throughout. It contains 18
+players generated from three strength tiers.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Dirichlet process prior on x</span></span>
-<span><span class="va">fit_dp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gibbs_bt_sbm.html">gibbs_bt_sbm</a></span><span class="op">(</span><span class="va">w_ij</span>, prior <span class="op">=</span> <span class="st">"DP"</span>, alpha_PY <span class="op">=</span> <span class="fl">1.0</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Pitman-Yor prior on x</span></span>
-<span><span class="va">fit_py</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gibbs_bt_sbm.html">gibbs_bt_sbm</a></span><span class="op">(</span><span class="va">w_ij</span>, prior <span class="op">=</span> <span class="st">"PY"</span>, alpha_PY <span class="op">=</span> <span class="fl">1.0</span>, sigma_PY <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Finite Dirichlet-Multinomial prior on x (at most K_DM blocks)</span></span>
-<span><span class="va">fit_dm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gibbs_bt_sbm.html">gibbs_bt_sbm</a></span><span class="op">(</span><span class="va">w_ij</span>, prior <span class="op">=</span> <span class="st">"DM"</span>, beta_DM <span class="op">=</span> <span class="fl">0.5</span>, K_DM <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Gnedin prior on x</span></span>
-<span><span class="va">fit_gn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gibbs_bt_sbm.html">gibbs_bt_sbm</a></span><span class="op">(</span><span class="va">w_ij</span>, prior <span class="op">=</span> <span class="st">"GN"</span>, gamma_GN <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
-<p>These four choices correspond directly to the helpers
-<code>urn_DP</code>, <code>urn_PY</code>, <code>urn_DM</code>, and
-<code>urn_GN</code> used internally by the sampler, and are the
-package-level interface to the partition-prior family discussed in
-Legramanti, Rigon, Durante, and Dunson (2022).</p>
-</div>
-</div>
-<div class="section level2">
-<h2 id="posterior-computation">Posterior Computation<a class="anchor" aria-label="anchor" href="#posterior-computation"></a>
-</h2>
-<p>The core sampler in <code><a href="../reference/gibbs_bt_sbm.html">gibbs_bt_sbm()</a></code> alternates three main
-blocks.</p>
-<p>First, latent variables <span class="math inline">\(Z_{ij}\)</span>
-are sampled for observed pairs <span class="math inline">\((i,j)\)</span> with <span class="math inline">\(n_{ij}&gt;0\)</span>: <span class="math display">\[
-Z_{ij} \sim \mathrm{Gamma}\!\left(n_{ij},
-\frac{1}{\lambda_{x_i}+\lambda_{x_j}}\right),
-\]</span> with symmetry <span class="math inline">\(Z_{ij}=Z_{ji}\)</span>. This step is implemented
-in C++ for speed.</p>
-<p>Second, each label <span class="math inline">\(x_i\)</span> is
-updated by single-site Gibbs moves. Existing clusters and one
-new-cluster option are compared on a log-weight scale: <span class="math display">\[
-\log p_h \propto \log(\text{prior mass}_h) + \text{likelihood
-contribution}_h.
-\]</span> For existing clusters, the key term is <span class="math display">\[
-w_i\log\lambda_h - \lambda_h\sum_j Z_{ij}, \qquad w_i = \sum_j w_{ij}.
-\]</span> For the new cluster, the package uses the integrated score
-under the Gamma prior.</p>
-<p>Third, occupied <span class="math inline">\(\lambda_k\)</span> are
-updated conjugately: <span class="math display">\[
-\lambda_k \mid - \sim \mathrm{Gamma}\left(a + \sum_{i:x_i=k} w_i,\ b +
-\sum_{i:x_i=k}\sum_j Z_{ij}\right).
-\]</span> Then a global geometric-mean rescaling of occupied intensities
-is applied for numerical stability.</p>
-</div>
-<div class="section level2">
-<h2 id="software-design">Software Design<a class="anchor" aria-label="anchor" href="#software-design"></a>
-</h2>
-<p>The implementation separates fitting, utilities, and plotting.</p>
-<ul>
-<li>
-<code><a href="../reference/gibbs_bt_sbm.html">gibbs_bt_sbm()</a></code> is the clustered sampler.</li>
-<li>
-<code><a href="../reference/gibbs_bt_simple.html">gibbs_bt_simple()</a></code> is the item-level Bradley-Terry
-baseline.</li>
-<li>
-<code><a href="../reference/relabel_by_lambda.html">relabel_by_lambda()</a></code> aligns labels across MCMC draws and
-computes posterior partition summaries.</li>
-<li>
-<code><a href="../reference/plot_block_adjacency.html">plot_block_adjacency()</a></code>,
-<code><a href="../reference/plot_assignment_probabilities.html">plot_assignment_probabilities()</a></code>,
-<code><a href="../reference/plot_lambda_uncertainty.html">plot_lambda_uncertainty()</a></code>, and
-<code><a href="../reference/plot_rank_intervals.html">plot_rank_intervals()</a></code> provide structured diagnostics.</li>
-<li>
-<code><a href="../reference/make_bt_simple_loo.html">make_bt_simple_loo()</a></code>,
-<code><a href="../reference/make_bt_cluster_loo.html">make_bt_cluster_loo()</a></code>, and
-<code><a href="../reference/compare_bt_models_loo.html">compare_bt_models_loo()</a></code> provide out-of-sample comparison
-helpers.</li>
-</ul>
-<p>The package ships with <code>ATP_2000_2025</code>, a yearly list with
-<code>Y_ij</code>, <code>N_ij</code>, and player metadata.</p>
-</div>
-<div class="section level2">
-<h2 id="reproducible-workflow">Reproducible Workflow<a class="anchor" aria-label="anchor" href="#reproducible-workflow"></a>
-</h2>
-<div class="section level3">
-<h3 id="simulation-first-example">Simulation-first example<a class="anchor" aria-label="anchor" href="#simulation-first-example"></a>
-</h3>
-<p>To ensure clear multi-cluster structure in a short run, we begin with
-synthetic paired-comparison data generated from three latent blocks.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_from_BTSBM.html">sample_from_BTSBM</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">simulation</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_from_BTSBM.html">sample_from_BTSBM</a></span><span class="op">(</span></span>
 <span>  n_players <span class="op">=</span> <span class="fl">18</span>,</span>
 <span>  K <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  mean_matches <span class="op">=</span> <span class="fl">8</span>,</span>
@@ -367,12 +193,9 @@ synthetic paired-comparison data generated from three latent blocks.</p>
 <span>  seed <span class="op">=</span> <span class="fl">123</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">w_ij</span> <span class="op">&lt;-</span> <span class="va">sim</span><span class="op">$</span><span class="va">w</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">w_ij</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0L</span></span>
-<span><span class="va">player_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Player_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">w_ij</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dimnames.html" class="external-link">dimnames</a></span><span class="op">(</span><span class="va">w_ij</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">player_ids</span>, <span class="va">player_ids</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">w_ij</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span>
+<span><span class="va">player_labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Player_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">simulation</span><span class="op">$</span><span class="va">w</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pairwise</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_bt_data.html">as_bt_data</a></span><span class="op">(</span><span class="va">simulation</span><span class="op">$</span><span class="va">w</span>, item_labels <span class="op">=</span> <span class="va">player_labels</span><span class="op">)</span></span>
+<span><span class="va">pairwise</span><span class="op">$</span><span class="va">wins</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span>
 <span><span class="co">#&gt;          Player_1 Player_2 Player_3 Player_4 Player_5 Player_6</span></span>
 <span><span class="co">#&gt; Player_1        0        1        0        0        0        0</span></span>
 <span><span class="co">#&gt; Player_2        5        0        1        6        0        0</span></span>
@@ -380,57 +203,342 @@ synthetic paired-comparison data generated from three latent blocks.</p>
 <span><span class="co">#&gt; Player_4        5        2        0        0        0        0</span></span>
 <span><span class="co">#&gt; Player_5        0        0        4       12        0        0</span></span>
 <span><span class="co">#&gt; Player_6        0        0        5        0        5        0</span></span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">w_ij</span><span class="op">)</span></span>
-<span><span class="va">S_demo</span> <span class="op">&lt;-</span> <span class="fl">300</span> <span class="op">-</span> <span class="fl">150</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>n <span class="op">=</span> <span class="va">n</span>, S <span class="op">=</span> <span class="va">S_demo</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   n   S </span></span>
-<span><span class="co">#&gt;  18 150</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="fit-clustered-model">Fit clustered model<a class="anchor" aria-label="anchor" href="#fit-clustered-model"></a>
-</h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gibbs_bt_sbm.html">gibbs_bt_sbm</a></span><span class="op">(</span></span>
-<span>  w_ij <span class="op">=</span> <span class="va">w_ij</span>,</span>
-<span>  a <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  prior <span class="op">=</span> <span class="st">"GN"</span>,</span>
-<span>  gamma_GN <span class="op">=</span> <span class="fl">0.8</span>,</span>
-<span>  T_iter <span class="op">=</span> <span class="fl">300</span>,</span>
-<span>  T_burn <span class="op">=</span> <span class="fl">150</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<div class="section level2">
+<h2 id="bt_sbm_model-define-a-bradleyterry-stochastic-block-model">
+<code>bt_sbm_model</code>: Define a Bradley–Terry stochastic block
+model<a class="anchor" aria-label="anchor" href="#bt_sbm_model-define-a-bradleyterry-stochastic-block-model"></a>
+</h2>
+<p><strong>Description</strong></p>
+<p><code><a href="../reference/bt_sbm_model.html">bt_sbm_model()</a></code> defines a clustered Bradley–Terry model.
+The simple model is defined with <code><a href="../reference/bt_model.html">bt_model()</a></code>. Both
+constructors return a <code>btsbm_model</code> and are fitted by
+<code><a href="../reference/fit_model.html">fit_model()</a></code>.</p>
+<p><strong>Usage</strong></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/bt_sbm_model.html">bt_sbm_model</a></span><span class="op">(</span></span>
+<span>  latent_strength <span class="op">=</span> <span class="fu"><a href="../reference/latent_strength.html">latent_strength</a></span><span class="op">(</span></span>
+<span>    shape <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>    rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span></span>
+<span>    gnedin_hyperparameter <span class="op">=</span> <span class="fl">0.5</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  ability_prior <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  item_prior <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><strong>Arguments</strong></p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Argument</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>latent_strength</code></td>
+<td>Gamma prior for positive block strengths, created by
+<code><a href="../reference/latent_strength.html">latent_strength()</a></code>.</td>
+</tr>
+<tr class="even">
+<td><code>item_clustering</code></td>
+<td>Prior on the latent item partition.</td>
+</tr>
+<tr class="odd">
+<td><code>ability_prior</code></td>
+<td>Deprecated alias for <code>latent_strength</code>.</td>
+</tr>
+<tr class="even">
+<td><code>item_prior</code></td>
+<td>Deprecated alias for <code>item_clustering</code>.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Value</strong></p>
+<p>A <code>btsbm_model</code> specification. It records scientific
+choices without starting the sampler.</p>
+<p><strong>Details</strong></p>
+<p>Each item has a block label <span class="math inline">\(x_i\in\{1,\ldots,K\}\)</span> and each occupied
+block has a positive strength <span class="math inline">\(\lambda_k\)</span>. The probability of a win
+is</p>
+<p><span class="math display">\[
+\Pr(i\text{ defeats }j\mid x,\lambda)
+=\frac{\lambda_{x_i}}{\lambda_{x_i}+\lambda_{x_j}},
+\]</span></p>
+<p>so the aggregated observation satisfies</p>
+<p><span class="math display">\[
+w_{ij}\mid n_{ij},x,\lambda
+\sim\operatorname{Binomial}\!\left(
+n_{ij},\frac{\lambda_{x_i}}{\lambda_{x_i}+\lambda_{x_j}}
+\right).
+\]</span></p>
+<p>The prior over <span class="math inline">\(x=(x_1,\ldots,x_n)\)</span> is a named model
+component rather than a collection of sampler-specific arguments.</p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Scientific choice</th>
+<th>Constructor</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Random finite number of blocks</td>
+<td><code>gnedin_prior(gnedin_hyperparameter = 0.8)</code></td>
+</tr>
+<tr class="even">
+<td>Dirichlet-process partition</td>
+<td><code>dirichlet_process_prior(concentration = 1)</code></td>
+</tr>
+<tr class="odd">
+<td>Pitman–Yor partition</td>
+<td><code>pitman_yor_prior(concentration = 1, discount = 0.2)</code></td>
+</tr>
+<tr class="even">
+<td>Fixed upper bound</td>
+<td><code>finite_partition(max_clusters = 4, concentration = 1)</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model_gnedin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bt_sbm_model.html">bt_sbm_model</a></span><span class="op">(</span></span>
+<span>  latent_strength <span class="op">=</span> <span class="fu"><a href="../reference/latent_strength.html">latent_strength</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">2</span>, rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyperparameter <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  x_samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">x_samples</span><span class="op">)</span>,</span>
-<span>  K_per_iter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">K_per_iter</span><span class="op">)</span>,</span>
-<span>  lambda_samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">lambda_samples</span><span class="op">)</span></span>
+<span><span class="va">model_finite</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bt_sbm_model.html">bt_sbm_model</a></span><span class="op">(</span></span>
+<span>  item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/finite_partition.html">finite_partition</a></span><span class="op">(</span>max_clusters <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="mcmc_control-set-mcmc-controls-for-an-rbbayes-fit">
+<code>mcmc_control</code>: Set MCMC controls for an RBBayes fit<a class="anchor" aria-label="anchor" href="#mcmc_control-set-mcmc-controls-for-an-rbbayes-fit"></a>
+</h2>
+<p><strong>Description</strong></p>
+<p><code><a href="../reference/mcmc_control.html">mcmc_control()</a></code> collects computational settings
+separately from the model specification. This makes it possible to reuse
+the same scientific model with different chain lengths, seeds, or
+initial states.</p>
+<p><strong>Usage</strong></p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/mcmc_control.html">mcmc_control</a></span><span class="op">(</span></span>
+<span>  iter <span class="op">=</span> <span class="fl">2000</span>,</span>
+<span>  warmup <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="va">iter</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  store <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"minimal"</span>, <span class="st">"augmented"</span><span class="op">)</span>,</span>
+<span>  init_item_cluster <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  init_ranking_cluster <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  progress_every <span class="op">=</span> <span class="fl">1000L</span>,</span>
+<span>  partition_moves <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><strong>Arguments</strong></p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Argument</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>iter</code></td>
+<td>Total number of MCMC iterations.</td>
+</tr>
+<tr class="even">
+<td><code>warmup</code></td>
+<td>Number of initial iterations discarded as warmup.</td>
+</tr>
+<tr class="odd">
+<td><code>seed</code></td>
+<td>Optional integer seed for reproducibility.</td>
+</tr>
+<tr class="even">
+<td><code>store</code></td>
+<td>Store the minimal state or also keep latent augmentations.</td>
+</tr>
+<tr class="odd">
+<td><code>init_item_cluster</code></td>
+<td>Optional initial item partition.</td>
+</tr>
+<tr class="even">
+<td><code>init_ranking_cluster</code></td>
+<td>Optional initial ranking partition for PL mixture and PL–LBM
+models.</td>
+</tr>
+<tr class="odd">
+<td>
+<code>verbose</code>, <code>progress_every</code>
+</td>
+<td>Control progress reporting.</td>
+</tr>
+<tr class="even">
+<td><code>partition_moves</code></td>
+<td>Optional settings created by <code><a href="../reference/partition_moves.html">partition_moves()</a></code>.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Value</strong></p>
+<p>An object of class <code>btsbm_mcmc_control</code>.</p>
+<p><strong>Example</strong></p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">control</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcmc_control.html">mcmc_control</a></span><span class="op">(</span>iter <span class="op">=</span> <span class="fl">400</span>, warmup <span class="op">=</span> <span class="fl">200</span>, seed <span class="op">=</span> <span class="fl">124</span><span class="op">)</span></span>
+<span><span class="va">control</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="fit_btsbm-fit-a-bayesian-bradleyterry-or-plackettluce-model">
+<code>fit_btsbm</code>: Fit a Bayesian Bradley–Terry or
+Plackett–Luce model<a class="anchor" aria-label="anchor" href="#fit_btsbm-fit-a-bayesian-bradleyterry-or-plackettluce-model"></a>
+</h2>
+<p><strong>Description</strong></p>
+<p><code><a href="../reference/fit_model.html">fit_model()</a></code> is the common fitting entry point for the
+simple and clustered Bradley–Terry and Plackett–Luce models.</p>
+<p><strong>Usage</strong></p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">model</span>, control <span class="op">=</span> <span class="fu"><a href="../reference/mcmc_control.html">mcmc_control</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Arguments</strong></p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Argument</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>data</code></td>
+<td>A <code>btsbm_pairwise_data</code> or
+<code>btsbm_ranking_data</code> object created by
+<code><a href="../reference/as_bt_data.html">as_bt_data()</a></code> or <code><a href="../reference/as_rankings.html">as_rankings()</a></code>.</td>
+</tr>
+<tr class="even">
+<td><code>model</code></td>
+<td>A model object created by an RBBayes model constructor.</td>
+</tr>
+<tr class="odd">
+<td><code>control</code></td>
+<td>An object created by <code><a href="../reference/mcmc_control.html">mcmc_control()</a></code>.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Value</strong></p>
+<p>An object of class <code>btsbm_fit</code>. Its stable draw names
+allow the same downstream summary and diagnostic functions to work
+across supported models.</p>
+<p><strong>Details</strong></p>
+<p>The internal BT–SBM kernel alternates three updates. A Thurstonian
+augmentation introduces latent <span class="math inline">\(Z_{ij}\)</span> variables for observed pairs. Item
+labels are then updated one at a time using the selected partition prior
+and the augmented likelihood. Finally, occupied strengths have conjugate
+Gamma updates. The number of occupied blocks may change during the label
+update, so <span class="math inline">\(K\)</span> is sampled rather than
+fixed.</p>
+<p>Cluster labels are permutation-invariant. For the summaries in this
+vignette, each draw is relabelled by decreasing occupied strength: block
+1 is strongest, block 2 is second strongest, and so forth. Users do not
+need to call a separate relabel step when using the
+<code>btsbm_fit</code> functions documented below.</p>
+<p><strong>Example</strong></p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bt_sbm_model.html">bt_sbm_model</a></span><span class="op">(</span></span>
+<span>  latent_strength <span class="op">=</span> <span class="fu"><a href="../reference/latent_strength.html">latent_strength</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">2</span>, rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyperparameter <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span><span class="va">pairwise</span>, <span class="va">model</span>, <span class="va">control</span><span class="op">)</span></span>
+<span><span class="va">fit</span></span>
+<span><span class="co">#&gt; &lt;btsbm_fit&gt; bt / item_sbm with 200 saved draws</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  item_cluster <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">draws</span><span class="op">$</span><span class="va">item_cluster</span><span class="op">)</span>,</span>
+<span>  n_item_clusters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">draws</span><span class="op">$</span><span class="va">n_item_clusters</span><span class="op">)</span>,</span>
+<span>  latent_strength <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">draws</span><span class="op">$</span><span class="va">latent_strength</span><span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 3</span></span>
-<span><span class="co">#&gt;  $ x_samples     : int [1:2] 150 18</span></span>
-<span><span class="co">#&gt;  $ K_per_iter    : int 150</span></span>
-<span><span class="co">#&gt;  $ lambda_samples: int 150</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">K_per_iter</span><span class="op">)</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="fl">6</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  3  4  5  6  7 10 </span></span>
-<span><span class="co">#&gt; 94 32 14  7  1  1</span></span></code></pre></div>
+<span><span class="co">#&gt;  $ item_cluster   : int [1:2] 200 18</span></span>
+<span><span class="co">#&gt;  $ n_item_clusters: int 200</span></span>
+<span><span class="co">#&gt;  $ latent_strength: int 200</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="relabel-and-summarize">Relabel and summarize<a class="anchor" aria-label="anchor" href="#relabel-and-summarize"></a>
-</h3>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">post</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/relabel_by_lambda.html">relabel_by_lambda</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">x_samples</span>, <span class="va">fit</span><span class="op">$</span><span class="va">lambda_samples</span><span class="op">)</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/output_type.html" class="external-link">is_latex_output</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
-<span>    <span class="va">post</span><span class="op">$</span><span class="va">block_count_distribution</span>,</span>
-<span>    caption <span class="op">=</span> <span class="st">"Posterior distribution of the number of occupied blocks"</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../reference/pretty_table_K_distribution.html">pretty_table_K_distribution</a></span><span class="op">(</span><span class="va">post</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="pretty_table_k_distribution-format-the-posterior-distribution-of-occupied-blocks">
+<code>pretty_table_K_distribution</code>: Format the posterior
+distribution of occupied blocks<a class="anchor" aria-label="anchor" href="#pretty_table_k_distribution-format-the-posterior-distribution-of-occupied-blocks"></a>
+</h2>
+<p><strong>Description</strong></p>
+<p>This function produces a compact horizontal table of the posterior
+distribution of <span class="math inline">\(K\)</span>, the number of
+occupied item blocks. A complete distribution is usually more
+informative than its mode alone.</p>
+<p><strong>Usage</strong></p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/pretty_table_K_distribution.html">pretty_table_K_distribution</a></span><span class="op">(</span></span>
+<span>  <span class="va">post</span>,</span>
+<span>  format <span class="op">=</span> <span class="st">"html"</span>,</span>
+<span>  p_min <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  digits <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  latex_options <span class="op">=</span> <span class="st">"hold_position"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><strong>Arguments</strong></p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Argument</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>post</code></td>
+<td>A <code>btsbm_fit</code> with an item partition, or relabelled
+output.</td>
+</tr>
+<tr class="even">
+<td><code>format</code></td>
+<td>Output format, usually <code>"html"</code> or
+<code>"latex"</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>p_min</code></td>
+<td>Drop probabilities no larger than this threshold.</td>
+</tr>
+<tr class="even">
+<td><code>digits</code></td>
+<td>Number of digits used to display probabilities.</td>
+</tr>
+<tr class="odd">
+<td><code>latex_options</code></td>
+<td>Styling options passed to <code>kableExtra</code> for LaTeX
+output.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Value</strong></p>
+<p>A <code>knitr_kable</code> object suitable for the requested document
+format.</p>
+<p><strong>Example</strong></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/pretty_table_K_distribution.html">pretty_table_K_distribution</a></span><span class="op">(</span></span>
+<span>  <span class="va">fit</span>,</span>
+<span>  format <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/output_type.html" class="external-link">is_latex_output</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="st">"latex"</span> <span class="kw">else</span> <span class="st">"html"</span>,</span>
+<span>  p_min <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <table class="table table" style="margin-left: auto; margin-right: auto;">
 <thead><tr>
+<th style="text-align:left;">
+Quantity
+</th>
 <th style="text-align:right;">
 3
 </th>
@@ -440,198 +548,491 @@ synthetic paired-comparison data generated from three latent blocks.</p>
 <th style="text-align:right;">
 5
 </th>
+<th style="text-align:right;">
+6
+</th>
+<th style="text-align:right;">
+7
+</th>
+<th style="text-align:right;">
+9
+</th>
 </tr></thead>
 <tbody><tr>
-<td style="text-align:right;">
-0.627
+<td style="text-align:left;">
+Posterior probability
 </td>
 <td style="text-align:right;">
-0.213
+0.475
 </td>
 <td style="text-align:right;">
-0.093
+0.275
+</td>
+<td style="text-align:right;">
+0.195
+</td>
+<td style="text-align:right;">
+0.025
+</td>
+<td style="text-align:right;">
+0.025
+</td>
+<td style="text-align:right;">
+0.005
 </td>
 </tr></tbody>
 </table>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">post</span><span class="op">$</span><span class="va">block_count_distribution</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   num_blocks count        prob</span></span>
-<span><span class="co">#&gt; 1          3    94 0.626666667</span></span>
-<span><span class="co">#&gt; 2          4    32 0.213333333</span></span>
-<span><span class="co">#&gt; 3          5    14 0.093333333</span></span>
-<span><span class="co">#&gt; 4          6     7 0.046666667</span></span>
-<span><span class="co">#&gt; 5          7     1 0.006666667</span></span>
-<span><span class="co">#&gt; 6         10     1 0.006666667</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">post</span><span class="op">$</span><span class="va">minVI_partition</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 3</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="visual-diagnostics">Visual diagnostics<a class="anchor" aria-label="anchor" href="#visual-diagnostics"></a>
-</h3>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_block_adjacency.html">plot_block_adjacency</a></span><span class="op">(</span>fit <span class="op">=</span> <span class="va">post</span>, w_ij <span class="op">=</span> <span class="va">w_ij</span><span class="op">)</span></span></code></pre></div>
-<div class="figure" style="text-align: center">
-<img src="BTSBM-software-paper_files/figure-html/plot-block-1.png" class="r-plt" alt="Block-ordered adjacency heatmap. Rows and columns are ordered by inferred blocks, with boundary lines indicating block transitions." width="88%"><p class="caption">
-Block-ordered adjacency heatmap. Rows and columns are ordered by
-inferred blocks, with boundary lines indicating block transitions.
-</p>
-</div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_assignment_probabilities.html">plot_assignment_probabilities</a></span><span class="op">(</span>fit <span class="op">=</span> <span class="va">post</span>, w_ij <span class="op">=</span> <span class="va">w_ij</span>, x_hat <span class="op">=</span> <span class="va">post</span><span class="op">$</span><span class="va">minVI_partition</span><span class="op">)</span></span></code></pre></div>
-<div class="figure" style="text-align: center">
-<img src="BTSBM-software-paper_files/figure-html/plot-assign-1.png" class="r-plt" alt="Posterior assignment probabilities by player and cluster, after relabelling for interpretability." width="88%"><p class="caption">
-Posterior assignment probabilities by player and cluster, after
-relabelling for interpretability.
-</p>
-</div>
+<div class="section level2">
+<h2 id="plot_block_adjacency-display-outcomes-in-posterior-block-order">
+<code>plot_block_adjacency</code>: Display outcomes in posterior
+block order<a class="anchor" aria-label="anchor" href="#plot_block_adjacency-display-outcomes-in-posterior-block-order"></a>
+</h2>
+<p><strong>Description</strong></p>
+<p><code><a href="../reference/plot_block_adjacency.html">plot_block_adjacency()</a></code> draws observed win rates after
+ordering items by a representative posterior partition and then by
+marginal win proportion within each block. Boundary lines and the
+coloured side band mark block transitions.</p>
+<p><strong>Usage</strong></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_lambda_uncertainty.html">plot_lambda_uncertainty</a></span><span class="op">(</span>fit <span class="op">=</span> <span class="va">post</span>, w_ij <span class="op">=</span> <span class="va">w_ij</span>, x_hat <span class="op">=</span> <span class="va">post</span><span class="op">$</span><span class="va">minVI_partition</span><span class="op">)</span></span></code></pre></div>
-<div class="figure" style="text-align: center">
-<img src="BTSBM-software-paper_files/figure-html/plot-lambda-1.png" class="r-plt" alt="Posterior uncertainty in block intensity parameters (lambda), summarising relative block strengths." width="88%"><p class="caption">
-Posterior uncertainty in block intensity parameters (lambda),
-summarising relative block strengths.
-</p>
-</div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_block_adjacency.html">plot_block_adjacency</a></span><span class="op">(</span></span>
+<span>  <span class="va">fit</span>,</span>
+<span>  w_ij <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  x_hat <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  relabel_blocks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"avg_lambda"</span><span class="op">)</span>,</span>
+<span>  lambda_hat <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  relabel_decreasing <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  clean_fun <span class="op">=</span> <span class="va">clean_players_names</span>,</span>
+<span>  players_df <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  players_id_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  labels_key_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  labels_value_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  clean_display_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  order_ids <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  palette <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fill_low <span class="op">=</span> <span class="st">"#FFFFCC"</span>,</span>
+<span>  fill_high <span class="op">=</span> <span class="st">"#006400"</span>,</span>
+<span>  no_match_label <span class="op">=</span> <span class="st">"No match played"</span>,</span>
+<span>  no_match_color <span class="op">=</span> <span class="st">"white"</span>,</span>
+<span>  mark_unplayed <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  unplayed_mark <span class="op">=</span> <span class="st">"×"</span>,</span>
+<span>  unplayed_mark_size <span class="op">=</span> <span class="fl">2.2</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><strong>Arguments</strong></p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Argument</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>fit</code></td>
+<td>A BT–SBM <code>btsbm_fit</code> object, or compatible relabelled
+output.</td>
+</tr>
+<tr class="even">
+<td>
+<code>w_ij</code>, <code>x_hat</code>
+</td>
+<td>Optional win matrix and partition estimate; these are normally
+obtained from <code>fit</code>.</td>
+</tr>
+<tr class="odd">
+<td>
+<code>relabel_blocks</code>, <code>lambda_hat</code>,
+<code>relabel_decreasing</code>
+</td>
+<td>Optional controls for ordering block labels by average
+strength.</td>
+</tr>
+<tr class="even">
+<td><code>clean_fun</code></td>
+<td>Optional function used to tidy display labels.</td>
+</tr>
+<tr class="odd">
+<td><code>labels</code></td>
+<td>Optional display labels, either named by item ID or aligned with
+items.</td>
+</tr>
+<tr class="even">
+<td>
+<code>players_df</code>, <code>players_id_col</code>,
+<code>labels_key_col</code>, <code>labels_value_col</code>,
+<code>clean_display_labels</code>
+</td>
+<td>Optional metadata-based label lookup and cleaning controls.</td>
+</tr>
+<tr class="odd">
+<td><code>order_ids</code></td>
+<td>Optional explicit ordering of item IDs.</td>
+</tr>
+<tr class="even">
+<td><code>palette</code></td>
+<td>Optional named vector of block colours.</td>
+</tr>
+<tr class="odd">
+<td>
+<code>fill_low</code>, <code>fill_high</code>
+</td>
+<td>Endpoints of the observed-win-rate colour scale.</td>
+</tr>
+<tr class="even">
+<td>
+<code>no_match_label</code>, <code>no_match_color</code>
+</td>
+<td>Legend label and colour for pairs with no observed match.</td>
+</tr>
+<tr class="odd">
+<td>
+<code>mark_unplayed</code>, <code>unplayed_mark</code>,
+<code>unplayed_mark_size</code>
+</td>
+<td>Control the optional marker drawn over unplayed pairs.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Value</strong></p>
+<p>A <code>ggplot</code> object. Each matrix cell is the observed win
+rate <span class="math inline">\(w_{ij}/n_{ij}\)</span>, not a posterior
+fitted probability.</p>
+<p><strong>Example</strong></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_rank_intervals.html">plot_rank_intervals</a></span><span class="op">(</span><span class="va">post</span>, max_players <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_block_adjacency.html">plot_block_adjacency</a></span><span class="op">(</span><span class="va">fit</span>, clean_fun <span class="op">=</span> <span class="va">identity</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="BTSBM-software-paper_files/figure-html/plot-rank-1.png" class="r-plt" alt="Posterior rank intervals for the top players, highlighting uncertainty in the induced ranking." width="88%"><p class="caption">
-Posterior rank intervals for the top players, highlighting uncertainty
-in the induced ranking.
+<img src="BTSBM-software-paper_files/figure-html/block-adjacency-1.png" class="r-plt" alt="Observed win rates reordered by the representative posterior partition. Boundary lines and the side band mark inferred blocks." width="88%"><p class="caption">
+Observed win rates reordered by the representative posterior partition.
+Boundary lines and the side band mark inferred blocks.
 </p>
 </div>
 </div>
-<div class="section level3">
-<h3 id="small-atp-illustration">Small ATP illustration<a class="anchor" aria-label="anchor" href="#small-atp-illustration"></a>
-</h3>
-<p>The simulation above is used for cluster-recovery diagnostics. For a
-lightweight real-data illustration, we run the same workflow on a small
-ATP subset.</p>
+<div class="section level2">
+<h2 id="plot_assignment_probabilities-display-posterior-uncertainty-over-block-membership">
+<code>plot_assignment_probabilities</code>: Display posterior
+uncertainty over block membership<a class="anchor" aria-label="anchor" href="#plot_assignment_probabilities-display-posterior-uncertainty-over-block-membership"></a>
+</h2>
+<p><strong>Description</strong></p>
+<p>This heatmap shows item-wise posterior assignment probabilities after
+ordering blocks by decreasing strength. By default, probabilities are
+conditional on the modal sampled value of <span class="math inline">\(K\)</span>. This separates uncertainty about which
+block an item occupies from uncertainty about how many blocks exist.</p>
+<p><strong>Usage</strong></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">w_ij_atp</span> <span class="op">&lt;-</span> <span class="va">ATP_2000_2025</span><span class="op">$</span><span class="va">`2017`</span><span class="op">$</span><span class="va">Y_ij</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">w_ij_atp</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0L</span></span>
-<span><span class="va">atp_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">w_ij_atp</span><span class="op">)</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">atp_ids</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">atp_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"ATP_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">w_ij_atp</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dimnames.html" class="external-link">dimnames</a></span><span class="op">(</span><span class="va">w_ij_atp</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">atp_ids</span>, <span class="va">atp_ids</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">fit_atp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gibbs_bt_sbm.html">gibbs_bt_sbm</a></span><span class="op">(</span></span>
-<span>  w_ij <span class="op">=</span> <span class="va">w_ij_atp</span>,</span>
-<span>  a <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  prior <span class="op">=</span> <span class="st">"GN"</span>,</span>
-<span>  gamma_GN <span class="op">=</span> <span class="fl">0.8</span>,</span>
-<span>  T_iter <span class="op">=</span> <span class="fl">180</span>,</span>
-<span>  T_burn <span class="op">=</span> <span class="fl">90</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">post_atp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/relabel_by_lambda.html">relabel_by_lambda</a></span><span class="op">(</span><span class="va">fit_atp</span><span class="op">$</span><span class="va">x_samples</span>, <span class="va">fit_atp</span><span class="op">$</span><span class="va">lambda_samples</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">post_atp</span><span class="op">$</span><span class="va">block_count_distribution</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   num_blocks count       prob</span></span>
-<span><span class="co">#&gt; 1          2    76 0.84444444</span></span>
-<span><span class="co">#&gt; 2          3    10 0.11111111</span></span>
-<span><span class="co">#&gt; 3          4     3 0.03333333</span></span>
-<span><span class="co">#&gt; 4          5     1 0.01111111</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="predictive-comparison-with-simple-bt">Predictive comparison with simple BT<a class="anchor" aria-label="anchor" href="#predictive-comparison-with-simple-bt"></a>
-</h3>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_assignment_probabilities.html">plot_assignment_probabilities</a></span><span class="op">(</span></span>
+<span>  <span class="va">fit</span>,</span>
+<span>  w_ij <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_n_clust <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  players_df <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  players_id_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  labels_key_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  labels_value_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  clean_display_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  clean_fun <span class="op">=</span> <span class="va">clean_players_names</span>,</span>
+<span>  x_hat <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  order_ids <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  k_show <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fill_low <span class="op">=</span> <span class="st">"#FFFFCC"</span>,</span>
+<span>  fill_high <span class="op">=</span> <span class="st">"#006400"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><strong>Arguments</strong></p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Argument</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>fit</code></td>
+<td>A BT–SBM <code>btsbm_fit</code> object, or compatible relabelled
+output.</td>
+</tr>
+<tr class="even">
+<td><code>w_ij</code></td>
+<td>Optional win matrix used for ordering and annotation; it is normally
+obtained from <code>fit</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>max_n_clust</code></td>
+<td>Occupied-cluster count on which probabilities are conditioned; the
+posterior mode is used by default.</td>
+</tr>
+<tr class="even">
+<td>
+<code>labels</code>, <code>clean_fun</code>
+</td>
+<td>Optional display labels and a function for tidying them.</td>
+</tr>
+<tr class="odd">
+<td>
+<code>players_df</code>, <code>players_id_col</code>,
+<code>labels_key_col</code>, <code>labels_value_col</code>,
+<code>clean_display_labels</code>
+</td>
+<td>Optional metadata-based label lookup and cleaning controls.</td>
+</tr>
+<tr class="even">
+<td>
+<code>x_hat</code>, <code>order_ids</code>
+</td>
+<td>Optional controls for item order.</td>
+</tr>
+<tr class="odd">
+<td><code>k_show</code></td>
+<td>Compatibility alias for <code>max_n_clust</code>.</td>
+</tr>
+<tr class="even">
+<td>
+<code>fill_low</code>, <code>fill_high</code>
+</td>
+<td>Endpoints of the probability colour scale.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Value</strong></p>
+<p>A <code>ggplot</code> object. A diffuse row indicates that an item
+lies near a posterior block boundary.</p>
+<p><strong>Example</strong></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit_simple</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gibbs_bt_simple.html">gibbs_bt_simple</a></span><span class="op">(</span></span>
-<span>  w_ij <span class="op">=</span> <span class="va">w_ij</span>,</span>
-<span>  a <span class="op">=</span> <span class="fl">0.01</span>,</span>
-<span>  b <span class="op">=</span> <span class="fl">0.1</span>,</span>
-<span>  T_iter <span class="op">=</span> <span class="fl">300</span>,</span>
-<span>  T_burn <span class="op">=</span> <span class="fl">150</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_assignment_probabilities.html">plot_assignment_probabilities</a></span><span class="op">(</span><span class="va">fit</span>, clean_fun <span class="op">=</span> <span class="va">identity</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<img src="BTSBM-software-paper_files/figure-html/assignment-probabilities-1.png" class="r-plt" alt="Posterior block-membership probabilities conditional on the modal number of occupied blocks." width="88%"><p class="caption">
+Posterior block-membership probabilities conditional on the modal number
+of occupied blocks.
+</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="plot_rank_intervals-plot-posterior-rank-intervals">
+<code>plot_rank_intervals</code>: Plot posterior rank intervals<a class="anchor" aria-label="anchor" href="#plot_rank_intervals-plot-posterior-rank-intervals"></a>
+</h2>
+<p><strong>Description</strong></p>
+<p>Because all items in a block share a strength, their induced ranks
+are tied. <code><a href="../reference/plot_rank_intervals.html">plot_rank_intervals()</a></code> summarizes posterior
+ordering without inventing within-block precision.</p>
+<p><strong>Usage</strong></p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_rank_intervals.html">plot_rank_intervals</a></span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  max_players <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  w_ij <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  player_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  burn_in <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  thin <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  ci <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  ties.method <span class="op">=</span> <span class="st">"average"</span>,</span>
+<span>  rank_grid_by <span class="op">=</span> <span class="fl">0.5</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><strong>Arguments</strong></p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Argument</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code></td>
+<td>A posterior-rank summary, posterior strength draws, a
+<code>btsbm_fit</code>, or compatible relabelled output.</td>
+</tr>
+<tr class="even">
+<td><code>max_players</code></td>
+<td>Optional maximum number of items displayed.</td>
+</tr>
+<tr class="odd">
+<td>
+<code>w_ij</code>, <code>player_names</code>
+</td>
+<td>Optional data and labels used when rank summaries must be
+computed.</td>
+</tr>
+<tr class="even">
+<td>
+<code>burn_in</code>, <code>thin</code>
+</td>
+<td>Optional post-processing controls for supplied draws.</td>
+</tr>
+<tr class="odd">
+<td><code>ci</code></td>
+<td>Posterior interval level.</td>
+</tr>
+<tr class="even">
+<td><code>ties.method</code></td>
+<td>Method passed to <code><a href="https://rdrr.io/r/base/rank.html" class="external-link">base::rank()</a></code>.</td>
+</tr>
+<tr class="odd">
+<td><code>rank_grid_by</code></td>
+<td>Spacing of the posterior-rank probability grid.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Value</strong></p>
+<p>A <code>ggplot</code> object.</p>
+<p><strong>Example</strong></p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_rank_intervals.html">plot_rank_intervals</a></span><span class="op">(</span><span class="va">fit</span>, max_players <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div>
+<p><img src="BTSBM-software-paper_files/figure-html/rank-intervals-1.png" class="r-plt" alt="" width="88%" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level2">
+<h2 id="mcmc_diagnostics-summarise-mixing-and-inspect-saved-traces">
+<code>mcmc_diagnostics</code>: Summarise mixing and inspect saved
+traces<a class="anchor" aria-label="anchor" href="#mcmc_diagnostics-summarise-mixing-and-inspect-saved-traces"></a>
+</h2>
+<p><strong>Description</strong></p>
+<p><code><a href="../reference/mcmc_diagnostics.html">mcmc_diagnostics()</a></code> computes lightweight scalar
+diagnostics, while <code><a href="../reference/plot_mcmc_traces.html">plot_mcmc_traces()</a></code> shows whether saved
+draws move around a stable region. Trace plots are an initial
+diagnostic, not proof of convergence.</p>
+<p><strong>Usage</strong></p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/mcmc_diagnostics.html">mcmc_diagnostics</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plot_mcmc_traces.html">plot_mcmc_traces</a></span><span class="op">(</span><span class="va">fit</span>, quantities <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Arguments</strong></p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Argument</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>fit</code></td>
+<td>A <code>btsbm_fit</code> object.</td>
+</tr>
+<tr class="even">
+<td><code>quantities</code></td>
+<td>Optional character vector naming scalar traces to display.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Value</strong></p>
+<p><code><a href="../reference/mcmc_diagnostics.html">mcmc_diagnostics()</a></code> returns a data frame with effective
+sample size, Monte Carlo standard error, and lag-one autocorrelation for
+each available scalar trace. <code><a href="../reference/plot_mcmc_traces.html">plot_mcmc_traces()</a></code> returns a
+<code>ggplot</code> object.</p>
+<p><strong>Example</strong></p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/mcmc_diagnostics.html">mcmc_diagnostics</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="co">#&gt;          quantity mean       sd      ess      mcse autocorrelation_lag_1</span></span>
+<span><span class="co">#&gt; 1 n_item_clusters 3.87 1.052921 35.20167 0.1774656              0.699808</span></span>
+<span><span class="fu"><a href="../reference/plot_mcmc_traces.html">plot_mcmc_traces</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
+<p><img src="BTSBM-software-paper_files/figure-html/diagnostics-1.png" class="r-plt" alt="" width="88%" style="display: block; margin: auto;"></p>
+<p>The short chain used here keeps the vignette quick to build. A
+scientific analysis should use longer independent chains and assess
+their agreement.</p>
+</div>
+<div class="section level2">
+<h2 id="loo_btsbm-run-predictive-comparison-for-a-fitted-model">
+<code>loo_btsbm</code>: Run predictive comparison for a fitted
+model<a class="anchor" aria-label="anchor" href="#loo_btsbm-run-predictive-comparison-for-a-fitted-model"></a>
+</h2>
+<p><strong>Description</strong></p>
+<p><code><a href="../reference/loo_btsbm.html">loo_btsbm()</a></code> runs Pareto-smoothed importance-sampling
+leave-one-out cross-validation using the pointwise log likelihood stored
+by the common fit interface.</p>
+<p><strong>Usage</strong></p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/loo_btsbm.html">loo_btsbm</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Arguments</strong></p>
+<table class="table">
+<thead><tr class="header">
+<th>Argument</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>fit</code></td>
+<td>A <code>btsbm_fit</code> object.</td>
+</tr>
+<tr class="even">
+<td><code>...</code></td>
+<td>Additional arguments passed to <code><a href="https://mc-stan.org/loo/reference/loo.html" class="external-link">loo::loo()</a></code>.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Value</strong></p>
+<p>A <code>loo</code> object. Models can be compared with
+<code><a href="https://mc-stan.org/loo/reference/loo_compare.html" class="external-link">loo::loo_compare()</a></code> when they use the same observations.</p>
+<p><strong>Example</strong></p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">simple_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span></span>
+<span>  <span class="va">pairwise</span>,</span>
+<span>  <span class="fu"><a href="../reference/bt_model.html">bt_model</a></span><span class="op">(</span>latent_strength <span class="op">=</span> <span class="fu"><a href="../reference/latent_strength.html">latent_strength</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">2</span>, rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/mcmc_control.html">mcmc_control</a></span><span class="op">(</span>iter <span class="op">=</span> <span class="fl">400</span>, warmup <span class="op">=</span> <span class="fl">200</span>, seed <span class="op">=</span> <span class="fl">125</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">llo_simple</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_bt_simple_loo.html">make_bt_simple_loo</a></span><span class="op">(</span><span class="va">w_ij</span>, <span class="va">fit_simple</span><span class="op">$</span><span class="va">lambda_samples</span><span class="op">)</span></span>
-<span><span class="va">llo_cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_bt_cluster_loo.html">make_bt_cluster_loo</a></span><span class="op">(</span></span>
-<span>  <span class="va">w_ij</span>,</span>
-<span>  <span class="va">post</span><span class="op">$</span><span class="va">lambda_samples_relabel</span>,</span>
-<span>  <span class="va">post</span><span class="op">$</span><span class="va">x_samples_relabel</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># The compare step requires the suggested package 'loo'.</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"loo"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">cmp_out</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="../reference/compare_bt_models_loo.html">compare_bt_models_loo</a></span><span class="op">(</span><span class="va">llo_simple</span>, <span class="va">llo_cluster</span><span class="op">)</span>,</span>
-<span>    error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="va">e</span></span>
-<span>  <span class="op">)</span></span>
-<span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">inherits</a></span><span class="op">(</span><span class="va">cmp_out</span>, <span class="st">"error"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
-<span>      <span class="st">"LOO comparison is unavailable in this local setup:"</span>,</span>
-<span>      <span class="fu"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">conditionMessage</a></span><span class="op">(</span><span class="va">cmp_out</span><span class="op">)</span></span>
-<span>    <span class="op">)</span></span>
-<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>    <span class="va">cmp_out</span><span class="op">$</span><span class="va">comparison</span></span>
-<span>  <span class="op">}</span></span>
+<span>  <span class="fu">loo</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/loo/reference/loo_compare.html" class="external-link">loo_compare</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    simple <span class="op">=</span> <span class="fu"><a href="../reference/loo_btsbm.html">loo_btsbm</a></span><span class="op">(</span><span class="va">simple_fit</span><span class="op">)</span>,</span>
+<span>    clustered <span class="op">=</span> <span class="fu"><a href="../reference/loo_btsbm.html">loo_btsbm</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span>  <span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>  <span class="st">"Install 'loo' to run compare_bt_models_loo()."</span></span>
+<span>  <span class="st">"Install 'loo' to run the predictive comparison."</span></span>
 <span><span class="op">}</span></span>
-<span><span class="co">#&gt;   model elpd_diff se_diff p_worse diag_diff        diag_elpd</span></span>
-<span><span class="co">#&gt;  model2       0.0     0.0      NA           82 k_psis &gt; 0.54</span></span>
-<span><span class="co">#&gt;  model1   -1359.9   382.6    1.00           60 k_psis &gt; 0.54</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="practical-notes-for-package-use">Practical Notes for Package Use<a class="anchor" aria-label="anchor" href="#practical-notes-for-package-use"></a>
-</h2>
-<p>The object dimensions used by BTSBM are consistent across functions.
-For <span class="math inline">\(S=T_{\text{iter}}-T_{\text{burn}}\)</span>,
-<code>x_samples</code> has shape <span class="math inline">\(S \times
-n\)</span>, <code>K_per_iter</code> has length <span class="math inline">\(S\)</span>, and relabelled item-level intensities
-are stored as <code>lambda_samples_relabel</code> with shape <span class="math inline">\(S \times n\)</span>.</p>
-<p>The main plotting functions expect relabelled output, not raw labels,
-because raw cluster indices are permutation-invariant across
-iterations.</p>
-<p>For computational control, the most important switches are matrix
-size <span class="math inline">\(n\)</span>, number of saved draws <span class="math inline">\(S\)</span>, and whether latent <span class="math inline">\(Z\)</span> draws are stored. The
-<code>store_z = TRUE</code> option is useful for diagnostics but
-substantially increases memory use.</p>
+<span><span class="co">#&gt;      model elpd_diff se_diff p_worse diag_diff        diag_elpd</span></span>
+<span><span class="co">#&gt;  clustered       0.0     0.0      NA           38 k_psis &gt; 0.57</span></span>
+<span><span class="co">#&gt;     simple      -4.5     3.5    0.90            5 k_psis &gt; 0.57</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="assumptions-and-limitations">Assumptions and Limitations<a class="anchor" aria-label="anchor" href="#assumptions-and-limitations"></a>
+<h2 id="btsbm-design-software-architecture-assumptions-and-scope">
+<code>BTSBM-design</code>: Software architecture, assumptions, and
+scope<a class="anchor" aria-label="anchor" href="#btsbm-design-software-architecture-assumptions-and-scope"></a>
 </h2>
-<p>BTSBM is intentionally focused. Outcomes are modelled through
-Bradley-Terry probabilities determined by latent intensities;
-pair-specific covariates and dynamic effects are not in the current core
-model. Partition priors are exchangeable and encoded through urn-style
-updates. The approach is effective for moderate problem sizes common in
-sports and ranking applications, but very large dense comparison
-matrices may require additional engineering.</p>
-</div>
-<div class="section level2">
-<h2 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
-</h2>
-<p>BTSBM provides a coherent workflow for Bayesian block-structured
-ranking from paired comparisons. It combines a model with interpretable
-latent structure, practical posterior computation, and
-publication-oriented diagnostics. The package is especially useful when
-strict total rankings are unstable but tiered structure is statistically
-and substantively credible.</p>
-</div>
-<div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
-</h2>
-<p>Bradley, R. A. and Terry, M. E. (1952). Rank analysis of incomplete
-block designs: I. The method of paired comparisons. Biometrika, 39(3/4),
-324-345.</p>
-<p>Ferguson, T. S. (1973). A Bayesian analysis of some nonparametric
-problems. The Annals of Statistics, 1(2), 209-230.</p>
-<p>Pitman, J. and Yor, M. (1997). The two-parameter Poisson-Dirichlet
-distribution derived from a stable subordinator. The Annals of
-Probability, 25(2), 855-900.</p>
-<p>Legramanti, S., Rigon, T., Durante, D., and Dunson, D. B. (2022).
-Extended stochastic block models with application to criminal networks.
-The Annals of Applied Statistics, 16(2), 865-891.</p>
+<p><strong>Software design</strong></p>
+<p>The public architecture separates five responsibilities:</p>
+<ol style="list-style-type: decimal">
+<li>
+<code><a href="../reference/as_bt_data.html">as_bt_data()</a></code> and <code><a href="../reference/as_rankings.html">as_rankings()</a></code> validate
+observations.</li>
+<li>Model constructors state the likelihood and latent structure.</li>
+<li>Prior constructors state reusable strength and partition
+priors.</li>
+<li>
+<code><a href="../reference/mcmc_control.html">mcmc_control()</a></code> holds computational settings.</li>
+<li>
+<code><a href="../reference/fit_model.html">fit_model()</a></code> returns a common fit consumed by summaries,
+plots, diagnostics, and <code><a href="../reference/log_lik.html">log_lik()</a></code>.</li>
+</ol>
+<p>This contract also covers the package’s Plackett–Luce models. The
+model-specific sampler remains an implementation detail, so analyses do
+not need different extraction and plotting code merely because the
+likelihood changes.</p>
+<p><strong>Assumptions and limitations</strong></p>
+<p>The Bradley–Terry likelihood assumes one transitive strength
+dimension and conditions on the observed comparison counts. The current
+core model does not include pair-specific covariates, temporal
+dependence, surface effects, or other contextual predictors. Partition
+priors are exchangeable. These assumptions should be checked against the
+scientific setting before interpreting inferred tiers.</p>
+<p><strong>Conclusion</strong></p>
+<p>RBBayes provides a coherent Bayesian workflow for pairwise outcomes
+when a strict ranking is more precise than the evidence supports. The
+posterior distribution over <span class="math inline">\(K\)</span>, the
+block-ordered adjacency matrix, and conditional assignment probabilities
+jointly show the inferred hierarchy and the uncertainty around its
+resolution and boundaries.</p>
+<p><strong>References</strong></p>
+<p>Caron, F. and Doucet, A. (2012). Efficient Bayesian inference for
+generalized Bradley–Terry models. <em>Journal of Computational and
+Graphical Statistics</em>, 21(1), 174–196.</p>
 <p>Vehtari, A., Gelman, A., and Gabry, J. (2017). Practical Bayesian
 model evaluation using leave-one-out cross-validation and WAIC.
-Statistics and Computing, 27, 1413-1432.</p>
+<em>Statistics and Computing</em>, 27, 1413–1432.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

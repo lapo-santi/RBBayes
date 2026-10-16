@@ -15,14 +15,17 @@ rankings.
 
 ``` r
 
-library(BTSBM)
+library(RBBayes)
 ```
 
 ## 1. Examine rankings before fitting
 
 The original Sushi Preference Dataset is a well-known benchmark. Its
 licence does not allow redistribution, so BTSBM includes a small
-synthetic Sushi-inspired teaching dataset instead. You can obtain the
+synthetic Sushi-inspired teaching dataset instead. It contains two
+simulated respondent preference profiles. Every model in this article is
+fitted to this same dataset, so the analysis becomes progressively
+richer without changing the scientific example. You can obtain the
 original data from [Kamishima’s data
 page](https://www.kamishima.net/soft/) if its terms suit your use.
 
@@ -58,7 +61,7 @@ illustration; use longer, multiple chains in a real analysis.
 
 ``` r
 
-simple_pl <- fit_btsbm(
+simple_pl <- fit_model(
   sushi,
   pl_model(latent_strength = latent_strength(shape = 1, rate = 1)),
   mcmc_control(iter = 600, warmup = 300, seed = 1)
@@ -96,7 +99,7 @@ not support a precise order inside every group.
 
 ``` r
 
-tiered_pl <- fit_btsbm(
+tiered_pl <- fit_model(
   sushi,
   pl_sbm_model(
     item_clustering = gnedin_prior(gnedin_hyperparameter = 0.5)
@@ -129,23 +132,15 @@ finite_partition(max_clusters = 4, concentration = 1)
 
 ## 4. Could respondents have different preference profiles?
 
-A PL mixture groups rankings, not sushi items. It answers questions such
-as whether there are distinct kinds of respondent preference. The
-Eurovision-inspired toy data is especially useful here because it has
-simulated jury and viewer profiles.
+A PL mixture groups rankings, not sushi items. On the same
+Sushi-inspired dataset, it asks whether respondents exhibit distinct
+preference profiles. This changes the model, not the data or the
+substantive question.
 
 ``` r
 
-votes <- eurovision_toy(n_rankings = 36, rank_length = 5, seed = 3)
-plot_ranking_positions(votes)
-```
-
-![](pl-ranking-models_files/figure-html/mixture-data-1.png)
-
-``` r
-
-mixture_fit <- fit_btsbm(
-  votes,
+mixture_fit <- fit_model(
+  sushi,
   pl_mixture_model(
     ranking_clustering = dirichlet_process_prior(concentration = 1)
   ),
@@ -153,7 +148,7 @@ mixture_fit <- fit_btsbm(
 )
 ```
 
-The rows and columns now refer to rankings, not acts. Dark blocks
+The rows and columns now refer to rankings, not sushi items. Dark blocks
 suggest respondents whose preferences were often assigned together.
 
 ``` r
@@ -166,15 +161,13 @@ plot_posterior_similarity(mixture_fit, target = "ranking")
 ## 5. Jointly group respondents and items
 
 The PL–LBM has both kinds of grouping: it clusters ranking rows and
-items at the same time. It is useful for a question like which
-respondent profiles prefer which groups of items. pl_lbm_toy() has known
-simulated structure so you can see the workflow.
+items at the same time. Continuing the Sushi-inspired analysis, it asks
+which respondent profiles prefer which groups of sushi items.
 
 ``` r
 
-structured_rankings <- pl_lbm_toy(n_rankings = 24, rank_length = 4, seed = 5)
-lbm_fit <- fit_btsbm(
-  structured_rankings,
+lbm_fit <- fit_model(
+  sushi,
   pl_lbm_model(
     ranking_clustering = finite_partition(max_clusters = 3),
     item_clustering = finite_partition(max_clusters = 3)

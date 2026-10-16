@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Ranking data: a beginner's guide to Plackett--Luce models • BTSBM: Bayesian paired-comparison and ranking models</title>
+<title>Ranking data: a beginner's guide to Plackett--Luce models • RBBayes: Bayesian paired-comparison and ranking models</title>
 <!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
   window.MathJax = {
     chtml: {
@@ -24,7 +24,7 @@
 
     <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="../index.html">BTSBM: Bayesian paired-comparison and ranking models</a>
+    <a class="navbar-brand me-2" href="../index.html">RBBayes: Bayesian paired-comparison and ranking models</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
@@ -87,14 +87,17 @@ selected. The strengths are relative rather than absolute: multiplying
 every strength by the same number would not change the predicted
 rankings.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/laposanti/BTSBM" class="external-link">BTSBM</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/laposanti/BTSBM" class="external-link">RBBayes</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="examine-rankings-before-fitting">1. Examine rankings before fitting<a class="anchor" aria-label="anchor" href="#examine-rankings-before-fitting"></a>
 </h2>
 <p>The original Sushi Preference Dataset is a well-known benchmark. Its
 licence does not allow redistribution, so BTSBM includes a small
-synthetic Sushi-inspired teaching dataset instead. You can obtain the
+synthetic Sushi-inspired teaching dataset instead. It contains two
+simulated respondent preference profiles. Every model in this article is
+fitted to this same dataset, so the analysis becomes progressively
+richer without changing the scientific example. You can obtain the
 original data from <a href="https://www.kamishima.net/soft/" class="external-link">Kamishima’s
 data page</a> if its terms suit your use.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -121,7 +124,7 @@ appears in each position; it is not yet a fitted model.</p>
 Gamma prior keeps strengths positive. The short chain below is for
 illustration; use longer, multiple chains in a real analysis.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">simple_pl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_btsbm.html">fit_btsbm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">simple_pl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span></span>
 <span>  <span class="va">sushi</span>,</span>
 <span>  <span class="fu"><a href="../reference/pl_model.html">pl_model</a></span><span class="op">(</span>latent_strength <span class="op">=</span> <span class="fu"><a href="../reference/latent_strength.html">latent_strength</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">1</span>, rate <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/mcmc_control.html">mcmc_control</a></span><span class="op">(</span>iter <span class="op">=</span> <span class="fl">600</span>, warmup <span class="op">=</span> <span class="fl">300</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
@@ -147,7 +150,7 @@ what place could each sushi item plausibly occupy? Rank 1 is best.</p>
 data support broad groups, such as often favoured and rarely favoured,
 but do not support a precise order inside every group.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tiered_pl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_btsbm.html">fit_btsbm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">tiered_pl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span></span>
 <span>  <span class="va">sushi</span>,</span>
 <span>  <span class="fu"><a href="../reference/pl_sbm_model.html">pl_sbm_model</a></span><span class="op">(</span></span>
 <span>    item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyperparameter <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
@@ -171,25 +174,22 @@ the decision being made:</p>
 <div class="section level2">
 <h2 id="could-respondents-have-different-preference-profiles">4. Could respondents have different preference profiles?<a class="anchor" aria-label="anchor" href="#could-respondents-have-different-preference-profiles"></a>
 </h2>
-<p>A PL mixture groups rankings, not sushi items. It answers questions
-such as whether there are distinct kinds of respondent preference. The
-Eurovision-inspired toy data is especially useful here because it has
-simulated jury and viewer profiles.</p>
+<p>A PL mixture groups rankings, not sushi items. On the same
+Sushi-inspired dataset, it asks whether respondents exhibit distinct
+preference profiles. This changes the model, not the data or the
+substantive question.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">votes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eurovision_toy.html">eurovision_toy</a></span><span class="op">(</span>n_rankings <span class="op">=</span> <span class="fl">36</span>, rank_length <span class="op">=</span> <span class="fl">5</span>, seed <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_ranking_positions.html">plot_ranking_positions</a></span><span class="op">(</span><span class="va">votes</span><span class="op">)</span></span></code></pre></div>
-<p><img src="pl-ranking-models_files/figure-html/mixture-data-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mixture_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_btsbm.html">fit_btsbm</a></span><span class="op">(</span></span>
-<span>  <span class="va">votes</span>,</span>
+<code class="sourceCode R"><span><span class="va">mixture_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span></span>
+<span>  <span class="va">sushi</span>,</span>
 <span>  <span class="fu"><a href="../reference/pl_mixture_model.html">pl_mixture_model</a></span><span class="op">(</span></span>
 <span>    ranking_clustering <span class="op">=</span> <span class="fu"><a href="../reference/dirichlet_process_prior.html">dirichlet_process_prior</a></span><span class="op">(</span>concentration <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/mcmc_control.html">mcmc_control</a></span><span class="op">(</span>iter <span class="op">=</span> <span class="fl">400</span>, warmup <span class="op">=</span> <span class="fl">200</span>, seed <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>The rows and columns now refer to rankings, not acts. Dark blocks
-suggest respondents whose preferences were often assigned together.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<p>The rows and columns now refer to rankings, not sushi items. Dark
+blocks suggest respondents whose preferences were often assigned
+together.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_posterior_similarity.html">plot_posterior_similarity</a></span><span class="op">(</span><span class="va">mixture_fit</span>, target <span class="op">=</span> <span class="st">"ranking"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="pl-ranking-models_files/figure-html/ranking-similarity-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
 </div>
@@ -197,23 +197,21 @@ suggest respondents whose preferences were often assigned together.</p>
 <h2 id="jointly-group-respondents-and-items">5. Jointly group respondents and items<a class="anchor" aria-label="anchor" href="#jointly-group-respondents-and-items"></a>
 </h2>
 <p>The PL–LBM has both kinds of grouping: it clusters ranking rows and
-items at the same time. It is useful for a question like which
-respondent profiles prefer which groups of items. pl_lbm_toy() has known
-simulated structure so you can see the workflow.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">structured_rankings</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pl_lbm_toy.html">pl_lbm_toy</a></span><span class="op">(</span>n_rankings <span class="op">=</span> <span class="fl">24</span>, rank_length <span class="op">=</span> <span class="fl">4</span>, seed <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="va">lbm_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_btsbm.html">fit_btsbm</a></span><span class="op">(</span></span>
-<span>  <span class="va">structured_rankings</span>,</span>
+items at the same time. Continuing the Sushi-inspired analysis, it asks
+which respondent profiles prefer which groups of sushi items.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">lbm_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span></span>
+<span>  <span class="va">sushi</span>,</span>
 <span>  <span class="fu"><a href="../reference/pl_lbm_model.html">pl_lbm_model</a></span><span class="op">(</span></span>
 <span>    ranking_clustering <span class="op">=</span> <span class="fu"><a href="../reference/finite_partition.html">finite_partition</a></span><span class="op">(</span>max_clusters <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span>
 <span>    item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/finite_partition.html">finite_partition</a></span><span class="op">(</span>max_clusters <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/mcmc_control.html">mcmc_control</a></span><span class="op">(</span>iter <span class="op">=</span> <span class="fl">400</span>, warmup <span class="op">=</span> <span class="fl">200</span>, seed <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_posterior_similarity.html">plot_posterior_similarity</a></span><span class="op">(</span><span class="va">lbm_fit</span>, target <span class="op">=</span> <span class="st">"item"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="pl-ranking-models_files/figure-html/lbm-item-similarity-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_posterior_similarity.html">plot_posterior_similarity</a></span><span class="op">(</span><span class="va">lbm_fit</span>, target <span class="op">=</span> <span class="st">"ranking"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="pl-ranking-models_files/figure-html/lbm-ranking-similarity-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
 </div>
@@ -224,7 +222,7 @@ simulated structure so you can see the workflow.</p>
 interpreting a partition. They are not a substitute for multiple chains,
 but they make it easy to spot a trace that is stuck or still
 drifting.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/mcmc_diagnostics.html">mcmc_diagnostics</a></span><span class="op">(</span><span class="va">tiered_pl</span><span class="op">)</span></span>
 <span><span class="co">#&gt;          quantity        mean        sd      ess      mcse</span></span>
 <span><span class="co">#&gt; 1 n_item_clusters    2.263333 0.9919351 23.00151 0.2068260</span></span>
