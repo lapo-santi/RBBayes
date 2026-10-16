@@ -127,7 +127,7 @@ Install the development version from GitHub:
 
 ```r
 # install.packages("devtools")
-devtools::install_github("lapo-santi/BTSBM-0b39af08")
+devtools::install_github("lapo-santi/RBBayes")
 library(RBBayes)
 ```
 
