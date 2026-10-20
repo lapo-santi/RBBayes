@@ -12,7 +12,8 @@ test_that("summaries identify BT versus BT-SBM without changing the likelihood",
     fit <- fit_preference(data, model, mcmc_control(iter = 20, warmup = 10, seed = 5))
     result <- summary(fit)
     expect_equal(result$model, structure)
-    expect_equal(result$likelihood, "bt")
+    expect_equal(result$likelihood, "Bradley-Terry")
+    expect_output(print(result), "Bradley-Terry")
   }
 })
 

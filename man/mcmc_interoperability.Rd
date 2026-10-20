@@ -43,10 +43,13 @@ numbering. Its chains must also have equal warm-up lengths.
 A coda mcmc object. Its first iteration is warmup + 1 and thin is 1.
 }
 \description{
-Columns \code{q[i]} are item strengths divided by their sum in each saved draw.
-With \code{normalise = FALSE}, \code{theta[i]} are the stored, unnormalised strengths.
-The index i follows \code{fit$data$item_labels}. K_item and K_ranking contain
-occupied-group counts when available. Only retained draws are returned.
+Columns are named after the items. \verb{rel_strength[<item>]} is the item's
+strength divided by the sum of all strengths in each saved draw (its share
+of total strength). With \code{normalise = FALSE}, \verb{lambda[<item>]} are the
+stored, unnormalised strengths. \code{n_item_blocks} and \code{n_ranking_groups}
+contain occupied-group counts when available. Only retained draws are
+returned. Older names (\code{q[i]}, \code{theta[i]}, \code{K_item}, \code{K_ranking}) are still
+accepted in \code{pars}.
 
 All fits must use identical data (including item order) and model
 specification, and have the same number of retained draws. The caller must

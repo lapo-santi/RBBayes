@@ -1,4 +1,4 @@
-#' Simulate a clearly separated twenty-player tennis league
+#' Simulate a tiered twenty-player tennis league
 #'
 #' Simulate a complete league with user-specified block strengths and sizes.
 #' A common random permutation shuffles both axes.
@@ -6,6 +6,8 @@
 #' @param seed Integer random seed, or NULL to use the current random state.
 #' @param n_blocks Positive integer number of generating blocks.
 #' @param latent_strength Positive vector with one strength per generating block.
+#'   The default `c(12, 6, 2, 1)` is on the same scale as the default Gamma
+#'   prior and gives tiers that are separable but not perfectly so.
 #' @param players_per_block Positive integer block sizes, either one common size
 #'   or a vector of length n_blocks.
 #' @param item_labels Optional unique names for all players.
@@ -15,7 +17,7 @@
 #' @export
 tennis_tiered_toy <- function(matches_per_pair = 20L, seed = 101L,
                                n_blocks = length(latent_strength),
-                               latent_strength = c(64, 16, 4, 1),
+                               latent_strength = c(12, 6, 2, 1),
                                players_per_block = 5L, item_labels = NULL,
                                format = c("data", "edgelist")) {
   format <- match.arg(format)
@@ -79,11 +81,18 @@ tennis_tiered_toy <- function(matches_per_pair = 20L, seed = 101L,
     # Include both directions, even zero counts, to retain all player names.
     index <- which(row(tennis$wins) != col(tennis$wins), arr.ind = TRUE)
     index <- index[order(index[, 1], index[, 2]), , drop = FALSE]
-    return(data.frame(
+    edges <- data.frame(
       winner = tennis$item_labels[index[, 1]],
       loser = tennis$item_labels[index[, 2]],
       count = as.numeric(tennis$wins[index]), stringsAsFactors = FALSE
-    ))
+    )
+    attr(edges, "truth") <- data.frame(
+      item = tennis$item_labels,
+      true_block = attr(tennis, "truth")$item_cluster,
+      true_strength = attr(tennis, "truth")$item_strength,
+      stringsAsFactors = FALSE
+    )
+    return(edges)
   }
   tennis
 }

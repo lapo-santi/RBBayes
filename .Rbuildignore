@@ -13,3 +13,4 @@
 ^local-presentation$
 # Research reference files are not package sources.
 ^paper$
+^tutorial-rendered$

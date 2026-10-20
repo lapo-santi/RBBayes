@@ -5,18 +5,37 @@
 \title{Define a simple Bradley--Terry model}
 \usage{
 bt_model(
-  latent_strength = .default_latent_strength(shape = 0.01, rate = 0.1),
+  shape = 4,
+  rate = exp(digamma(shape)),
+  latent_strength = NULL,
   ability_prior = NULL
 )
 }
 \arguments{
-\item{latent_strength}{Gamma prior for positive item strengths.}
+\item{shape, rate}{Shape and rate of the Gamma prior on every
+\eqn{\lambda_i}.}
 
-\item{ability_prior}{Deprecated alias for \code{latent_strength}.}
+\item{latent_strength, ability_prior}{Deprecated. A prior object from
+\code{\link[=latent_strength]{latent_strength()}}; if supplied it overrides \code{shape} and \code{rate}.}
 }
 \value{
 A \code{btsbm_model}.
 }
 \description{
-Define a simple Bradley--Terry model
+Each item \eqn{i} has its own positive strength \eqn{\lambda_i}, and
+\deqn{y_{ij} \mid \lambda \sim \mathrm{Binomial}\left(n_{ij},
+  \frac{\lambda_i}{\lambda_i + \lambda_j}\right).}
+The strengths are given independent and identically distributed Gamma
+priors, \eqn{\lambda_i \sim \mathrm{Gamma}(\mathrm{shape}, \mathrm{rate})}.
+Only the shape and rate need to be supplied: the model knows the
+\eqn{\lambda_i} are i.i.d.
+}
+\details{
+The default rate \code{exp(digamma(shape))} gives \eqn{E[\log \lambda_i] = 0},
+so a typical strength is about one. Strengths used to simulate data should
+be on a comparable scale (for example \code{c(12, 6, 2, 1)}, rather than values
+spanning several orders of magnitude).
+}
+\examples{
+bt_model(shape = 2)
 }

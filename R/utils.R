@@ -561,8 +561,8 @@ shannon_entropy <- function(p) {
 #'         cluster's \eqn{\lambda} after relabelling.}
 #'   \item{\code{co_clustering}}{Posterior similarity matrix (N x N).}
 #'   \item{\code{minVI_partition}}{Partition estimated by minimizing posterior expected VI
-#'         using \pkg{salso}.}
-#'   \item{\code{partition_binder}}{Partition estimated by Binder's loss using \pkg{salso}.}
+#'         (using \pkg{salso} when installed, otherwise a built-in search).}
+#'   \item{\code{partition_binder}}{Partition estimated by Binder's loss.}
 #'   \item{\code{n_clusters_each_iter}}{Integer vector (length S) of occupied cluster counts per iteration.}
 #'   \item{\code{block_count_distribution}}{Data frame with columns
 #'         \code{num_blocks}, \code{count}, \code{prob} summarizing the posterior of the
@@ -591,7 +591,7 @@ shannon_entropy <- function(p) {
 #' \itemize{
 #'   \item \code{x_samples} must be integer-valued with no missing items per row.
 #'   \item \code{lambda_samples} may be sparse (NAs for non-occupied labels).
-#'   \item \pkg{salso} must be available for the point-estimate summaries.
+#'   \item \pkg{salso} is used for the point estimates when installed.
 #' }
 #'
 #' @examples
@@ -613,7 +613,6 @@ shannon_entropy <- function(p) {
 #' @seealso \code{\link[salso]{salso}}, \code{\link[salso]{VI}},
 #'   \code{\link[salso]{binder}}, \code{\link[mcclust]{comp.psm}}
 #'
-#' @import mcclust
 #' @importFrom stats rexp
 #' @export
 
@@ -628,20 +627,10 @@ relabel_by_lambda <- function(x_samples, lambda_samples) {
   n_clusters_each_iter <- relabeled$n_clusters_each_iter
   top_block_count_per_iter <- relabeled$top_block_count_per_iter
 
-  psm <- mcclust::comp.psm(x_samples)
+  psm <- .psm_from_draws(x_samples)
 
-  partition_minVI <- salso::salso(
-    x_relabeled,
-    loss = salso::VI(),
-    nRuns = 16L,
-    nCores = 1L
-  )
-  partition_binder <- salso::salso(
-    x_relabeled,
-    loss = salso::binder(),
-    nRuns = 16L,
-    nCores = 1L
-  )
+  partition_minVI <- .partition_point_estimate_draws(x_relabeled, loss = "VI")
+  partition_binder <- .partition_point_estimate_draws(x_relabeled, loss = "binder")
 
   relabel_partition_by_item_mean_lambda <- function(z, lambda_item_mean) {
     stopifnot(length(z) == length(lambda_item_mean))
@@ -716,7 +705,10 @@ lambda_to_theta <- function(lambda) {
 
 
 
-#' Format a block-count posterior distribution as a pretty- table
+#' Format a block-count posterior distribution as a table (superseded)
+#'
+#' Superseded by [posterior_K_table()], which has a clearer name and returns a
+#' data frame by default.
 #'
 #' Given a common fit object (or lower-level relabelled output), this function
 #' produces a horizontal table with the posterior distribution of K, the number
@@ -745,7 +737,6 @@ lambda_to_theta <- function(lambda) {
 #' @importFrom tidyr pivot_wider
 #' @importFrom tidyselect all_of
 #' @importFrom knitr kable
-#' @importFrom kableExtra kable_styling
 #' @export
 pretty_table_K_distribution <- function(
     post,
@@ -796,6 +787,9 @@ pretty_table_K_distribution <- function(
       values_from = prob
     )
 
-  knitr::kable(df_wide, digits = digits,format = format) |>
-    kableExtra::kable_styling(latex_options = latex_options)
+  out <- knitr::kable(df_wide, digits = digits, format = format)
+  if (requireNamespace("kableExtra", quietly = TRUE)) {
+    out <- kableExtra::kable_styling(out, latex_options = latex_options)
+  }
+  out
 }

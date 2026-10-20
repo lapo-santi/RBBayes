@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{pretty_table_K_distribution}
 \alias{pretty_table_K_distribution}
-\title{Format a block-count posterior distribution as a pretty- table}
+\title{Format a block-count posterior distribution as a table (superseded)}
 \usage{
 pretty_table_K_distribution(
   post,
@@ -33,11 +33,14 @@ A \code{kableExtra} / \code{knitr_kable} object (suitable for LaTeX or HTML,
 depending on \code{format}).
 }
 \description{
+Superseded by \code{\link[=posterior_K_table]{posterior_K_table()}}, which has a clearer name and returns a
+data frame by default.
+}
+\details{
 Given a common fit object (or lower-level relabelled output), this function
 produces a horizontal table with the posterior distribution of K, the number
 of occupied item blocks.
 It formats the result with \code{knitr::kable} and \code{kableExtra::kable_styling}.
-}
-\details{
+
 Values whose posterior probability is no larger than \code{p_min} are omitted.
 }

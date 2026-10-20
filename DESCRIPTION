@@ -38,19 +38,19 @@ LinkingTo: Rcpp
 Imports:
     stats,
     Rcpp,
-    mcclust,
     dplyr,
     rlang,
-    salso,
     ggplot2,
     tidyr,
     magrittr,
     scales,
-    kableExtra,
     knitr,
     tidyselect
 Suggests:
     testthat (>= 3.0.0),
+    salso,
+    mcclust,
+    kableExtra,
     rmarkdown,
     pkgdown,
     coda,

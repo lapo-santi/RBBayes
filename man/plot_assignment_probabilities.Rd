@@ -19,8 +19,11 @@ plot_assignment_probabilities(
   x_hat = NULL,
   order_ids = NULL,
   k_show = NULL,
-  fill_low = "#FFFFCC",
-  fill_high = "#006400"
+  fill_low = "#B2182B",
+  fill_high = "#2166AC",
+  fill_mid = "#F7F7F7",
+  show_values = NULL,
+  z_hat = NULL
 )
 }
 \arguments{
@@ -54,7 +57,14 @@ assignment probabilities. If \code{NULL}, the posterior modal number is used.}
 
 \item{k_show}{Compatibility alias for \code{max_n_clust}.}
 
-\item{fill_low, fill_high}{Colors for the heatmap gradient low/high.}
+\item{fill_low, fill_mid, fill_high}{Colours at probability 0, 0.5 and 1.
+The scale diverges at 0.5, so blue cells mark items that are more likely
+than not to belong to that block.}
+
+\item{show_values}{Print the probabilities in the cells; defaults to \code{TRUE}
+for at most 30 items.}
+
+\item{z_hat}{Preferred name for \code{x_hat}: a hard partition used for ordering.}
 }
 \value{
 A \code{ggplot} object.

@@ -4,20 +4,24 @@
 \alias{strength_summary}
 \title{Summarise posterior item strengths with credible intervals}
 \usage{
-strength_summary(fit, credible_mass = 0.9)
+strength_summary(fit, credible_mass = 0.9, scale = c("relative", "raw"))
 }
 \arguments{
 \item{fit}{A simple BT/PL or item-SBM btsbm_fit object.}
 
 \item{credible_mass}{Width of the central posterior interval, in (0, 1).}
+
+\item{scale}{\code{"relative"} (default, shares adding to one) or \code{"raw"}
+(the strengths as stored by the sampler).}
 }
 \value{
 A data frame with one row per item, ordered from larger to smaller
 posterior mean strength.
 }
 \description{
-This is a compact numerical companion to plot_strength_summary(). The
-reported strengths are relative: for Plackett--Luce fits, the default
-reporting scale has geometric mean one; for Bradley--Terry fits, a larger
-value means a higher chance of beating an item with a smaller value.
+This is a compact numerical companion to \code{\link[=plot_strength_summary]{plot_strength_summary()}}. By
+default strengths are reported as relative strengths: in every draw each
+\eqn{\lambda_i} is divided by \eqn{\sum_j \lambda_j}, so they are shares that
+add to one and do not depend on the arbitrary overall scale. A larger value
+means a higher chance of beating (BT) or being preferred to (PL) others.
 }

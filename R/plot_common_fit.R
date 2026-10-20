@@ -25,24 +25,21 @@ plot_strength_summary <- function(fit, credible_mass = 0.9) {
   .require_ggplot2()
   summary_data <- strength_summary(fit, credible_mass = credible_mass)
   summary_data$item <- factor(summary_data$item, levels = rev(summary_data$item))
-  likelihood_label <- if (fit$model$likelihood == "pl") {
-    "Relative item strength (geometric mean = 1)"
-  } else {
-    "Relative item strength"
-  }
+  equal_share <- 1 / nrow(summary_data)
 
   ggplot2::ggplot(summary_data, ggplot2::aes(x = .data$mean, y = .data$item)) +
+    ggplot2::geom_vline(xintercept = equal_share, linetype = "dashed", colour = "#7F7F7F") +
     ggplot2::geom_errorbar(
       ggplot2::aes(xmin = .data$lower, xmax = .data$upper),
       width = 0, linewidth = 0.5, colour = "#4D4D4D"
     ) +
     ggplot2::geom_point(size = 2.2, colour = "#0072B2") +
-    ggplot2::geom_vline(xintercept = 1, linetype = "dashed", colour = "#7F7F7F") +
     ggplot2::labs(
-      x = likelihood_label,
+      x = "Relative strength (share of total strength)",
       y = NULL,
       title = "Posterior item strengths",
-      subtitle = paste0(round(credible_mass * 100), "% credible intervals"),
+      subtitle = paste0("Posterior means and ", round(credible_mass * 100),
+                        "% credible intervals; dashed line = equal strengths (1/n)"),
       caption = "A larger strength indicates a more preferred item (PL) or a stronger competitor (BT)."
     ) +
     ggplot2::theme_minimal(base_size = 12) +
@@ -51,18 +48,28 @@ plot_strength_summary <- function(fit, credible_mass = 0.9) {
 
 #' Plot the posterior similarity of items or rankings
 #'
-#' A dark cell means that two entities were often assigned to the same latent
-#' group across posterior draws. The plot is label-invariant, which makes it
-#' safer to interpret than the raw MCMC cluster labels.
+#' Cell \eqn{(i, j)} shows \eqn{\Pr(z_i = z_j \mid y)}, the proportion of
+#' draws in which the two entities share a latent group. The plot is
+#' label-invariant, which makes it safer to interpret than raw MCMC labels.
+#'
+#' For item partitions, rows are ordered by the point estimate of the partition
+#' (blocks outlined, block 1 strongest). Values below one inside an outlined
+#' block do not mean the items move to another block: in a given draw the
+#' block may simply be split into finer sub-blocks. Use [block_stability()] to
+#' see whether the missing mass goes to splitting or to merging.
 #'
 #' @param fit A btsbm_fit object containing an item or ranking partition.
 #' @param target Whether to plot latent groups of "item" or "ranking".
-#' @param order_rows Whether to cluster the rows and columns for display.
+#' @param order_rows Whether to reorder rows and columns for display.
+#' @param show_blocks Outline the blocks of the point estimate (items only).
+#' @param show_values Print probabilities in cells; defaults to `TRUE` for at
+#'   most 20 entities.
 #'
 #' @return A ggplot object.
 #' @export
 plot_posterior_similarity <- function(fit, target = c("item", "ranking"),
-                                      order_rows = TRUE) {
+                                      order_rows = TRUE, show_blocks = TRUE,
+                                      show_values = NULL) {
   .require_ggplot2()
   if (!inherits(fit, "btsbm_fit")) {
     stop("'fit' must be a btsbm_fit object.", call. = FALSE)
@@ -71,15 +78,25 @@ plot_posterior_similarity <- function(fit, target = c("item", "ranking"),
   similarity <- posterior_similarity(fit, target = target)
   labels <- if (target == "item") fit$data$item_labels else fit$data$ranking_labels
   display_order <- seq_along(labels)
+  z_hat <- NULL
+  if (target == "item" && !is.null(fit$draws$item_cluster)) {
+    z_hat <- partition_point_estimate(fit)
+  }
   if (isTRUE(order_rows) && length(labels) > 1L) {
-    dissimilarity_matrix <- 1 - similarity
-    dissimilarity_matrix[dissimilarity_matrix < 0] <- 0
-    diag(dissimilarity_matrix) <- 0
-    dissimilarity <- stats::as.dist(dissimilarity_matrix)
-    display_order <- stats::hclust(dissimilarity, method = "average")$order
+    if (!is.null(z_hat)) {
+      display_order <- order(z_hat, -.item_strength_mean(fit))
+    } else {
+      dissimilarity_matrix <- 1 - similarity
+      dissimilarity_matrix[dissimilarity_matrix < 0] <- 0
+      diag(dissimilarity_matrix) <- 0
+      dissimilarity <- stats::as.dist(dissimilarity_matrix)
+      display_order <- stats::hclust(dissimilarity, method = "average")$order
+    }
   }
   similarity <- similarity[display_order, display_order, drop = FALSE]
   labels <- labels[display_order]
+  n <- length(labels)
+  if (is.null(show_values)) show_values <- n <= 20L
   plot_data <- expand.grid(
     row = seq_along(labels), column = seq_along(labels),
     KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE
@@ -88,7 +105,7 @@ plot_posterior_similarity <- function(fit, target = c("item", "ranking"),
   plot_data$row_label <- factor(labels[plot_data$row], levels = rev(labels))
   plot_data$column_label <- factor(labels[plot_data$column], levels = labels)
 
-  ggplot2::ggplot(
+  p <- ggplot2::ggplot(
     plot_data, ggplot2::aes(x = .data$column_label, y = .data$row_label)
   ) +
     ggplot2::geom_tile(ggplot2::aes(fill = .data$probability), colour = "white", linewidth = 0.15) +
@@ -99,13 +116,35 @@ plot_posterior_similarity <- function(fit, target = c("item", "ranking"),
       y = NULL,
       fill = "Probability",
       title = paste("Posterior similarity of", if (target == "item") "items" else "rankings"),
-      subtitle = "Probability of belonging to the same latent group"
+      subtitle = if (!is.null(z_hat) && isTRUE(show_blocks)) {
+        "Pr(same block | y); outlines show the point estimate of the partition"
+      } else "Probability of belonging to the same latent group"
     ) +
     ggplot2::theme_minimal(base_size = 11) +
     ggplot2::theme(
       axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
       panel.grid = ggplot2::element_blank()
     )
+  if (isTRUE(show_values)) {
+    p <- p + ggplot2::geom_text(
+      ggplot2::aes(label = sprintf("%.2f", .data$probability),
+                   colour = .data$probability > 0.6),
+      size = 2.3, show.legend = FALSE
+    ) + ggplot2::scale_colour_manual(values = c(`FALSE` = "grey20", `TRUE` = "white"))
+  }
+  if (!is.null(z_hat) && isTRUE(show_blocks) && isTRUE(order_rows)) {
+    runs <- rle(as.integer(z_hat[display_order]))
+    ends <- cumsum(runs$lengths)
+    starts <- ends - runs$lengths + 1
+    boxes <- data.frame(xmin = starts - 0.5, xmax = ends + 0.5,
+                        ymin = n - ends + 0.5, ymax = n - starts + 1.5)
+    p <- p + ggplot2::geom_rect(
+      data = boxes, inherit.aes = FALSE,
+      ggplot2::aes(xmin = .data$xmin, xmax = .data$xmax, ymin = .data$ymin, ymax = .data$ymax),
+      fill = NA, colour = "#D55E00", linewidth = 0.8
+    )
+  }
+  p
 }
 
 #' Plot saved MCMC traces

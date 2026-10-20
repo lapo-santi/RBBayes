@@ -3,7 +3,7 @@
 \name{latent_strength}
 \alias{latent_strength}
 \alias{gamma_ability}
-\title{Define a Gamma prior for positive latent strengths}
+\title{Gamma prior object for positive strengths (low-level)}
 \usage{
 latent_strength(shape = 1, rate = 1)
 
@@ -18,7 +18,7 @@ gamma_ability(shape = 1, rate = 1)
 An object of class \code{btsbm_strength_prior}.
 }
 \description{
-A Plackett--Luce likelihood only identifies relative strengths. This prior
-is defined on the positive, unnormalised strengths used by the sampler;
-\code{pl_identifiability()} controls the scale used when strengths are reported.
+Model constructors such as \code{\link[=bt_model]{bt_model()}} now take \code{shape} and \code{rate}
+directly, so most users never need this function. It is kept for
+compatibility with code written for earlier development versions.
 }

@@ -45,7 +45,8 @@
 .normalise_strength <- function(strength, method) {
   strength <- pmax(as.numeric(strength), .Machine$double.eps)
   if (identical(method, "none")) return(strength)
-  strength / exp(mean(log(strength)))
+  if (identical(method, "logmean0")) return(strength / exp(mean(log(strength))))
+  strength / sum(strength)
 }
 
 .pl_log_lik_one <- function(rankings, item_strength) {

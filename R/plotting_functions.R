@@ -622,17 +622,14 @@ plot_block_adjacency <- function(
     }
   }
 
-  make_palette <- function(n, palette_name = "Dark 3") {
-    if (is.function(grDevices::hcl.colors)) return(grDevices::hcl.colors(n, palette = palette_name))
-    grDevices::rainbow(n)
-  }
-
   K <- length(unique(x_hat))
-  if (is.null(palette)) palette <- make_palette(K)
-  stopifnot(length(palette) == K)
   levs <- levels(factor(x_hat))
-  if (!is.null(names(palette)) && all(levs %in% names(palette))) palette <- palette[levs]
-  if (is.null(names(palette)) || !all(levs %in% names(palette))) names(palette) <- levs
+  if (!is.null(palette) && !is.null(names(palette)) && all(levs %in% names(palette))) {
+    palette <- palette[levs]
+  } else {
+    palette <- .block_palette(K, palette)
+    names(palette) <- levs
+  }
 
   to_title_safe <- function(x) {
     x <- gsub("[-_]", " ", x)
@@ -872,7 +869,12 @@ plot_block_adjacency <- function(
 #'   assignment probabilities. If `NULL`, the posterior modal number is used.
 #' @param x_hat Optional hard partition used to order players by cluster.
 #' @param order_ids Optional character vector specifying explicit item order.
-#' @param fill_low,fill_high Colors for the heatmap gradient low/high.
+#' @param fill_low,fill_mid,fill_high Colours at probability 0, 0.5 and 1.
+#'   The scale diverges at 0.5, so blue cells mark items that are more likely
+#'   than not to belong to that block.
+#' @param show_values Print the probabilities in the cells; defaults to `TRUE`
+#'   for at most 30 items.
+#' @param z_hat Preferred name for `x_hat`: a hard partition used for ordering.
 #' @return A \code{ggplot} object.
 #' @examples
 #' \dontrun{
@@ -894,9 +896,13 @@ plot_assignment_probabilities <- function(
     x_hat = NULL,
     order_ids = NULL,
     k_show = NULL,
-    fill_low = "#FFFFCC",
-    fill_high = "#006400"
+    fill_low = "#B2182B",
+    fill_high = "#2166AC",
+    fill_mid = "#F7F7F7",
+    show_values = NULL,
+    z_hat = NULL
 ){
+  if (!is.null(z_hat)) x_hat <- z_hat
   if (inherits(fit, "btsbm_fit")) {
     common_fit <- fit
     if (common_fit$model$likelihood != "bt" ||
@@ -1165,21 +1171,42 @@ plot_assignment_probabilities <- function(
       }
     )
 
-  ggplot2::ggplot(assignment_probs_long_plot) +
-    ggplot2::geom_tile(ggplot2::aes(x = Cluster, y = pl_id, fill = prob)) +
-    ggplot2::scale_fill_gradient(low = fill_low, high = fill_high, na.value = "#009680") +
-    ggplot2::labs(x = "", y = "", fill = "Assign. Prob.") +
+  if (is.null(show_values)) show_values <- length(unique(assignment_probs_long_plot$pl_id)) <= 30L
+  assignment_probs_long_plot$Cluster <- sub("^Cluster ", "Block ", assignment_probs_long_plot$Cluster)
+  assignment_probs_long_plot$Cluster <- factor(
+    assignment_probs_long_plot$Cluster,
+    levels = paste("Block", seq_len(max_n_clust))
+  )
+  p <- ggplot2::ggplot(assignment_probs_long_plot) +
+    ggplot2::geom_tile(ggplot2::aes(x = Cluster, y = pl_id, fill = prob),
+                       colour = "white", linewidth = 0.3) +
+    ggplot2::scale_fill_gradient2(low = fill_low, mid = fill_mid, high = fill_high,
+                                  midpoint = 0.5, limits = c(0, 1),
+                                  name = "Pr(z_i = k | y, K)") +
+    ggplot2::labs(
+      x = "", y = "",
+      title = sprintf("Block membership given K = %d", max_n_clust),
+      subtitle = sprintf("%d of %d draws (%.0f%%) have K = %d; block 1 is the strongest",
+                         length(keep_draws), nrow(fit$x_samples),
+                         100 * length(keep_draws) / nrow(fit$x_samples), max_n_clust)
+    ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(
-      axis.text.x = ggplot2::element_text(angle = 90),
       axis.title.x = ggplot2::element_blank(),
-      axis.title.y = ggplot2::element_blank()
+      axis.title.y = ggplot2::element_blank(),
+      panel.grid = ggplot2::element_blank()
     ) +
     ggplot2::scale_y_discrete(
       limits = if (!is.null(order_ids)) rev(unique(order_ids)) else ggplot2::waiver(),
-      labels = function(x) unname(id_to_disp[x]),
-      guide = ggplot2::guide_axis(n.dodge = 2)
+      labels = function(x) unname(id_to_disp[x])
     )
+  if (isTRUE(show_values)) {
+    p <- p + ggplot2::geom_text(
+      ggplot2::aes(x = Cluster, y = pl_id, label = sprintf("%.2f", prob)),
+      size = 2.6
+    )
+  }
+  p
 }
 
 #' Figure 5 plotting function
@@ -1282,12 +1309,7 @@ plot_lambda_uncertainty <- function(fit,
 
   if (is.null(x_hat)) {
     if (!is.null(max_n_clust) && length(keep_idx) < S) {
-      x_hat <- salso::salso(
-        x_samples_use,
-        loss = salso::binder(),
-        nRuns = 16L,
-        nCores = 1L
-      )
+      x_hat <- .partition_point_estimate_draws(x_samples_use, loss = "binder")
     } else if (!is.null(fit$minVI_partition)) {
       x_hat <- as.integer(fit$minVI_partition)
     } else if (!is.null(fit$partition_binder)) {
@@ -1476,18 +1498,7 @@ plot_lambda_uncertainty <- function(fit,
   player_summ$player_id <- factor(player_summ$player_id, levels = order_ids, ordered = TRUE)
   player_summ$cluster <- factor(player_summ$cluster, levels = seq_len(K_plot), ordered = TRUE)
 
-  palette_fun <- get0("btsbm_block_palette", mode = "function", inherits = TRUE)
-  if (is.function(palette_fun)) {
-    pal <- palette_fun(K_plot, palette)
-  } else {
-    if (!is.null(palette) && length(palette) >= K_plot) {
-      pal <- palette[seq_len(K_plot)]
-    } else if (!is.null(palette) && length(palette) >= 2) {
-      pal <- grDevices::colorRampPalette(palette)(K_plot)
-    } else {
-      pal <- grDevices::hcl.colors(K_plot, palette = "Dark 3")
-    }
-  }
+  pal <- .block_palette(K_plot, palette)
   names(pal) <- as.character(seq_len(K_plot))
 
   base_theme <- ggplot2::theme_minimal(base_size = 13) +

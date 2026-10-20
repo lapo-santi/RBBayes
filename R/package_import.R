@@ -1,6 +1,5 @@
 #' @importFrom stats rexp median rgamma rbinom runif dbinom setNames
 # roxygen on the function that uses them:
-#' @importFrom mcclust comp.psm
 
 #' @importFrom stats dbinom rgamma rbinom runif
 

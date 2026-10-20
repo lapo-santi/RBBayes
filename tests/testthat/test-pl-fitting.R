@@ -16,14 +16,14 @@ test_that("simple PL fitting returns a common fit object and ranking-level likel
   expect_equal(dim(ll), c(20, 16))
   expect_true(all(is.finite(ll)))
   expect_equal(attr(ll, "unit_index"), data$ranking_id)
-  expect_equal(summary(fit)$n_draws, 20L)
+  expect_equal(summary(fit)$retained_draws, 20L)
 })
 
 test_that("PL--SBM fitting records item partition and compatible likelihood", {
   data <- sushi_toy(n_rankings = 12, rank_length = 4, seed = 3)
   fit <- fit_btsbm(
     data,
-    pl_sbm_model(item_clustering = gnedin_prior(gnedin_hyperparameter = 0.6)),
+    pl_sbm_model(item_clustering = gnedin_prior(gnedin_hyper = 0.6)),
     mcmc_control(iter = 35, warmup = 15, seed = 4)
   )
 
@@ -44,7 +44,7 @@ test_that("PL--SBM fitting records item partition and compatible likelihood", {
 test_that("PL--SBM accepts every exposed clustering-prior family", {
   data <- sushi_toy(n_rankings = 10, rank_length = 3, seed = 12)
   priors <- list(
-    gnedin_prior(gnedin_hyperparameter = 0.6),
+    gnedin_prior(gnedin_hyper = 0.6),
     dirichlet_process_prior(concentration = 1),
     pitman_yor_prior(concentration = 1, discount = 0.2),
     finite_partition(max_clusters = 3, concentration = 1)

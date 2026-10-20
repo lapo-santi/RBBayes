@@ -70,13 +70,13 @@ number of tiers be learned from the data.
 
 ```{r choose-model}
 model <- bt_sbm_model(
-  latent_strength = latent_strength(shape = 4, rate = exp(digamma(4))),
-  item_clustering = gnedin_prior(gnedin_hyperparameter = 0.5)
+  shape = 4, rate = exp(digamma(4)),
+  item_clustering = gnedin_prior(gnedin_hyper = 0.5)
 )
 model
 ```
 
-The latent_strength() prior must be positive. item_clustering is a prior over
+`shape` and `rate` define the Gamma prior on each block strength $\lambda_k$. item_clustering is a prior over
 possible player tiers. You can use finite_partition(max_clusters = 3) when a
 strict upper limit is scientifically justified.
 
@@ -103,7 +103,7 @@ reports the posterior probability of each sampled value of $K$; it is more
 informative than reporting only the most frequent value.
 
 ```{r block-count-table}
-pretty_table_K_distribution(fit, p_min = 0)
+posterior_K_table(fit)
 ```
 
 Concentrated probability on one value means the data resolve the number of
@@ -121,7 +121,7 @@ tier; consistently darker upper-right blocks indicate that stronger tiers tend
 to defeat weaker ones.
 
 ```{r block-adjacency, fig.height=5.5, fig.cap="Observed win rates reordered by the representative BT--SBM partition. Boundary lines and the side band identify inferred tiers."}
-plot_block_adjacency(fit)
+plot_ordered_adjacency(fit)
 ```
 
 ## 6. Separate assignment uncertainty from uncertainty in $K$

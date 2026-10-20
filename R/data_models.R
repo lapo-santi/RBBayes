@@ -150,7 +150,8 @@ print.btsbm_ranking_data <- function(x, ...) {
 
 #' @export
 print.btsbm_strength_prior <- function(x, ...) {
-  cat("<latent_strength_prior> Gamma(shape =", x$shape, ", rate =", x$rate, ")\n")
+  cat("<strength prior> Gamma(shape = ", signif(x$shape, 4), ", rate = ",
+      signif(x$rate, 4), ")\n", sep = "")
   invisible(x)
 }
 
@@ -158,7 +159,7 @@ print.btsbm_strength_prior <- function(x, ...) {
 print.btsbm_partition_prior <- function(x, ...) {
   description <- switch(
     x$type,
-    gnedin = paste0("Gnedin(gnedin_hyperparameter = ", x$gnedin_hyperparameter, ")"),
+    gnedin = paste0("Gnedin(gnedin_hyper = ", x$gamma, ")"),
     dp = paste0("Dirichlet process(concentration = ", x$concentration, ")"),
     py = paste0("Pitman--Yor(concentration = ", x$concentration,
                 ", discount = ", x$discount, ")"),
@@ -169,11 +170,11 @@ print.btsbm_partition_prior <- function(x, ...) {
   invisible(x)
 }
 
-#' Define a Gamma prior for positive latent strengths
+#' Gamma prior object for positive strengths (low-level)
 #'
-#' A Plackett--Luce likelihood only identifies relative strengths. This prior
-#' is defined on the positive, unnormalised strengths used by the sampler;
-#' `pl_identifiability()` controls the scale used when strengths are reported.
+#' Model constructors such as [bt_model()] now take `shape` and `rate`
+#' directly, so most users never need this function. It is kept for
+#' compatibility with code written for earlier development versions.
 #'
 #' @param shape Positive Gamma shape for each latent strength.
 #' @param rate Positive Gamma rate for each latent strength.
@@ -205,8 +206,9 @@ gamma_ability <- function(shape = 1, rate = 1) {
 #'
 #' @param family One of `"gnedin"`, `"dirichlet_process"`, `"pitman_yor"`,
 #'   or `"finite_dirichlet"`.
-#' @param gnedin_hyperparameter Gnedin hyperparameter in `(0, 1)`. Larger
-#'   values favour more occupied groups a priori.
+#' @param gnedin_hyper Gnedin hyperparameter \eqn{\gamma} in `(0, 1)`.
+#'   Larger values favour more occupied groups a priori.
+#' @param gnedin_hyperparameter Deprecated alias for `gnedin_hyper`.
 #' @param concentration Concentration for the Dirichlet-process, Pitman--Yor,
 #'   or finite-Dirichlet prior.
 #' @param discount Pitman--Yor discount in `[0, 1)`.
@@ -217,9 +219,11 @@ gamma_ability <- function(shape = 1, rate = 1) {
 #' @export
 clustering_prior <- function(
     family = c("gnedin", "dirichlet_process", "pitman_yor", "finite_dirichlet"),
-    gnedin_hyperparameter = 0.5, concentration = 1, discount = 0.2,
-    max_clusters = NULL) {
+    gnedin_hyper = 0.5, concentration = 1, discount = 0.2,
+    max_clusters = NULL, gnedin_hyperparameter = NULL) {
   family <- match.arg(family)
+  if (!is.null(gnedin_hyperparameter)) gnedin_hyper <- gnedin_hyperparameter
+  gnedin_hyperparameter <- gnedin_hyper
   type <- switch(
     family,
     gnedin = "gnedin",
@@ -229,10 +233,11 @@ clustering_prior <- function(
   )
   if (type == "gnedin") {
     if (!is.finite(gnedin_hyperparameter) || gnedin_hyperparameter <= 0 || gnedin_hyperparameter >= 1) {
-      stop("`gnedin_hyperparameter` must lie in (0, 1).", call. = FALSE)
+      stop("`gnedin_hyper` must lie in (0, 1).", call. = FALSE)
     }
     values <- list(
       type = type, family = family,
+      gnedin_hyper = as.numeric(gnedin_hyperparameter),
       gnedin_hyperparameter = as.numeric(gnedin_hyperparameter),
       gamma = as.numeric(gnedin_hyperparameter)
     )
@@ -264,11 +269,19 @@ clustering_prior <- function(
 
 #' Gnedin prior for a latent partition
 #'
-#' @param gnedin_hyperparameter Gnedin hyperparameter in `(0, 1)`.
+#' A Gnedin (2010) prior allows a random but almost surely finite number of
+#' occupied groups.
+#'
+#' @param gnedin_hyper Gnedin hyperparameter \eqn{\gamma} in `(0, 1)`.
+#' @param gnedin_hyperparameter Deprecated alias for `gnedin_hyper`.
 #' @return An object of class `btsbm_partition_prior`.
+#' @examples
+#' gnedin_prior(gnedin_hyper = 0.5)
+#' prior_mean_K(20, gnedin_prior(0.5))
 #' @export
-gnedin_prior <- function(gnedin_hyperparameter = 0.5) {
-  clustering_prior("gnedin", gnedin_hyperparameter = gnedin_hyperparameter)
+gnedin_prior <- function(gnedin_hyper = 0.5, gnedin_hyperparameter = NULL) {
+  if (!is.null(gnedin_hyperparameter)) gnedin_hyper <- gnedin_hyperparameter
+  clustering_prior("gnedin", gnedin_hyper = gnedin_hyper)
 }
 
 #' Dirichlet-process prior for a latent partition
@@ -317,21 +330,25 @@ partition_prior <- function(type = c("gnedin", "dp", "py", "dm"),
   type <- match.arg(type)
   switch(
     type,
-    gnedin = clustering_prior("gnedin", gnedin_hyperparameter = gamma),
+    gnedin = clustering_prior("gnedin", gnedin_hyper = gamma),
     dp = clustering_prior("dirichlet_process", concentration = alpha),
     py = clustering_prior("pitman_yor", concentration = alpha, discount = sigma),
     dm = clustering_prior("finite_dirichlet", concentration = beta, max_clusters = K)
   )
 }
 
-#' Set the identifiable representation for Plackett--Luce abilities
+#' Set the reporting scale for Plackett--Luce strengths
 #'
-#' @param method Normalisation method.  `"logmean0"` gives each reported
-#'   ability vector geometric mean one.
+#' A Plackett--Luce likelihood only identifies strength ratios. By default each
+#' saved strength vector is divided by its sum (`"sum"`), so reported strengths
+#' are shares that add to one, exactly like the normalised Bradley--Terry
+#' strengths. `"logmean0"` (geometric mean one) is kept for compatibility.
+#'
+#' @param method One of `"sum"` (default), `"none"` or `"logmean0"`.
 #'
 #' @return An object of class `btsbm_pl_identifiability`.
 #' @export
-pl_identifiability <- function(method = c("logmean0", "none")) {
+pl_identifiability <- function(method = c("sum", "none", "logmean0")) {
   structure(list(method = match.arg(method)), class = "btsbm_pl_identifiability")
 }
 
@@ -439,61 +456,107 @@ partition_moves <- function(split_merge = 0L, ranking_split_merge = 0L,
   )
 }
 
+.resolve_strength_prior <- function(shape, rate, latent_strength = NULL,
+                                    ability_prior = NULL) {
+  legacy <- if (!is.null(latent_strength)) latent_strength else ability_prior
+  # Positional legacy call, e.g. bt_model(latent_strength(2, 1)).
+  if (is.null(legacy) && inherits(shape, "btsbm_strength_prior")) legacy <- shape
+  if (!is.null(legacy)) {
+    if (!inherits(legacy, "btsbm_strength_prior")) {
+      stop("`latent_strength` must be created by `latent_strength()`; ",
+           "new code should pass `shape` and `rate` directly.", call. = FALSE)
+    }
+    return(legacy)
+  }
+  latent_strength(shape = shape, rate = rate)
+}
+
 #' Define a simple Bradley--Terry model
-#' @param latent_strength Gamma prior for positive item strengths.
-#' @param ability_prior Deprecated alias for `latent_strength`.
+#'
+#' Each item \eqn{i} has its own positive strength \eqn{\lambda_i}, and
+#' \deqn{y_{ij} \mid \lambda \sim \mathrm{Binomial}\left(n_{ij},
+#'   \frac{\lambda_i}{\lambda_i + \lambda_j}\right).}
+#' The strengths are given independent and identically distributed Gamma
+#' priors, \eqn{\lambda_i \sim \mathrm{Gamma}(\mathrm{shape}, \mathrm{rate})}.
+#' Only the shape and rate need to be supplied: the model knows the
+#' \eqn{\lambda_i} are i.i.d.
+#'
+#' The default rate `exp(digamma(shape))` gives \eqn{E[\log \lambda_i] = 0},
+#' so a typical strength is about one. Strengths used to simulate data should
+#' be on a comparable scale (for example `c(12, 6, 2, 1)`, rather than values
+#' spanning several orders of magnitude).
+#'
+#' @param shape,rate Shape and rate of the Gamma prior on every
+#'   \eqn{\lambda_i}.
+#' @param latent_strength,ability_prior Deprecated. A prior object from
+#'   [latent_strength()]; if supplied it overrides `shape` and `rate`.
 #' @return A `btsbm_model`.
+#' @examples
+#' bt_model(shape = 2)
 #' @export
-bt_model <- function(latent_strength = .default_latent_strength(shape = 0.01, rate = 0.1),
-                     ability_prior = NULL) {
-  if (!is.null(ability_prior)) latent_strength <- ability_prior
-  .new_btsbm_model("bt", "none", latent_strength)
+bt_model <- function(shape = 4, rate = exp(digamma(shape)),
+                     latent_strength = NULL, ability_prior = NULL) {
+  prior <- .resolve_strength_prior(shape, rate, latent_strength, ability_prior)
+  .new_btsbm_model("bt", "none", prior)
 }
 
 #' Define a Bradley--Terry stochastic block model
-#' @param latent_strength Gamma prior for positive block strengths.
-#' @param item_clustering Prior on latent item blocks.
-#' @param ability_prior Deprecated alias for `latent_strength`.
+#'
+#' Item \eqn{i} belongs to block \eqn{z_i \in \{1, \ldots, K\}} and all items
+#' in block \eqn{k} share the strength \eqn{\lambda_k}:
+#' \deqn{\Pr(i \text{ beats } j \mid z, \lambda) =
+#'   \frac{\lambda_{z_i}}{\lambda_{z_i} + \lambda_{z_j}}.}
+#' Block strengths are i.i.d. \eqn{\mathrm{Gamma}(\mathrm{shape}, \mathrm{rate})}
+#' and the partition \eqn{z} receives the prior `item_clustering`.
+#'
+#' @inheritParams bt_model
+#' @param item_clustering Prior on the item partition \eqn{z}; see
+#'   [gnedin_prior()], [dirichlet_process_prior()], [pitman_yor_prior()] or
+#'   [dirichlet_multinomial_prior()].
 #' @param item_prior Deprecated alias for `item_clustering`.
 #' @return A `btsbm_model`.
+#' @examples
+#' bt_sbm_model(shape = 2, item_clustering = gnedin_prior(gnedin_hyper = 0.5))
 #' @export
-bt_sbm_model <- function(latent_strength = .default_latent_strength(shape = 4, rate = exp(digamma(4))),
-                         item_clustering = gnedin_prior(gnedin_hyperparameter = 0.5),
-                         ability_prior = NULL, item_prior = NULL) {
-  if (!is.null(ability_prior)) latent_strength <- ability_prior
+bt_sbm_model <- function(shape = 4, rate = exp(digamma(shape)),
+                         item_clustering = gnedin_prior(gnedin_hyper = 0.5),
+                         latent_strength = NULL, ability_prior = NULL,
+                         item_prior = NULL) {
+  prior <- .resolve_strength_prior(shape, rate, latent_strength, ability_prior)
   if (!is.null(item_prior)) item_clustering <- item_prior
-  .new_btsbm_model("bt", "item_sbm", latent_strength,
-                    item_clustering = item_clustering)
+  .new_btsbm_model("bt", "item_sbm", prior, item_clustering = item_clustering)
 }
 
 #' Define a simple Plackett--Luce model
-#' @param latent_strength Gamma prior for positive item strengths.
-#' @param identifiability PL reporting constraint.
-#' @param ability_prior Deprecated alias for `latent_strength`.
+#'
+#' Item strengths are i.i.d. \eqn{\mathrm{Gamma}(\mathrm{shape},
+#' \mathrm{rate})}. By default reported strengths are divided by their sum in
+#' every draw, so they are shares that add to one.
+#'
+#' @inheritParams bt_model
+#' @param identifiability PL reporting constraint, see [pl_identifiability()].
 #' @return A `btsbm_model`.
 #' @export
-pl_model <- function(latent_strength = .default_latent_strength(),
-                     identifiability = pl_identifiability(), ability_prior = NULL) {
-  if (!is.null(ability_prior)) latent_strength <- ability_prior
-  .new_btsbm_model("pl", "none", latent_strength, identifiability = identifiability)
+pl_model <- function(shape = 1, rate = 1,
+                     identifiability = pl_identifiability(),
+                     latent_strength = NULL, ability_prior = NULL) {
+  prior <- .resolve_strength_prior(shape, rate, latent_strength, ability_prior)
+  .new_btsbm_model("pl", "none", prior, identifiability = identifiability)
 }
 
 #' Define a Plackett--Luce stochastic block model
-#' @param latent_strength Gamma prior for positive block strengths.
-#' @param item_clustering Prior on latent item blocks. Use [gnedin_prior()],
-#'   [dirichlet_process_prior()], [pitman_yor_prior()], or [finite_partition()].
-#' @param identifiability PL reporting constraint.
-#' @param ability_prior Deprecated alias for `latent_strength`.
-#' @param item_prior Deprecated alias for `item_clustering`.
+#' @inheritParams bt_sbm_model
+#' @inheritParams pl_model
 #' @return A `btsbm_model`.
 #' @export
-pl_sbm_model <- function(latent_strength = .default_latent_strength(),
-                         item_clustering = gnedin_prior(gnedin_hyperparameter = 0.5),
-                         identifiability = pl_identifiability(), ability_prior = NULL,
+pl_sbm_model <- function(shape = 1, rate = 1,
+                         item_clustering = gnedin_prior(gnedin_hyper = 0.5),
+                         identifiability = pl_identifiability(),
+                         latent_strength = NULL, ability_prior = NULL,
                          item_prior = NULL) {
-  if (!is.null(ability_prior)) latent_strength <- ability_prior
+  prior <- .resolve_strength_prior(shape, rate, latent_strength, ability_prior)
   if (!is.null(item_prior)) item_clustering <- item_prior
-  .new_btsbm_model("pl", "item_sbm", latent_strength, item_clustering = item_clustering,
+  .new_btsbm_model("pl", "item_sbm", prior, item_clustering = item_clustering,
                     identifiability = identifiability)
 }
 
@@ -502,20 +565,19 @@ pl_sbm_model <- function(latent_strength = .default_latent_strength(),
 #' Ranking rows are assigned to latent preference groups. Each group has a
 #' separate vector of item strengths.
 #'
-#' @param latent_strength Gamma prior for positive component strengths.
+#' @inheritParams pl_model
 #' @param ranking_clustering Prior on latent ranking groups.
-#' @param identifiability PL reporting constraint.
-#' @param ability_prior Deprecated alias for `latent_strength`.
 #' @param ranking_prior Deprecated alias for `ranking_clustering`.
 #' @return A `btsbm_model`.
 #' @export
-pl_mixture_model <- function(latent_strength = .default_latent_strength(),
-                             ranking_clustering = gnedin_prior(gnedin_hyperparameter = 0.5),
-                             identifiability = pl_identifiability(), ability_prior = NULL,
+pl_mixture_model <- function(shape = 1, rate = 1,
+                             ranking_clustering = gnedin_prior(gnedin_hyper = 0.5),
+                             identifiability = pl_identifiability(),
+                             latent_strength = NULL, ability_prior = NULL,
                              ranking_prior = NULL) {
-  if (!is.null(ability_prior)) latent_strength <- ability_prior
+  prior <- .resolve_strength_prior(shape, rate, latent_strength, ability_prior)
   if (!is.null(ranking_prior)) ranking_clustering <- ranking_prior
-  .new_btsbm_model("pl", "ranking_mixture", latent_strength,
+  .new_btsbm_model("pl", "ranking_mixture", prior,
                     ranking_clustering = ranking_clustering,
                     identifiability = identifiability)
 }
@@ -525,24 +587,21 @@ pl_mixture_model <- function(latent_strength = .default_latent_strength(),
 #' The PL--LBM jointly partitions ranking rows and items. Each pair of latent
 #' groups has its own positive strength.
 #'
-#' @param latent_strength Gamma prior for positive cell strengths.
-#' @param ranking_clustering Prior on latent ranking groups.
-#' @param item_clustering Prior on latent item blocks.
-#' @param identifiability PL reporting constraint.
-#' @param ability_prior Deprecated alias for `latent_strength`.
-#' @param ranking_prior Deprecated alias for `ranking_clustering`.
-#' @param item_prior Deprecated alias for `item_clustering`.
+#' @inheritParams pl_model
+#' @inheritParams pl_mixture_model
+#' @inheritParams bt_sbm_model
 #' @return A `btsbm_model`.
 #' @export
-pl_lbm_model <- function(latent_strength = .default_latent_strength(),
-                         ranking_clustering = gnedin_prior(gnedin_hyperparameter = 0.5),
-                         item_clustering = gnedin_prior(gnedin_hyperparameter = 0.5),
-                         identifiability = pl_identifiability(), ability_prior = NULL,
+pl_lbm_model <- function(shape = 1, rate = 1,
+                         ranking_clustering = gnedin_prior(gnedin_hyper = 0.5),
+                         item_clustering = gnedin_prior(gnedin_hyper = 0.5),
+                         identifiability = pl_identifiability(),
+                         latent_strength = NULL, ability_prior = NULL,
                          ranking_prior = NULL, item_prior = NULL) {
-  if (!is.null(ability_prior)) latent_strength <- ability_prior
+  prior <- .resolve_strength_prior(shape, rate, latent_strength, ability_prior)
   if (!is.null(ranking_prior)) ranking_clustering <- ranking_prior
   if (!is.null(item_prior)) item_clustering <- item_prior
-  .new_btsbm_model("pl", "lbm", latent_strength,
+  .new_btsbm_model("pl", "lbm", prior,
                     item_clustering = item_clustering,
                     ranking_clustering = ranking_clustering,
                     identifiability = identifiability)
@@ -550,25 +609,16 @@ pl_lbm_model <- function(latent_strength = .default_latent_strength(),
 
 #' @export
 print.btsbm_model <- function(x, ...) {
-  likelihood <- switch(x$likelihood, bt = "Bradley--Terry", pl = "Plackett--Luce")
-  structure <- switch(
-    x$structure,
-    none = "item-specific strengths",
-    item_sbm = "latent item clustering",
-    ranking_mixture = "latent ranking clustering",
-    lbm = "joint ranking and item clustering",
-    x$structure
-  )
-  cat("<btsbm_model>", likelihood, "with", structure, "\n")
-  cat("  latent strength: Gamma(shape =", x$latent_strength$shape,
-      ", rate =", x$latent_strength$rate, ")\n")
+  cat("<btsbm_model>", .model_long_name(x), "\n")
+  symbol <- if (x$structure == "none") "lambda_i" else "lambda_k"
+  cat("  strength prior:   ", symbol, " ~ iid Gamma(shape = ",
+      signif(x$latent_strength$shape, 4), ", rate = ",
+      signif(x$latent_strength$rate, 4), ")\n", sep = "")
   if (!is.null(x$item_clustering)) {
-    cat("  item clustering:")
-    print(x$item_clustering)
+    cat("  item partition:    z ~ ", .prior_description(x$item_clustering), "\n", sep = "")
   }
   if (!is.null(x$ranking_clustering)) {
-    cat("  ranking clustering:")
-    print(x$ranking_clustering)
+    cat("  ranking partition: ", .prior_description(x$ranking_clustering), "\n", sep = "")
   }
   invisible(x)
 }

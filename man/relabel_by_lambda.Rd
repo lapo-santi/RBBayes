@@ -28,8 +28,8 @@ A named list with components:
 cluster's \eqn{\lambda} after relabelling.}
 \item{\code{co_clustering}}{Posterior similarity matrix (N x N).}
 \item{\code{minVI_partition}}{Partition estimated by minimizing posterior expected VI
-using \pkg{salso}.}
-\item{\code{partition_binder}}{Partition estimated by Binder's loss using \pkg{salso}.}
+(using \pkg{salso} when installed, otherwise a built-in search).}
+\item{\code{partition_binder}}{Partition estimated by Binder's loss.}
 \item{\code{n_clusters_each_iter}}{Integer vector (length S) of occupied cluster counts per iteration.}
 \item{\code{block_count_distribution}}{Data frame with columns
 \code{num_blocks}, \code{count}, \code{prob} summarizing the posterior of the
@@ -70,7 +70,7 @@ the generalized variation of information and Binder losses.
 \itemize{
 \item \code{x_samples} must be integer-valued with no missing items per row.
 \item \code{lambda_samples} may be sparse (NAs for non-occupied labels).
-\item \pkg{salso} must be available for the point-estimate summaries.
+\item \pkg{salso} is used for the point estimates when installed.
 }
 }
 

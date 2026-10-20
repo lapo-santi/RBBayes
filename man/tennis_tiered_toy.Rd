@@ -2,13 +2,13 @@
 % Please edit documentation in R/tennis_tiered_toy.R
 \name{tennis_tiered_toy}
 \alias{tennis_tiered_toy}
-\title{Simulate a clearly separated twenty-player tennis league}
+\title{Simulate a tiered twenty-player tennis league}
 \usage{
 tennis_tiered_toy(
   matches_per_pair = 20L,
   seed = 101L,
   n_blocks = length(latent_strength),
-  latent_strength = c(64, 16, 4, 1),
+  latent_strength = c(12, 6, 2, 1),
   players_per_block = 5L,
   item_labels = NULL,
   format = c("data", "edgelist")
@@ -21,7 +21,9 @@ tennis_tiered_toy(
 
 \item{n_blocks}{Positive integer number of generating blocks.}
 
-\item{latent_strength}{Positive vector with one strength per generating block.}
+\item{latent_strength}{Positive vector with one strength per generating block.
+The default \code{c(12, 6, 2, 1)} is on the same scale as the default Gamma
+prior and gives tiers that are separable but not perfectly so.}
 
 \item{players_per_block}{Positive integer block sizes, either one common size
 or a vector of length n_blocks.}

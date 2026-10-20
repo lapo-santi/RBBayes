@@ -6,18 +6,19 @@
 \usage{
 clustering_prior(
   family = c("gnedin", "dirichlet_process", "pitman_yor", "finite_dirichlet"),
-  gnedin_hyperparameter = 0.5,
+  gnedin_hyper = 0.5,
   concentration = 1,
   discount = 0.2,
-  max_clusters = NULL
+  max_clusters = NULL,
+  gnedin_hyperparameter = NULL
 )
 }
 \arguments{
 \item{family}{One of \code{"gnedin"}, \code{"dirichlet_process"}, \code{"pitman_yor"},
 or \code{"finite_dirichlet"}.}
 
-\item{gnedin_hyperparameter}{Gnedin hyperparameter in \verb{(0, 1)}. Larger
-values favour more occupied groups a priori.}
+\item{gnedin_hyper}{Gnedin hyperparameter \eqn{\gamma} in \verb{(0, 1)}.
+Larger values favour more occupied groups a priori.}
 
 \item{concentration}{Concentration for the Dirichlet-process, Pitman--Yor,
 or finite-Dirichlet prior.}
@@ -26,6 +27,8 @@ or finite-Dirichlet prior.}
 
 \item{max_clusters}{Required maximum number of groups for
 \code{family = "finite_dirichlet"}.}
+
+\item{gnedin_hyperparameter}{Deprecated alias for \code{gnedin_hyper}.}
 }
 \value{
 An object of class \code{btsbm_partition_prior}.

@@ -7,7 +7,9 @@
 plot_posterior_similarity(
   fit,
   target = c("item", "ranking"),
-  order_rows = TRUE
+  order_rows = TRUE,
+  show_blocks = TRUE,
+  show_values = NULL
 )
 }
 \arguments{
@@ -15,13 +17,25 @@ plot_posterior_similarity(
 
 \item{target}{Whether to plot latent groups of "item" or "ranking".}
 
-\item{order_rows}{Whether to cluster the rows and columns for display.}
+\item{order_rows}{Whether to reorder rows and columns for display.}
+
+\item{show_blocks}{Outline the blocks of the point estimate (items only).}
+
+\item{show_values}{Print probabilities in cells; defaults to \code{TRUE} for at
+most 20 entities.}
 }
 \value{
 A ggplot object.
 }
 \description{
-A dark cell means that two entities were often assigned to the same latent
-group across posterior draws. The plot is label-invariant, which makes it
-safer to interpret than the raw MCMC cluster labels.
+Cell \eqn{(i, j)} shows \eqn{\Pr(z_i = z_j \mid y)}, the proportion of
+draws in which the two entities share a latent group. The plot is
+label-invariant, which makes it safer to interpret than raw MCMC labels.
+}
+\details{
+For item partitions, rows are ordered by the point estimate of the partition
+(blocks outlined, block 1 strongest). Values below one inside an outlined
+block do not mean the items move to another block: in a given draw the
+block may simply be split into finer sub-blocks. Use \code{\link[=block_stability]{block_stability()}} to
+see whether the missing mass goes to splitting or to merging.
 }

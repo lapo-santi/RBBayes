@@ -5,22 +5,27 @@
 \title{Define a Plackett--Luce stochastic block model}
 \usage{
 pl_sbm_model(
-  latent_strength = .default_latent_strength(),
-  item_clustering = gnedin_prior(gnedin_hyperparameter = 0.5),
+  shape = 1,
+  rate = 1,
+  item_clustering = gnedin_prior(gnedin_hyper = 0.5),
   identifiability = pl_identifiability(),
+  latent_strength = NULL,
   ability_prior = NULL,
   item_prior = NULL
 )
 }
 \arguments{
-\item{latent_strength}{Gamma prior for positive block strengths.}
+\item{shape, rate}{Shape and rate of the Gamma prior on every
+\eqn{\lambda_i}.}
 
-\item{item_clustering}{Prior on latent item blocks. Use \code{\link[=gnedin_prior]{gnedin_prior()}},
-\code{\link[=dirichlet_process_prior]{dirichlet_process_prior()}}, \code{\link[=pitman_yor_prior]{pitman_yor_prior()}}, or \code{\link[=finite_partition]{finite_partition()}}.}
+\item{item_clustering}{Prior on the item partition \eqn{z}; see
+\code{\link[=gnedin_prior]{gnedin_prior()}}, \code{\link[=dirichlet_process_prior]{dirichlet_process_prior()}}, \code{\link[=pitman_yor_prior]{pitman_yor_prior()}} or
+\code{\link[=dirichlet_multinomial_prior]{dirichlet_multinomial_prior()}}.}
 
-\item{identifiability}{PL reporting constraint.}
+\item{identifiability}{PL reporting constraint, see \code{\link[=pl_identifiability]{pl_identifiability()}}.}
 
-\item{ability_prior}{Deprecated alias for \code{latent_strength}.}
+\item{latent_strength, ability_prior}{Deprecated. A prior object from
+\code{\link[=latent_strength]{latent_strength()}}; if supplied it overrides \code{shape} and \code{rate}.}
 
 \item{item_prior}{Deprecated alias for \code{item_clustering}.}
 }

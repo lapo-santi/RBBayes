@@ -2,17 +2,19 @@
 % Please edit documentation in R/data_models.R
 \name{pl_identifiability}
 \alias{pl_identifiability}
-\title{Set the identifiable representation for Plackett--Luce abilities}
+\title{Set the reporting scale for Plackett--Luce strengths}
 \usage{
-pl_identifiability(method = c("logmean0", "none"))
+pl_identifiability(method = c("sum", "none", "logmean0"))
 }
 \arguments{
-\item{method}{Normalisation method.  \code{"logmean0"} gives each reported
-ability vector geometric mean one.}
+\item{method}{One of \code{"sum"} (default), \code{"none"} or \code{"logmean0"}.}
 }
 \value{
 An object of class \code{btsbm_pl_identifiability}.
 }
 \description{
-Set the identifiable representation for Plackett--Luce abilities
+A Plackett--Luce likelihood only identifies strength ratios. By default each
+saved strength vector is divided by its sum (\code{"sum"}), so reported strengths
+are shares that add to one, exactly like the normalised Bradley--Terry
+strengths. \code{"logmean0"} (geometric mean one) is kept for compatibility.
 }

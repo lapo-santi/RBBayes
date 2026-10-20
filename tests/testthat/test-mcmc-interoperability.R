@@ -17,15 +17,17 @@ test_that("matrix and array conversions preserve draw values and dimensions", {
   fit <- make_interop_fit()
   draws <- as.matrix(fit)
   expect_equal(unname(rowSums(draws)), rep(1, 20))
-  expect_identical(colnames(draws), paste0("q[", 1:3, "]"))
+  expect_identical(colnames(draws), paste0("rel_strength[", c("A", "B", "C"), "]"))
+  expect_identical(colnames(as.matrix(fit, normalise = FALSE)), paste0("lambda[", c("A", "B", "C"), "]"))
+  expect_identical(colnames(as.matrix(fit, pars = "q[2]")), "rel_strength[B]")
   expect_equal(unname(as.matrix(fit, normalise = FALSE)),
                unname(fit$draws$item_strength))
-  array <- as.array(fit, pars = c("q[3]", "q[1]"))
+  array <- as.array(fit, pars = c("rel_strength[C]", "rel_strength[A]"))
   expect_equal(dim(array), c(20L, 1L, 2L))
   expect_equal(unname(array[, 1, ]), unname(draws[, c(3, 1)]))
   expect_equal(dim(as.array(fit, pars = "q[1]")), c(20L, 1L, 1L))
   expect_error(as.matrix(fit, pars = "missing"), "available")
-  expect_error(as.matrix(fit, pars = c("q[1]", "q[1]")), "distinct")
+  expect_error(as.matrix(fit, pars = c("rel_strength[A]", "rel_strength[A]")), "distinct")
   expect_error(as.matrix(fit, normalise = NA), "TRUE or FALSE")
 })
 
@@ -67,10 +69,10 @@ test_that("coda dispatch works and retains original iteration numbering", {
 test_that("bayesplot accepts fits directly and combined arrays", {
   skip_if_not_installed("bayesplot")
   fit <- make_interop_fit()
-  expect_s3_class(bayesplot::mcmc_trace(fit, pars = "q[1]"), "ggplot")
-  expect_s3_class(bayesplot::mcmc_intervals(fit, pars = c("q[1]", "q[2]")), "ggplot")
+  expect_s3_class(bayesplot::mcmc_trace(fit, pars = "rel_strength[A]"), "ggplot")
+  expect_s3_class(bayesplot::mcmc_intervals(fit, pars = c("rel_strength[A]", "rel_strength[B]")), "ggplot")
   expect_s3_class(bayesplot::mcmc_dens_overlay(
-    as_draws_array(list(fit, make_interop_fit(13))), pars = "q[1]"), "ggplot")
+    as_draws_array(list(fit, make_interop_fit(13))), pars = "rel_strength[A]"), "ggplot")
 })
 
 test_that("converters expose only fixed-dimensional quantities for latent models", {
@@ -81,9 +83,9 @@ test_that("converters expose only fixed-dimensional quantities for latent models
     draws <- as.matrix(fit)
     expect_equal(nrow(draws), 8)
     expect_true(all(is.finite(draws)))
-    expect_false(any(grepl("allocation|lambda", colnames(draws))))
+    expect_false(any(grepl("allocation|^lambda", colnames(draws))))
     if (is.null(fit$draws$item_strength)) {
-      expect_true(all(colnames(draws) %in% c("K_item", "K_ranking")))
+      expect_true(all(colnames(draws) %in% c("n_item_blocks", "n_ranking_groups")))
     }
   }
 })

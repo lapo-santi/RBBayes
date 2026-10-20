@@ -32,14 +32,14 @@ pairwise <- as_bt_data(wins)
 fit <- fit_model(
   pairwise,
   bt_sbm_model(
-    latent_strength = latent_strength(shape = 4, rate = exp(digamma(4))),
-    item_clustering = gnedin_prior(gnedin_hyperparameter = 0.8)
+    shape = 4, rate = exp(digamma(4)),
+    item_clustering = gnedin_prior(gnedin_hyper = 0.8)
   ),
   mcmc_control(iter = 500, warmup = 250, seed = 1)
 )
 
-pretty_table_K_distribution(fit, p_min = 0)
-plot_block_adjacency(fit)
+posterior_K_table(fit)
+plot_ordered_adjacency(fit)
 plot_assignment_probabilities(fit)
 ```
 
@@ -55,8 +55,8 @@ rankings <- sushi_toy(n_rankings = 40, rank_length = 5)
 fit_pl <- fit_model(
   rankings,
   pl_sbm_model(
-    latent_strength = latent_strength(shape = 1, rate = 1),
-    item_clustering = gnedin_prior(gnedin_hyperparameter = 0.5)
+    shape = 1, rate = 1,
+    item_clustering = gnedin_prior(gnedin_hyper = 0.5)
   ),
   mcmc_control(iter = 600, warmup = 300, seed = 1)
 )
@@ -102,6 +102,9 @@ matrix and the remaining PLuce-porting work.
 
 ## Documentation
 
+- Hands-on tutorial (R Markdown, knit it locally):
+  `file.copy(system.file("tutorial", "RBBayes-tutorial.Rmd", package = "RBBayes"), ".")`
+
 - Package website: https://laposanti.github.io/BTSBM
 - Function reference: https://laposanti.github.io/BTSBM/reference/index.html
 - Getting started vignette: https://laposanti.github.io/BTSBM/articles/getting-started.html
@@ -113,18 +116,19 @@ fit <- fit_model(tennis_tiered_toy(), bt_model(),
                  mcmc_control(iter = 1000, warmup = 500, seed = 1))
 chain <- coda::as.mcmc(fit)
 coda::effectiveSize(chain)
-bayesplot::mcmc_intervals(fit, pars = c("q[1]", "q[2]"))
+bayesplot::mcmc_intervals(fit, regex_pars = "rel_strength")
 
 fit2 <- fit_model(fit$data, fit$model,
                   mcmc_control(iter = 1000, warmup = 500, seed = 2))
 chains <- as_mcmc_chains(list(fit, fit2))
 coda::gelman.diag(chains, autoburnin = FALSE, multivariate = FALSE)
-bayesplot::mcmc_trace(as_draws_array(list(fit, fit2)), pars = "q[1]")
+bayesplot::mcmc_trace(as_draws_array(list(fit, fit2)),
+                     pars = colnames(as.matrix(fit))[1:2])
 ```
 
-By default, `q[i]` is item `i`'s share of total strength within each draw, with
-indices following `fit$data$item_labels`. Use `as.matrix(fit, normalise = FALSE)`
-for strengths on the stored scale. Occupied-group counts are included when
+By default, `rel_strength[<item>]` is that item's share of total strength
+within each draw, named after the item. Use `as.matrix(fit, normalise = FALSE)`
+for strengths on the stored scale (`lambda[<item>]`). Occupied-group counts are included when
 available. Mixtures and joint latent block models currently export group-count
 traces only. Variable-length block strengths and arbitrary allocation labels
 are excluded. Arrays retain separate iteration, chain and parameter dimensions.

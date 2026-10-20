@@ -4,16 +4,24 @@
 \alias{summary.btsbm_fit}
 \title{Summarise an RBBayes fit}
 \usage{
-\method{summary}{btsbm_fit}(object, ...)
+\method{summary}{btsbm_fit}(object, credible_mass = 0.9, ...)
 }
 \arguments{
 \item{object}{A \code{btsbm_fit} object.}
 
+\item{credible_mass}{Width of the reported credible intervals.}
+
 \item{...}{Unused.}
 }
 \value{
-A list containing model and sampler summaries.
+An object of class \code{summary.btsbm_fit}, a named list.
 }
 \description{
-Summarise an RBBayes fit
+Collects the main features of a fit under self-explanatory names: the
+model, the data size, the priors, the MCMC run and the key posterior
+results. For models with item-specific strengths, the strength table uses
+relative strengths (each strength divided by the sum of all strengths in a
+draw). For block models, it reports the posterior distribution of the number
+of blocks \eqn{K} and the point estimate of the partition \eqn{z} instead,
+because individual strengths are not the natural summary there.
 }

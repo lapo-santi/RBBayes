@@ -132,44 +132,162 @@ fit_model <- function(data, model, control = mcmc_control()) {
   out
 }
 
+.model_long_name <- function(model) {
+  if (model$likelihood == "bt") {
+    if (model$structure == "none") "Bradley-Terry (BT), one strength per item"
+    else "Bradley-Terry stochastic block model (BT-SBM), items share block strengths"
+  } else {
+    switch(model$structure,
+           none = "Plackett-Luce (PL), one strength per item",
+           item_sbm = "Plackett-Luce stochastic block model (PL-SBM)",
+           ranking_mixture = "Plackett-Luce mixture over ranking groups",
+           lbm = "Plackett-Luce latent block model (PL-LBM)",
+           model$structure)
+  }
+}
+
+.model_short_name <- function(model) {
+  if (model$likelihood == "bt") {
+    if (model$structure == "none") "BT" else "BT-SBM"
+  } else {
+    switch(model$structure, none = "PL", item_sbm = "PL-SBM",
+           ranking_mixture = "PL mixture", lbm = "PL-LBM", model$structure)
+  }
+}
+
+.prior_description <- function(prior) {
+  if (is.null(prior)) return(NULL)
+  switch(prior$type,
+         gnedin = sprintf("Gnedin(gnedin_hyper = %g)", prior$gamma),
+         dp = sprintf("Dirichlet process(concentration = %g)", prior$alpha),
+         py = sprintf("Pitman-Yor(concentration = %g, discount = %g)", prior$alpha, prior$sigma),
+         dm = sprintf("Dirichlet-multinomial(max_clusters = %d, concentration = %g)",
+                      prior$K, prior$beta))
+}
+
 #' Print an RBBayes fit
 #' @param x A `btsbm_fit` object.
 #' @param ... Unused.
 #' @return The input object, invisibly.
 #' @export
 print.btsbm_fit <- function(x, ...) {
-  n_draws <- .fit_n_draws(x)
-  cat("<btsbm_fit>", x$model$likelihood, "/", x$model$structure,
-      "with", n_draws, "saved draws\n")
+  cat("<btsbm_fit>", .model_long_name(x$model), "\n")
+  cat("  ", x$data$n_items, " items; ", .fit_n_draws(x),
+      " retained posterior draws. Use summary() for results.\n", sep = "")
   invisible(x)
 }
 
 #' Summarise an RBBayes fit
+#'
+#' Collects the main features of a fit under self-explanatory names: the
+#' model, the data size, the priors, the MCMC run and the key posterior
+#' results. For models with item-specific strengths, the strength table uses
+#' relative strengths (each strength divided by the sum of all strengths in a
+#' draw). For block models, it reports the posterior distribution of the number
+#' of blocks \eqn{K} and the point estimate of the partition \eqn{z} instead,
+#' because individual strengths are not the natural summary there.
+#'
 #' @param object A `btsbm_fit` object.
+#' @param credible_mass Width of the reported credible intervals.
 #' @param ... Unused.
-#' @return A list containing model and sampler summaries.
+#' @return An object of class `summary.btsbm_fit`, a named list.
 #' @export
-summary.btsbm_fit <- function(object, ...) {
-  model_name <- if (object$model$likelihood == "bt") {
-    if (object$model$structure == "none") "BT" else "BT-SBM"
-  } else {
-    switch(object$model$structure, none = "PL", item_sbm = "PL-SBM",
-           ranking_mixture = "PL mixture", lbm = "PL-LBM", object$model$structure)
-  }
-  list(
-    model = model_name,
-    likelihood = object$model$likelihood,
-    structure = object$model$structure,
-    n_items = object$data$n_items,
-    n_observations = if (inherits(object$data, "btsbm_ranking_data")) {
-      object$data$n_rankings
-    } else {
-      sum(upper.tri(object$data$wins) & (object$data$wins + t(object$data$wins) > 0))
-    },
-    n_draws = .fit_n_draws(object),
-    elapsed_seconds = object$elapsed,
-    diagnostics = object$diagnostics
+summary.btsbm_fit <- function(object, credible_mass = 0.9, ...) {
+  fit <- object
+  model <- fit$model
+  data <- fit$data
+  out <- list(
+    model = .model_short_name(model),
+    model_description = .model_long_name(model),
+    likelihood = switch(model$likelihood, bt = "Bradley-Terry", pl = "Plackett-Luce"),
+    item_structure = switch(model$structure, none = "item-specific strengths",
+                            item_sbm = "latent item blocks",
+                            ranking_mixture = "latent ranking groups",
+                            lbm = "latent ranking groups and item blocks"),
+    n_items = data$n_items,
+    strength_prior = sprintf("%s ~ iid Gamma(shape = %s, rate = %s)",
+                             if (model$structure == "none") "lambda_i" else "lambda_k",
+                             signif(model$latent_strength$shape, 4),
+                             signif(model$latent_strength$rate, 4)),
+    item_partition_prior = .prior_description(model$item_clustering),
+    ranking_partition_prior = .prior_description(model$ranking_clustering),
+    mcmc_iterations = fit$control$iter,
+    mcmc_warmup = fit$control$warmup,
+    retained_draws = .fit_n_draws(fit),
+    run_time_seconds = unname(fit$elapsed)
   )
+  if (inherits(data, "btsbm_ranking_data")) {
+    out$n_rankings <- data$n_rankings
+    out$ranking_length <- data$rank_length
+  } else {
+    n_ij <- data$wins + t(data$wins)
+    out$n_pairs_compared <- sum(upper.tri(n_ij) & n_ij > 0)
+    out$n_comparisons <- sum(data$wins)
+  }
+  if (!is.null(fit$draws$item_cluster)) {
+    out$posterior_K <- posterior_K_table(fit)
+    z_hat <- partition_point_estimate(fit)
+    out$point_estimate_partition <- z_hat
+    out$blocks <- data.frame(
+      block = sort(unique(z_hat)),
+      size = as.vector(table(factor(z_hat, levels = sort(unique(z_hat))))),
+      members = vapply(sort(unique(z_hat)), function(k) paste(names(z_hat)[z_hat == k], collapse = ", "),
+                       character(1)),
+      stringsAsFactors = FALSE
+    )
+  } else if (!is.null(fit$draws$item_strength)) {
+    out$relative_strengths <- strength_summary(fit, credible_mass = credible_mass)
+  }
+  if (!is.null(fit$draws$n_ranking_clusters)) {
+    tab <- table(fit$draws$n_ranking_clusters)
+    out$posterior_ranking_groups <- data.frame(groups = as.integer(names(tab)),
+                                               probability = as.vector(tab) / sum(tab))
+  }
+  out$credible_mass <- credible_mass
+  class(out) <- "summary.btsbm_fit"
+  out
+}
+
+#' @export
+print.summary.btsbm_fit <- function(x, ...) {
+  cat("Model:   ", x$model_description, "\n", sep = "")
+  if (!is.null(x$n_comparisons)) {
+    cat("Data:    ", x$n_items, " items, ", x$n_pairs_compared, " compared pairs, ",
+        x$n_comparisons, " comparisons\n", sep = "")
+  } else {
+    cat("Data:    ", x$n_items, " items, ", x$n_rankings, " rankings of length ",
+        x$ranking_length, "\n", sep = "")
+  }
+  cat("Priors:  ", x$strength_prior, "\n", sep = "")
+  if (!is.null(x$item_partition_prior)) cat("         item partition z ~ ", x$item_partition_prior, "\n", sep = "")
+  if (!is.null(x$ranking_partition_prior)) cat("         ranking partition ~ ", x$ranking_partition_prior, "\n", sep = "")
+  cat(sprintf("MCMC:    %d iterations, %d warm-up, %d retained draws (%.1f s)\n",
+              x$mcmc_iterations, x$mcmc_warmup, x$retained_draws, x$run_time_seconds))
+  if (!is.null(x$posterior_K)) {
+    cat("\nPosterior number of blocks, Pr(K = k | y):\n")
+    pk <- stats::setNames(round(x$posterior_K$probability, 3), x$posterior_K$K)
+    print(pk)
+    cat("\nPoint estimate of the partition (block 1 = strongest):\n")
+    for (r in seq_len(nrow(x$blocks))) {
+      cat(sprintf("  Block %d (%d items): %s\n", x$blocks$block[r], x$blocks$size[r],
+                  x$blocks$members[r]))
+    }
+  }
+  if (!is.null(x$relative_strengths)) {
+    cat(sprintf("\nRelative strengths (share of total strength), %g%% credible intervals:\n",
+                100 * x$credible_mass))
+    tab <- x$relative_strengths
+    show <- utils::head(tab, 10L)
+    show[, -1] <- round(show[, -1], 3)
+    print(show, row.names = FALSE)
+    if (nrow(tab) > 10L) cat("  ... ", nrow(tab) - 10L, " more items; see strength_summary().\n", sep = "")
+  }
+  if (!is.null(x$posterior_ranking_groups)) {
+    cat("\nPosterior number of ranking groups:\n")
+    print(stats::setNames(round(x$posterior_ranking_groups$probability, 3),
+                          x$posterior_ranking_groups$groups))
+  }
+  invisible(x)
 }
 
 .fit_n_draws <- function(fit) {
@@ -270,26 +388,31 @@ posterior_strength <- function(fit, summary = c("draws", "mean")) {
 
 #' Summarise posterior item strengths with credible intervals
 #'
-#' This is a compact numerical companion to plot_strength_summary(). The
-#' reported strengths are relative: for Plackett--Luce fits, the default
-#' reporting scale has geometric mean one; for Bradley--Terry fits, a larger
-#' value means a higher chance of beating an item with a smaller value.
+#' This is a compact numerical companion to [plot_strength_summary()]. By
+#' default strengths are reported as relative strengths: in every draw each
+#' \eqn{\lambda_i} is divided by \eqn{\sum_j \lambda_j}, so they are shares that
+#' add to one and do not depend on the arbitrary overall scale. A larger value
+#' means a higher chance of beating (BT) or being preferred to (PL) others.
 #'
 #' @param fit A simple BT/PL or item-SBM btsbm_fit object.
 #' @param credible_mass Width of the central posterior interval, in (0, 1).
+#' @param scale `"relative"` (default, shares adding to one) or `"raw"`
+#'   (the strengths as stored by the sampler).
 #'
 #' @return A data frame with one row per item, ordered from larger to smaller
 #'   posterior mean strength.
 #' @export
-strength_summary <- function(fit, credible_mass = 0.9) {
+strength_summary <- function(fit, credible_mass = 0.9, scale = c("relative", "raw")) {
   if (!inherits(fit, "btsbm_fit")) {
     stop("'fit' must be a btsbm_fit object.", call. = FALSE)
   }
+  scale <- match.arg(scale)
   if (length(credible_mass) != 1L || !is.finite(credible_mass) ||
       credible_mass <= 0 || credible_mass >= 1) {
     stop("'credible_mass' must lie strictly between zero and one.", call. = FALSE)
   }
   draws <- posterior_strength(fit, summary = "draws")
+  if (scale == "relative") draws <- draws / rowSums(draws)
   tail_probability <- (1 - credible_mass) / 2
   result <- data.frame(
     item = fit$data$item_labels,
@@ -299,7 +422,9 @@ strength_summary <- function(fit, credible_mass = 0.9) {
     upper = apply(draws, 2L, stats::quantile, probs = 1 - tail_probability),
     stringsAsFactors = FALSE
   )
-  result[order(result$mean, decreasing = TRUE), , drop = FALSE]
+  result <- result[order(result$mean, decreasing = TRUE), , drop = FALSE]
+  rownames(result) <- NULL
+  result
 }
 
 #' Compute implied item abilities from a fit

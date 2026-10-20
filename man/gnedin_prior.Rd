@@ -4,14 +4,21 @@
 \alias{gnedin_prior}
 \title{Gnedin prior for a latent partition}
 \usage{
-gnedin_prior(gnedin_hyperparameter = 0.5)
+gnedin_prior(gnedin_hyper = 0.5, gnedin_hyperparameter = NULL)
 }
 \arguments{
-\item{gnedin_hyperparameter}{Gnedin hyperparameter in \verb{(0, 1)}.}
+\item{gnedin_hyper}{Gnedin hyperparameter \eqn{\gamma} in \verb{(0, 1)}.}
+
+\item{gnedin_hyperparameter}{Deprecated alias for \code{gnedin_hyper}.}
 }
 \value{
 An object of class \code{btsbm_partition_prior}.
 }
 \description{
-Gnedin prior for a latent partition
+A Gnedin (2010) prior allows a random but almost surely finite number of
+occupied groups.
+}
+\examples{
+gnedin_prior(gnedin_hyper = 0.5)
+prior_mean_K(20, gnedin_prior(0.5))
 }

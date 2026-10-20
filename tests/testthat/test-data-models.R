@@ -36,7 +36,7 @@ test_that("as_rankings validates complete and top-m ranking matrices", {
 })
 
 test_that("PL constructors use descriptive strength and clustering names", {
-  prior <- gnedin_prior(gnedin_hyperparameter = 0.6)
+  prior <- gnedin_prior(gnedin_hyper = 0.6)
   strength <- latent_strength(shape = 2, rate = 3)
   model <- pl_sbm_model(latent_strength = strength, item_clustering = prior)
   control <- mcmc_control(
@@ -49,12 +49,14 @@ test_that("PL constructors use descriptive strength and clustering names", {
   expect_equal(model$structure, "item_sbm")
   expect_identical(model$latent_strength, strength)
   expect_identical(model$item_clustering, prior)
-  expect_output(print(strength), "latent_strength_prior")
+  expect_output(print(strength), "strength prior")
   expect_output(print(prior), "Gnedin")
-  expect_output(print(model), "Plackett--Luce")
+  expect_output(print(model), "Plackett-Luce")
   expect_s3_class(control, "btsbm_mcmc_control")
   expect_equal(control$iter, 50L)
-  expect_error(gnedin_prior(gnedin_hyperparameter = 1), "hyperparameter")
+  expect_error(gnedin_prior(gnedin_hyper = 1), "gnedin_hyper")
+  expect_identical(gnedin_prior(gnedin_hyperparameter = 0.6), prior)
+  expect_identical(pl_sbm_model(shape = 2, rate = 3, item_clustering = prior), model)
   expect_error(mcmc_control(iter = 10, warmup = 10), "warmup")
 })
 
@@ -65,7 +67,7 @@ test_that("all clustering-prior choices have intuitive parameter names", {
   finite <- finite_partition(max_clusters = 3, concentration = 0.75)
 
   expect_equal(gnedin$family, "gnedin")
-  expect_equal(gnedin$gnedin_hyperparameter, 0.6)
+  expect_equal(gnedin$gnedin_hyper, 0.6)
   expect_equal(dp$family, "dirichlet_process")
   expect_equal(dp$concentration, 2)
   expect_equal(py$discount, 0.25)

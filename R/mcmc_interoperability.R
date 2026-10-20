@@ -1,9 +1,12 @@
 #' Convert a preference fit to a matrix of saved posterior draws
 #'
-#' Columns `q[i]` are item strengths divided by their sum in each saved draw.
-#' With `normalise = FALSE`, `theta[i]` are the stored, unnormalised strengths.
-#' The index i follows `fit$data$item_labels`. K_item and K_ranking contain
-#' occupied-group counts when available. Only retained draws are returned.
+#' Columns are named after the items. `rel_strength[<item>]` is the item's
+#' strength divided by the sum of all strengths in each saved draw (its share
+#' of total strength). With `normalise = FALSE`, `lambda[<item>]` are the
+#' stored, unnormalised strengths. `n_item_blocks` and `n_ranking_groups`
+#' contain occupied-group counts when available. Only retained draws are
+#' returned. Older names (`q[i]`, `theta[i]`, `K_item`, `K_ranking`) are still
+#' accepted in `pars`.
 #'
 #' Variable-length block-strength vectors and arbitrary allocation labels are
 #' deliberately excluded. Mixture and LBM fits currently expose group counts
@@ -31,8 +34,8 @@ as.matrix.btsbm_fit <- function(x, ..., normalise = TRUE, pars = NULL) {
       stop("Item-strength draws must be finite, positive and match the saved draws.", call. = FALSE)
     }
     if (normalise) strength <- strength / rowSums(strength)
-    colnames(strength) <- paste0(if (normalise) "q[" else "theta[",
-                                seq_len(ncol(strength)), "]")
+    colnames(strength) <- paste0(if (normalise) "rel_strength[" else "lambda[",
+                                 x$data$item_labels, "]")
     result <- cbind(result, strength)
   }
   for (count in c("n_item_clusters", "n_ranking_clusters")) {
@@ -42,12 +45,13 @@ as.matrix.btsbm_fit <- function(x, ..., normalise = TRUE, pars = NULL) {
         stop("Group-count draws must be finite and match the saved draws.", call. = FALSE)
       }
       column <- matrix(values, ncol = 1L)
-      colnames(column) <- if (count == "n_item_clusters") "K_item" else "K_ranking"
+      colnames(column) <- if (count == "n_item_clusters") "n_item_blocks" else "n_ranking_groups"
       result <- cbind(result, column)
     }
   }
   if (ncol(result) == 0L) stop("No fixed-dimensional posterior quantities are available.", call. = FALSE)
   if (!is.null(pars)) {
+    pars <- .translate_legacy_pars(pars, colnames(result), x$data$item_labels, normalise)
     if (!is.character(pars) || !length(pars) || anyNA(pars) || anyDuplicated(pars) ||
         any(!pars %in% colnames(result))) {
       stop("`pars` must select distinct available parameter names: ",
@@ -143,4 +147,19 @@ as_mcmc_chains <- function(x, normalise = TRUE, pars = NULL) {
   }
   chains <- lapply(fits, as.mcmc.btsbm_fit, normalise = normalise, pars = pars)
   do.call(coda::mcmc.list, chains)
+}
+
+.translate_legacy_pars <- function(pars, available, item_labels, normalise) {
+  if (!is.character(pars)) return(pars)
+  out <- pars
+  legacy <- grepl("^(q|theta)\\[[0-9]+\\]$", pars)
+  if (any(legacy)) {
+    idx <- as.integer(sub("^.*\\[([0-9]+)\\]$", "\\1", pars[legacy]))
+    ok <- idx >= 1L & idx <= length(item_labels)
+    prefix <- if (normalise) "rel_strength[" else "lambda["
+    out[legacy][ok] <- paste0(prefix, item_labels[idx[ok]], "]")
+  }
+  out[out == "K_item"] <- "n_item_blocks"
+  out[out == "K_ranking"] <- "n_ranking_groups"
+  out
 }
