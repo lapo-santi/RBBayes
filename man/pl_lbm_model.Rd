@@ -5,8 +5,8 @@
 \title{Define a Plackett--Luce latent block model}
 \usage{
 pl_lbm_model(
-  shape = 1,
-  rate = 1,
+  shape_lambda = 1,
+  rate_lambda = 1,
   ranking_clustering = gnedin_prior(gnedin_hyper = 0.5),
   item_clustering = gnedin_prior(gnedin_hyper = 0.5),
   identifiability = pl_identifiability(),
@@ -17,8 +17,8 @@ pl_lbm_model(
 )
 }
 \arguments{
-\item{shape, rate}{Shape and rate of the Gamma prior on every
-\eqn{\lambda_i}.}
+\item{shape_lambda, rate_lambda}{Shape and rate of the Gamma prior on
+every strength \eqn{\lambda}.}
 
 \item{ranking_clustering}{Prior on latent ranking groups.}
 
@@ -29,7 +29,7 @@ pl_lbm_model(
 \item{identifiability}{PL reporting constraint, see \code{\link[=pl_identifiability]{pl_identifiability()}}.}
 
 \item{latent_strength, ability_prior}{Deprecated. A prior object from
-\code{\link[=latent_strength]{latent_strength()}}; if supplied it overrides \code{shape} and \code{rate}.}
+\code{\link[=latent_strength]{latent_strength()}}; if supplied it overrides \code{shape_lambda} and \code{rate_lambda}.}
 
 \item{ranking_prior}{Deprecated alias for \code{ranking_clustering}.}
 

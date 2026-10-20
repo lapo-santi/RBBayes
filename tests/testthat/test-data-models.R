@@ -56,7 +56,7 @@ test_that("PL constructors use descriptive strength and clustering names", {
   expect_equal(control$iter, 50L)
   expect_error(gnedin_prior(gnedin_hyper = 1), "gnedin_hyper")
   expect_identical(gnedin_prior(gnedin_hyperparameter = 0.6), prior)
-  expect_identical(pl_sbm_model(shape = 2, rate = 3, item_clustering = prior), model)
+  expect_identical(pl_sbm_model(shape_lambda = 2, rate_lambda = 3, item_clustering = prior), model)
   expect_error(mcmc_control(iter = 10, warmup = 10), "warmup")
 })
 

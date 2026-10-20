@@ -18,7 +18,7 @@ gamma_ability(shape = 1, rate = 1)
 An object of class \code{btsbm_strength_prior}.
 }
 \description{
-Model constructors such as \code{\link[=bt_model]{bt_model()}} now take \code{shape} and \code{rate}
+Model constructors such as \code{\link[=bt_model]{bt_model()}} now take \code{shape_lambda} and \code{rate_lambda}
 directly, so most users never need this function. It is kept for
 compatibility with code written for earlier development versions.
 }

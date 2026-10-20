@@ -172,7 +172,7 @@ print.btsbm_partition_prior <- function(x, ...) {
 
 #' Gamma prior object for positive strengths (low-level)
 #'
-#' Model constructors such as [bt_model()] now take `shape` and `rate`
+#' Model constructors such as [bt_model()] now take `shape_lambda` and `rate_lambda`
 #' directly, so most users never need this function. It is kept for
 #' compatibility with code written for earlier development versions.
 #'
@@ -456,19 +456,19 @@ partition_moves <- function(split_merge = 0L, ranking_split_merge = 0L,
   )
 }
 
-.resolve_strength_prior <- function(shape, rate, latent_strength = NULL,
+.resolve_strength_prior <- function(shape_lambda, rate_lambda, latent_strength = NULL,
                                     ability_prior = NULL) {
   legacy <- if (!is.null(latent_strength)) latent_strength else ability_prior
   # Positional legacy call, e.g. bt_model(latent_strength(2, 1)).
-  if (is.null(legacy) && inherits(shape, "btsbm_strength_prior")) legacy <- shape
+  if (is.null(legacy) && inherits(shape_lambda, "btsbm_strength_prior")) legacy <- shape_lambda
   if (!is.null(legacy)) {
     if (!inherits(legacy, "btsbm_strength_prior")) {
       stop("`latent_strength` must be created by `latent_strength()`; ",
-           "new code should pass `shape` and `rate` directly.", call. = FALSE)
+           "new code should pass `shape_lambda` and `rate_lambda` directly.", call. = FALSE)
     }
     return(legacy)
   }
-  latent_strength(shape = shape, rate = rate)
+  latent_strength(shape = shape_lambda, rate = rate_lambda)
 }
 
 #' Define a simple Bradley--Terry model
@@ -477,26 +477,26 @@ partition_moves <- function(split_merge = 0L, ranking_split_merge = 0L,
 #' \deqn{y_{ij} \mid \lambda \sim \mathrm{Binomial}\left(n_{ij},
 #'   \frac{\lambda_i}{\lambda_i + \lambda_j}\right).}
 #' The strengths are given independent and identically distributed Gamma
-#' priors, \eqn{\lambda_i \sim \mathrm{Gamma}(\mathrm{shape}, \mathrm{rate})}.
-#' Only the shape and rate need to be supplied: the model knows the
-#' \eqn{\lambda_i} are i.i.d.
+#' priors, \eqn{\lambda_i \sim \mathrm{Gamma}(\mathrm{shape\_lambda}, \mathrm{rate\_lambda})}.
+#' Only `shape_lambda` and `rate_lambda` need to be supplied: the model knows
+#' the \eqn{\lambda_i} are i.i.d.
 #'
-#' The default rate `exp(digamma(shape))` gives \eqn{E[\log \lambda_i] = 0},
+#' The default `rate_lambda = exp(digamma(shape_lambda))` gives \eqn{E[\log \lambda_i] = 0},
 #' so a typical strength is about one. Strengths used to simulate data should
 #' be on a comparable scale (for example `c(12, 6, 2, 1)`, rather than values
 #' spanning several orders of magnitude).
 #'
-#' @param shape,rate Shape and rate of the Gamma prior on every
-#'   \eqn{\lambda_i}.
+#' @param shape_lambda,rate_lambda Shape and rate of the Gamma prior on
+#'   every strength \eqn{\lambda}.
 #' @param latent_strength,ability_prior Deprecated. A prior object from
-#'   [latent_strength()]; if supplied it overrides `shape` and `rate`.
+#'   [latent_strength()]; if supplied it overrides `shape_lambda` and `rate_lambda`.
 #' @return A `btsbm_model`.
 #' @examples
-#' bt_model(shape = 2)
+#' bt_model(shape_lambda = 2)
 #' @export
-bt_model <- function(shape = 4, rate = exp(digamma(shape)),
+bt_model <- function(shape_lambda = 4, rate_lambda = exp(digamma(shape_lambda)),
                      latent_strength = NULL, ability_prior = NULL) {
-  prior <- .resolve_strength_prior(shape, rate, latent_strength, ability_prior)
+  prior <- .resolve_strength_prior(shape_lambda, rate_lambda, latent_strength, ability_prior)
   .new_btsbm_model("bt", "none", prior)
 }
 
@@ -506,7 +506,7 @@ bt_model <- function(shape = 4, rate = exp(digamma(shape)),
 #' in block \eqn{k} share the strength \eqn{\lambda_k}:
 #' \deqn{\Pr(i \text{ beats } j \mid z, \lambda) =
 #'   \frac{\lambda_{z_i}}{\lambda_{z_i} + \lambda_{z_j}}.}
-#' Block strengths are i.i.d. \eqn{\mathrm{Gamma}(\mathrm{shape}, \mathrm{rate})}
+#' Block strengths are i.i.d. \eqn{\mathrm{Gamma}(\mathrm{shape\_lambda}, \mathrm{rate\_lambda})}
 #' and the partition \eqn{z} receives the prior `item_clustering`.
 #'
 #' @inheritParams bt_model
@@ -516,31 +516,31 @@ bt_model <- function(shape = 4, rate = exp(digamma(shape)),
 #' @param item_prior Deprecated alias for `item_clustering`.
 #' @return A `btsbm_model`.
 #' @examples
-#' bt_sbm_model(shape = 2, item_clustering = gnedin_prior(gnedin_hyper = 0.5))
+#' bt_sbm_model(shape_lambda = 2, item_clustering = gnedin_prior(gnedin_hyper = 0.5))
 #' @export
-bt_sbm_model <- function(shape = 4, rate = exp(digamma(shape)),
+bt_sbm_model <- function(shape_lambda = 4, rate_lambda = exp(digamma(shape_lambda)),
                          item_clustering = gnedin_prior(gnedin_hyper = 0.5),
                          latent_strength = NULL, ability_prior = NULL,
                          item_prior = NULL) {
-  prior <- .resolve_strength_prior(shape, rate, latent_strength, ability_prior)
+  prior <- .resolve_strength_prior(shape_lambda, rate_lambda, latent_strength, ability_prior)
   if (!is.null(item_prior)) item_clustering <- item_prior
   .new_btsbm_model("bt", "item_sbm", prior, item_clustering = item_clustering)
 }
 
 #' Define a simple Plackett--Luce model
 #'
-#' Item strengths are i.i.d. \eqn{\mathrm{Gamma}(\mathrm{shape},
-#' \mathrm{rate})}. By default reported strengths are divided by their sum in
+#' Item strengths are i.i.d. \eqn{\mathrm{Gamma}(\mathrm{shape\_lambda},
+#' \mathrm{rate\_lambda})}. By default reported strengths are divided by their sum in
 #' every draw, so they are shares that add to one.
 #'
 #' @inheritParams bt_model
 #' @param identifiability PL reporting constraint, see [pl_identifiability()].
 #' @return A `btsbm_model`.
 #' @export
-pl_model <- function(shape = 1, rate = 1,
+pl_model <- function(shape_lambda = 1, rate_lambda = 1,
                      identifiability = pl_identifiability(),
                      latent_strength = NULL, ability_prior = NULL) {
-  prior <- .resolve_strength_prior(shape, rate, latent_strength, ability_prior)
+  prior <- .resolve_strength_prior(shape_lambda, rate_lambda, latent_strength, ability_prior)
   .new_btsbm_model("pl", "none", prior, identifiability = identifiability)
 }
 
@@ -549,12 +549,12 @@ pl_model <- function(shape = 1, rate = 1,
 #' @inheritParams pl_model
 #' @return A `btsbm_model`.
 #' @export
-pl_sbm_model <- function(shape = 1, rate = 1,
+pl_sbm_model <- function(shape_lambda = 1, rate_lambda = 1,
                          item_clustering = gnedin_prior(gnedin_hyper = 0.5),
                          identifiability = pl_identifiability(),
                          latent_strength = NULL, ability_prior = NULL,
                          item_prior = NULL) {
-  prior <- .resolve_strength_prior(shape, rate, latent_strength, ability_prior)
+  prior <- .resolve_strength_prior(shape_lambda, rate_lambda, latent_strength, ability_prior)
   if (!is.null(item_prior)) item_clustering <- item_prior
   .new_btsbm_model("pl", "item_sbm", prior, item_clustering = item_clustering,
                     identifiability = identifiability)
@@ -570,12 +570,12 @@ pl_sbm_model <- function(shape = 1, rate = 1,
 #' @param ranking_prior Deprecated alias for `ranking_clustering`.
 #' @return A `btsbm_model`.
 #' @export
-pl_mixture_model <- function(shape = 1, rate = 1,
+pl_mixture_model <- function(shape_lambda = 1, rate_lambda = 1,
                              ranking_clustering = gnedin_prior(gnedin_hyper = 0.5),
                              identifiability = pl_identifiability(),
                              latent_strength = NULL, ability_prior = NULL,
                              ranking_prior = NULL) {
-  prior <- .resolve_strength_prior(shape, rate, latent_strength, ability_prior)
+  prior <- .resolve_strength_prior(shape_lambda, rate_lambda, latent_strength, ability_prior)
   if (!is.null(ranking_prior)) ranking_clustering <- ranking_prior
   .new_btsbm_model("pl", "ranking_mixture", prior,
                     ranking_clustering = ranking_clustering,
@@ -592,13 +592,13 @@ pl_mixture_model <- function(shape = 1, rate = 1,
 #' @inheritParams bt_sbm_model
 #' @return A `btsbm_model`.
 #' @export
-pl_lbm_model <- function(shape = 1, rate = 1,
+pl_lbm_model <- function(shape_lambda = 1, rate_lambda = 1,
                          ranking_clustering = gnedin_prior(gnedin_hyper = 0.5),
                          item_clustering = gnedin_prior(gnedin_hyper = 0.5),
                          identifiability = pl_identifiability(),
                          latent_strength = NULL, ability_prior = NULL,
                          ranking_prior = NULL, item_prior = NULL) {
-  prior <- .resolve_strength_prior(shape, rate, latent_strength, ability_prior)
+  prior <- .resolve_strength_prior(shape_lambda, rate_lambda, latent_strength, ability_prior)
   if (!is.null(ranking_prior)) ranking_clustering <- ranking_prior
   if (!is.null(item_prior)) item_clustering <- item_prior
   .new_btsbm_model("pl", "lbm", prior,
@@ -611,8 +611,8 @@ pl_lbm_model <- function(shape = 1, rate = 1,
 print.btsbm_model <- function(x, ...) {
   cat("<btsbm_model>", .model_long_name(x), "\n")
   symbol <- if (x$structure == "none") "lambda_i" else "lambda_k"
-  cat("  strength prior:   ", symbol, " ~ iid Gamma(shape = ",
-      signif(x$latent_strength$shape, 4), ", rate = ",
+  cat("  strength prior:   ", symbol, " ~ iid Gamma(shape_lambda = ",
+      signif(x$latent_strength$shape, 4), ", rate_lambda = ",
       signif(x$latent_strength$rate, 4), ")\n", sep = "")
   if (!is.null(x$item_clustering)) {
     cat("  item partition:    z ~ ", .prior_description(x$item_clustering), "\n", sep = "")

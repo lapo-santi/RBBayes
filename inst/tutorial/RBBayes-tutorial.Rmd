@@ -25,6 +25,12 @@ produced by the code in the document, so you can **knit it on your own
 computer** (RStudio: *Knit* button, or `rmarkdown::render("RBBayes-tutorial.Rmd")`)
 and obtain the same results. Knitting takes about two minutes on a laptop.
 
+**In the lecture** the slides follow this file in order. Each code slide names
+the chunk to run (e.g. `fit-bt`); the slides show exactly the code in this
+file, so your numbers and figures will match the ones on the screen. In
+RStudio, run a chunk with the green arrow or Ctrl/Cmd + Shift + Enter, and use
+*Run All Chunks Above* if you fall behind.
+
 **Installation (run once).** RBBayes contains a little C++ code, so you need
 the standard R build tools: Rtools on Windows, or the Xcode command-line tools
 on macOS (`xcode-select --install` in a terminal).
@@ -109,14 +115,14 @@ tennis$wins[1:5, 1:5]      # wins[i, j] = wins of row player i over column playe
 ```
 
 **Are the true strengths on the scale of the prior?** Below we give every
-strength a Gamma(shape = 2, rate = $e^{\psi(2)}$) prior; this rate makes
+strength a Gamma(`shape_lambda` = 2, `rate_lambda` = $e^{\psi(2)}$) prior; this rate makes
 $E[\log \lambda] = 0$, so a typical strength is about 1. Only ratios of strengths
 matter, so compare the *ratios* $12/1$ with what the prior finds plausible:
 
 ```{r prior-scale}
-shape <- 2
-rate  <- exp(digamma(shape))
-prior_draws <- rgamma(1e5, shape, rate)
+shape_lambda <- 2
+rate_lambda  <- exp(digamma(shape_lambda))
+prior_draws  <- rgamma(1e5, shape = shape_lambda, rate = rate_lambda)
 quantile(prior_draws, c(0.05, 0.5, 0.95))
 # Ratio of the 95% to the 5% prior quantile versus the largest true ratio:
 c(prior_ratio = unname(quantile(prior_draws, 0.95) / quantile(prior_draws, 0.05)),
@@ -168,13 +174,13 @@ with players ordered by their estimated tier.
 
 ## The standard Bradley--Terry model
 
-Each player gets their own strength $\lambda_i \overset{iid}{\sim}$ Gamma(shape, rate).
-In `bt_model()` you only give the shape and rate.
+Each player gets their own strength $\lambda_i \overset{iid}{\sim}$ Gamma(`shape_lambda`, `rate_lambda`).
+In `bt_model()` you only give `shape_lambda` and `rate_lambda`.
 
 ```{r fit-bt}
 bt_fit <- fit_model(
   tennis,
-  bt_model(shape = 2, rate = exp(digamma(2))),
+  bt_model(shape_lambda = 2, rate_lambda = exp(digamma(2))),
   mcmc_control(iter = 4000, warmup = 2000, seed = 12)
 )
 bt_fit
@@ -254,7 +260,7 @@ Values of the potential scale reduction factor close to 1 are reassuring.
 ## The Bradley--Terry stochastic block model
 
 The BT--SBM groups players into blocks: $z_i$ is the block of player $i$,
-$\lambda_k \overset{iid}{\sim}$ Gamma(shape, rate) is the strength of block $k$,
+$\lambda_k \overset{iid}{\sim}$ Gamma(`shape_lambda`, `rate_lambda`) is the strength of block $k$,
 and the partition $z$ gets a prior that leaves the number of blocks $K$ random.
 
 ### Prior on the number of blocks
@@ -286,7 +292,7 @@ and, with its large prior standard deviation, is not very informative about $K$.
 
 ```{r fit-sbm}
 sbm_model <- bt_sbm_model(
-  shape = 2, rate = exp(digamma(2)),
+  shape_lambda = 2, rate_lambda = exp(digamma(2)),
   item_clustering = gnedin_prior(gnedin_hyper = 0.5)
 )
 sbm_model
@@ -479,7 +485,7 @@ matches.
 ```{r atp-fit}
 atp_fit <- fit_model(
   atp_data,
-  bt_sbm_model(shape = 2, rate = exp(digamma(2)),
+  bt_sbm_model(shape_lambda = 2, rate_lambda = exp(digamma(2)),
                item_clustering = gnedin_prior(gnedin_hyper = 0.5)),
   mcmc_control(iter = 6000, warmup = 3000, seed = 1)
 )
@@ -559,7 +565,7 @@ plot_ranking_positions(sushi)
 ```
 
 ```{r pl-fit}
-pl_fit <- fit_model(sushi, pl_model(shape = 1, rate = 1),
+pl_fit <- fit_model(sushi, pl_model(shape_lambda = 1, rate_lambda = 1),
                     mcmc_control(iter = 2000, warmup = 1000, seed = 4))
 summary(pl_fit)
 ```

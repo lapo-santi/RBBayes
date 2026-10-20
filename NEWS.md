@@ -1,7 +1,7 @@
 # Tutorial-driven interface revision
 
-* Model constructors take the Gamma prior directly: `bt_model(shape = 2, rate = 1)`,
-  `bt_sbm_model(shape, rate, item_clustering)`, and likewise for PL models. The
+* Model constructors take the Gamma prior directly: `bt_model(shape_lambda = 2, rate_lambda = 1)`,
+  `bt_sbm_model(shape_lambda, rate_lambda, item_clustering)`, and likewise for PL models. The
   strengths are i.i.d. a priori; `latent_strength()` objects are still accepted
   (deprecated). The default BT prior is now Gamma(4, exp(digamma(4))), matching BT--SBM.
 * `gnedin_prior(gnedin_hyper = 0.5)`; `gnedin_hyperparameter` is a deprecated alias.

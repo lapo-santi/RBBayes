@@ -205,7 +205,7 @@ summary.btsbm_fit <- function(object, credible_mass = 0.9, ...) {
                             ranking_mixture = "latent ranking groups",
                             lbm = "latent ranking groups and item blocks"),
     n_items = data$n_items,
-    strength_prior = sprintf("%s ~ iid Gamma(shape = %s, rate = %s)",
+    strength_prior = sprintf("%s ~ iid Gamma(shape_lambda = %s, rate_lambda = %s)",
                              if (model$structure == "none") "lambda_i" else "lambda_k",
                              signif(model$latent_strength$shape, 4),
                              signif(model$latent_strength$rate, 4)),

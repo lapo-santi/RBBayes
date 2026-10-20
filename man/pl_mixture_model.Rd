@@ -5,8 +5,8 @@
 \title{Define a Plackett--Luce ranking-mixture model}
 \usage{
 pl_mixture_model(
-  shape = 1,
-  rate = 1,
+  shape_lambda = 1,
+  rate_lambda = 1,
   ranking_clustering = gnedin_prior(gnedin_hyper = 0.5),
   identifiability = pl_identifiability(),
   latent_strength = NULL,
@@ -15,15 +15,15 @@ pl_mixture_model(
 )
 }
 \arguments{
-\item{shape, rate}{Shape and rate of the Gamma prior on every
-\eqn{\lambda_i}.}
+\item{shape_lambda, rate_lambda}{Shape and rate of the Gamma prior on
+every strength \eqn{\lambda}.}
 
 \item{ranking_clustering}{Prior on latent ranking groups.}
 
 \item{identifiability}{PL reporting constraint, see \code{\link[=pl_identifiability]{pl_identifiability()}}.}
 
 \item{latent_strength, ability_prior}{Deprecated. A prior object from
-\code{\link[=latent_strength]{latent_strength()}}; if supplied it overrides \code{shape} and \code{rate}.}
+\code{\link[=latent_strength]{latent_strength()}}; if supplied it overrides \code{shape_lambda} and \code{rate_lambda}.}
 
 \item{ranking_prior}{Deprecated alias for \code{ranking_clustering}.}
 }

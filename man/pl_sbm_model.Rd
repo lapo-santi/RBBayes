@@ -5,8 +5,8 @@
 \title{Define a Plackett--Luce stochastic block model}
 \usage{
 pl_sbm_model(
-  shape = 1,
-  rate = 1,
+  shape_lambda = 1,
+  rate_lambda = 1,
   item_clustering = gnedin_prior(gnedin_hyper = 0.5),
   identifiability = pl_identifiability(),
   latent_strength = NULL,
@@ -15,8 +15,8 @@ pl_sbm_model(
 )
 }
 \arguments{
-\item{shape, rate}{Shape and rate of the Gamma prior on every
-\eqn{\lambda_i}.}
+\item{shape_lambda, rate_lambda}{Shape and rate of the Gamma prior on
+every strength \eqn{\lambda}.}
 
 \item{item_clustering}{Prior on the item partition \eqn{z}; see
 \code{\link[=gnedin_prior]{gnedin_prior()}}, \code{\link[=dirichlet_process_prior]{dirichlet_process_prior()}}, \code{\link[=pitman_yor_prior]{pitman_yor_prior()}} or
@@ -25,7 +25,7 @@ pl_sbm_model(
 \item{identifiability}{PL reporting constraint, see \code{\link[=pl_identifiability]{pl_identifiability()}}.}
 
 \item{latent_strength, ability_prior}{Deprecated. A prior object from
-\code{\link[=latent_strength]{latent_strength()}}; if supplied it overrides \code{shape} and \code{rate}.}
+\code{\link[=latent_strength]{latent_strength()}}; if supplied it overrides \code{shape_lambda} and \code{rate_lambda}.}
 
 \item{item_prior}{Deprecated alias for \code{item_clustering}.}
 }

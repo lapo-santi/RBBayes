@@ -5,8 +5,8 @@
 \title{Define a Bradley--Terry stochastic block model}
 \usage{
 bt_sbm_model(
-  shape = 4,
-  rate = exp(digamma(shape)),
+  shape_lambda = 4,
+  rate_lambda = exp(digamma(shape_lambda)),
   item_clustering = gnedin_prior(gnedin_hyper = 0.5),
   latent_strength = NULL,
   ability_prior = NULL,
@@ -14,15 +14,15 @@ bt_sbm_model(
 )
 }
 \arguments{
-\item{shape, rate}{Shape and rate of the Gamma prior on every
-\eqn{\lambda_i}.}
+\item{shape_lambda, rate_lambda}{Shape and rate of the Gamma prior on
+every strength \eqn{\lambda}.}
 
 \item{item_clustering}{Prior on the item partition \eqn{z}; see
 \code{\link[=gnedin_prior]{gnedin_prior()}}, \code{\link[=dirichlet_process_prior]{dirichlet_process_prior()}}, \code{\link[=pitman_yor_prior]{pitman_yor_prior()}} or
 \code{\link[=dirichlet_multinomial_prior]{dirichlet_multinomial_prior()}}.}
 
 \item{latent_strength, ability_prior}{Deprecated. A prior object from
-\code{\link[=latent_strength]{latent_strength()}}; if supplied it overrides \code{shape} and \code{rate}.}
+\code{\link[=latent_strength]{latent_strength()}}; if supplied it overrides \code{shape_lambda} and \code{rate_lambda}.}
 
 \item{item_prior}{Deprecated alias for \code{item_clustering}.}
 }
@@ -34,9 +34,9 @@ Item \eqn{i} belongs to block \eqn{z_i \in \{1, \ldots, K\}} and all items
 in block \eqn{k} share the strength \eqn{\lambda_k}:
 \deqn{\Pr(i \text{ beats } j \mid z, \lambda) =
   \frac{\lambda_{z_i}}{\lambda_{z_i} + \lambda_{z_j}}.}
-Block strengths are i.i.d. \eqn{\mathrm{Gamma}(\mathrm{shape}, \mathrm{rate})}
+Block strengths are i.i.d. \eqn{\mathrm{Gamma}(\mathrm{shape\_lambda}, \mathrm{rate\_lambda})}
 and the partition \eqn{z} receives the prior \code{item_clustering}.
 }
 \examples{
-bt_sbm_model(shape = 2, item_clustering = gnedin_prior(gnedin_hyper = 0.5))
+bt_sbm_model(shape_lambda = 2, item_clustering = gnedin_prior(gnedin_hyper = 0.5))
 }

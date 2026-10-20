@@ -71,7 +71,7 @@ longer, multiple chains in a real analysis.
 ```{r pl-fit}
 simple_pl <- fit_model(
   sushi,
-  pl_model(shape = 1, rate = 1),
+  pl_model(shape_lambda = 1, rate_lambda = 1),
   mcmc_control(iter = 600, warmup = 300, seed = 1)
 )
 simple_pl

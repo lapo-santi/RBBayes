@@ -32,7 +32,7 @@ pairwise <- as_bt_data(wins)
 fit <- fit_model(
   pairwise,
   bt_sbm_model(
-    shape = 4, rate = exp(digamma(4)),
+    shape_lambda = 4, rate_lambda = exp(digamma(4)),
     item_clustering = gnedin_prior(gnedin_hyper = 0.8)
   ),
   mcmc_control(iter = 500, warmup = 250, seed = 1)
@@ -55,7 +55,7 @@ rankings <- sushi_toy(n_rankings = 40, rank_length = 5)
 fit_pl <- fit_model(
   rankings,
   pl_sbm_model(
-    shape = 1, rate = 1,
+    shape_lambda = 1, rate_lambda = 1,
     item_clustering = gnedin_prior(gnedin_hyper = 0.5)
   ),
   mcmc_control(iter = 600, warmup = 300, seed = 1)

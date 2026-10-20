@@ -1,13 +1,13 @@
 make_toy_sbm <- function() {
   data <- tennis_tiered_toy(seed = 3, matches_per_pair = 10)
-  fit_model(data, bt_sbm_model(shape = 2), mcmc_control(iter = 600, warmup = 300, seed = 4))
+  fit_model(data, bt_sbm_model(shape_lambda = 2), mcmc_control(iter = 600, warmup = 300, seed = 4))
 }
 
-test_that("model constructors accept shape and rate directly", {
-  model <- bt_model(shape = 2, rate = 3)
+test_that("model constructors accept shape_lambda and rate_lambda directly", {
+  model <- bt_model(shape_lambda = 2, rate_lambda = 3)
   expect_equal(model$latent_strength$shape, 2)
   expect_equal(model$latent_strength$rate, 3)
-  expect_equal(bt_sbm_model(shape = 2)$latent_strength$rate, exp(digamma(2)))
+  expect_equal(bt_sbm_model(shape_lambda = 2)$latent_strength$rate, exp(digamma(2)))
   legacy <- bt_model(latent_strength = latent_strength(shape = 2, rate = 3))
   expect_identical(legacy, model)
   expect_identical(bt_model(latent_strength(2, 3)), model)

@@ -27,7 +27,7 @@ strength; that probability, \eqn{\Pr(z_i = z_j \mid y)}, is returned in the
 \examples{
 \donttest{
 data <- tennis_tiered_toy(seed = 1)
-fit <- fit_model(data, bt_model(shape = 2),
+fit <- fit_model(data, bt_model(shape_lambda = 2),
                  mcmc_control(iter = 400, warmup = 200, seed = 1))
 round(prob_stronger(fit)[1:4, 1:4], 2)
 }
