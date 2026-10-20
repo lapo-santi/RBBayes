@@ -12,6 +12,9 @@
   [`as_pl_data()`](https://laposanti.github.io/BTSBM/reference/as_rankings.md)
   : Create validated Plackett–Luce ranking data
 
+- [`block_stability()`](https://laposanti.github.io/BTSBM/reference/block_stability.md)
+  : How stable is each estimated block?
+
 - [`block_winprob_table_from_lambdas()`](https://laposanti.github.io/BTSBM/reference/block_winprob_table_from_lambdas.md)
   : Block-level Bradley-Terry win probabilities from player strengths
 
@@ -32,6 +35,9 @@
 
 - [`compute_expected_wins_rank_posterior()`](https://laposanti.github.io/BTSBM/reference/compute_expected_wins_rank_posterior.md)
   : Posterior rank summaries from player-strength draws
+
+- [`credible_ball()`](https://laposanti.github.io/BTSBM/reference/credible_ball.md)
+  : Credible ball for the item partition
 
 - [`dirichlet_multinomial_prior()`](https://laposanti.github.io/BTSBM/reference/dirichlet_multinomial_prior.md)
   : Dirichlet–multinomial prior for a latent partition
@@ -84,7 +90,7 @@
 
 - [`latent_strength()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md)
   [`gamma_ability()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md)
-  : Define a Gamma prior for positive latent strengths
+  : Gamma prior object for positive strengths (low-level)
 
 - [`log_lik()`](https://laposanti.github.io/BTSBM/reference/log_lik.md)
   : Compute pointwise log likelihoods from an RBBayes fit
@@ -123,6 +129,9 @@
 - [`partition_moves()`](https://laposanti.github.io/BTSBM/reference/partition_moves.md)
   : Set partition-move controls
 
+- [`partition_point_estimate()`](https://laposanti.github.io/BTSBM/reference/partition_point_estimate.md)
+  : Point estimate of the item partition
+
 - [`partition_prior()`](https://laposanti.github.io/BTSBM/reference/partition_prior.md)
   : Legacy partition-prior interface
 
@@ -130,7 +139,7 @@
   : Pitman–Yor prior for a latent partition
 
 - [`pl_identifiability()`](https://laposanti.github.io/BTSBM/reference/pl_identifiability.md)
-  : Set the identifiable representation for Plackett–Luce abilities
+  : Set the reporting scale for Plackett–Luce strengths
 
 - [`pl_lbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_lbm_model.md)
   : Define a Plackett–Luce latent block model
@@ -153,17 +162,26 @@
 - [`plot_block_adjacency()`](https://laposanti.github.io/BTSBM/reference/plot_block_adjacency.md)
   : Figure 3 plotting function Block-ordered adjacency heatmap (BT-SBM)
 
+- [`plot_credible_ball()`](https://laposanti.github.io/BTSBM/reference/plot_credible_ball.md)
+  : Plot the credible ball for the item partition
+
 - [`plot_lambda_uncertainty()`](https://laposanti.github.io/BTSBM/reference/plot_lambda_uncertainty.md)
   : Figure 5 plotting function Lambda uncertainty plot (per player)
 
 - [`plot_mcmc_traces()`](https://laposanti.github.io/BTSBM/reference/plot_mcmc_traces.md)
   : Plot saved MCMC traces
 
+- [`plot_ordered_adjacency()`](https://laposanti.github.io/BTSBM/reference/plot_ordered_adjacency.md)
+  : Plot the observed outcomes ordered by the estimated blocks
+
 - [`plot_pairwise_outcomes()`](https://laposanti.github.io/BTSBM/reference/plot_pairwise_outcomes.md)
   : Plot observed pairwise win counts
 
 - [`plot_posterior_similarity()`](https://laposanti.github.io/BTSBM/reference/plot_posterior_similarity.md)
   : Plot the posterior similarity of items or rankings
+
+- [`plot_prob_stronger()`](https://laposanti.github.io/BTSBM/reference/plot_prob_stronger.md)
+  : Plot posterior probabilities that one item is stronger than another
 
 - [`plot_rank_intervals()`](https://laposanti.github.io/BTSBM/reference/plot_rank_intervals.md)
   : Plot posterior rank intervals
@@ -174,6 +192,9 @@
 - [`plot_strength_summary()`](https://laposanti.github.io/BTSBM/reference/plot_strength_summary.md)
   : Plot posterior item strengths and their uncertainty
 
+- [`posterior_K_table()`](https://laposanti.github.io/BTSBM/reference/posterior_K_table.md)
+  : Posterior distribution of the number of blocks K
+
 - [`posterior_similarity()`](https://laposanti.github.io/BTSBM/reference/posterior_similarity.md)
   : Compute posterior similarity for an inferred partition
 
@@ -181,7 +202,7 @@
   : Summarise posterior item strengths
 
 - [`pretty_table_K_distribution()`](https://laposanti.github.io/BTSBM/reference/pretty_table_K_distribution.md)
-  : Format a block-count posterior distribution as a pretty- table
+  : Format a block-count posterior distribution as a table (superseded)
 
 - [`print(`*`<btsbm_fit>`*`)`](https://laposanti.github.io/BTSBM/reference/print.btsbm_fit.md)
   : Print an RBBayes fit
@@ -191,6 +212,9 @@
 
 - [`prior_variance_K()`](https://laposanti.github.io/BTSBM/reference/prior_variance_K.md)
   : Prior variance of the number of occupied groups
+
+- [`prob_stronger()`](https://laposanti.github.io/BTSBM/reference/prob_stronger.md)
+  : Posterior probability that one item is stronger than another
 
 - [`relabel_by_lambda()`](https://laposanti.github.io/BTSBM/reference/relabel_by_lambda.md)
   : Relabel partitions by decreasing \\\lambda\\, compute point
@@ -209,7 +233,7 @@
   : Sushi-inspired toy ranking data
 
 - [`tennis_tiered_toy()`](https://laposanti.github.io/BTSBM/reference/tennis_tiered_toy.md)
-  : Simulate a clearly separated twenty-player tennis league
+  : Simulate a tiered twenty-player tennis league
 
 - [`tennis_toy()`](https://laposanti.github.io/BTSBM/reference/tennis_toy.md)
   : Tennis-league toy paired-comparison data

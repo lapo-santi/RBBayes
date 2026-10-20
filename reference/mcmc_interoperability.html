@@ -5,17 +5,23 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Convert a preference fit to a matrix of saved posterior draws — as.matrix.btsbm_fit"><meta name="description" content="Columns q[i] are item strengths divided by their sum in each saved draw.
-With normalise = FALSE, theta[i] are the stored, unnormalised strengths.
-The index i follows fit$data$item_labels. K_item and K_ranking contain
-occupied-group counts when available. Only retained draws are returned.
+</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Convert a preference fit to a matrix of saved posterior draws — as.matrix.btsbm_fit"><meta name="description" content="Columns are named after the items. rel_strength[&amp;lt;item&amp;gt;] is the item's
+strength divided by the sum of all strengths in each saved draw (its share
+of total strength). With normalise = FALSE, lambda[&amp;lt;item&amp;gt;] are the
+stored, unnormalised strengths. n_item_blocks and n_ranking_groups
+contain occupied-group counts when available. Only retained draws are
+returned. Older names (q[i], theta[i], K_item, K_ranking) are still
+accepted in pars.
 All fits must use identical data (including item order) and model
 specification, and have the same number of retained draws. The caller must
 supply independently run chains, preferably with different seeds and
-initialisations; these converters cannot establish independence."><meta property="og:description" content="Columns q[i] are item strengths divided by their sum in each saved draw.
-With normalise = FALSE, theta[i] are the stored, unnormalised strengths.
-The index i follows fit$data$item_labels. K_item and K_ranking contain
-occupied-group counts when available. Only retained draws are returned.
+initialisations; these converters cannot establish independence."><meta property="og:description" content="Columns are named after the items. rel_strength[&amp;lt;item&amp;gt;] is the item's
+strength divided by the sum of all strengths in each saved draw (its share
+of total strength). With normalise = FALSE, lambda[&amp;lt;item&amp;gt;] are the
+stored, unnormalised strengths. n_item_blocks and n_ranking_groups
+contain occupied-group counts when available. Only retained draws are
+returned. Older names (q[i], theta[i], K_item, K_ranking) are still
+accepted in pars.
 All fits must use identical data (including item order) and model
 specification, and have the same number of retained draws. The caller must
 supply independently run chains, preferably with different seeds and
@@ -61,10 +67,13 @@ initialisations; these converters cannot establish independence."></head><body>
     </div>
 
     <div class="ref-description section level2">
-    <p>Columns <code>q[i]</code> are item strengths divided by their sum in each saved draw.
-With <code>normalise = FALSE</code>, <code>theta[i]</code> are the stored, unnormalised strengths.
-The index i follows <code>fit$data$item_labels</code>. K_item and K_ranking contain
-occupied-group counts when available. Only retained draws are returned.</p>
+    <p>Columns are named after the items. <code>rel_strength[&lt;item&gt;]</code> is the item's
+strength divided by the sum of all strengths in each saved draw (its share
+of total strength). With <code>normalise = FALSE</code>, <code>lambda[&lt;item&gt;]</code> are the
+stored, unnormalised strengths. <code>n_item_blocks</code> and <code>n_ranking_groups</code>
+contain occupied-group counts when available. Only retained draws are
+returned. Older names (<code>q[i]</code>, <code>theta[i]</code>, <code>K_item</code>, <code>K_ranking</code>) are still
+accepted in <code>pars</code>.</p>
 <p>All fits must use identical data (including item order) and model
 specification, and have the same number of retained draws. The caller must
 supply independently run chains, preferably with different seeds and

@@ -11,10 +11,11 @@ fixes an upper bound through `max_clusters`.
 ``` r
 clustering_prior(
   family = c("gnedin", "dirichlet_process", "pitman_yor", "finite_dirichlet"),
-  gnedin_hyperparameter = 0.5,
+  gnedin_hyper = 0.5,
   concentration = 1,
   discount = 0.2,
-  max_clusters = NULL
+  max_clusters = NULL,
+  gnedin_hyperparameter = NULL
 )
 ```
 
@@ -25,10 +26,10 @@ clustering_prior(
   One of `"gnedin"`, `"dirichlet_process"`, `"pitman_yor"`, or
   `"finite_dirichlet"`.
 
-- gnedin_hyperparameter:
+- gnedin_hyper:
 
-  Gnedin hyperparameter in `(0, 1)`. Larger values favour more occupied
-  groups a priori.
+  Gnedin hyperparameter \\\gamma\\ in `(0, 1)`. Larger values favour
+  more occupied groups a priori.
 
 - concentration:
 
@@ -42,6 +43,10 @@ clustering_prior(
 - max_clusters:
 
   Required maximum number of groups for `family = "finite_dirichlet"`.
+
+- gnedin_hyperparameter:
+
+  Deprecated alias for `gnedin_hyper`.
 
 ## Value
 

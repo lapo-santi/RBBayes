@@ -1,10 +1,12 @@
 # Convert a preference fit to a matrix of saved posterior draws
 
-Columns `q[i]` are item strengths divided by their sum in each saved
-draw. With `normalise = FALSE`, `theta[i]` are the stored, unnormalised
-strengths. The index i follows `fit$data$item_labels`. K_item and
-K_ranking contain occupied-group counts when available. Only retained
-draws are returned.
+Columns are named after the items. `rel_strength[<item>]` is the item's
+strength divided by the sum of all strengths in each saved draw (its
+share of total strength). With `normalise = FALSE`, `lambda[<item>]` are
+the stored, unnormalised strengths. `n_item_blocks` and
+`n_ranking_groups` contain occupied-group counts when available. Only
+retained draws are returned. Older names (`q[i]`, `theta[i]`, `K_item`,
+`K_ranking`) are still accepted in `pars`.
 
 All fits must use identical data (including item order) and model
 specification, and have the same number of retained draws. The caller

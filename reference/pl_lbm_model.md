@@ -7,10 +7,12 @@ latent groups has its own positive strength.
 
 ``` r
 pl_lbm_model(
-  latent_strength = .default_latent_strength(),
-  ranking_clustering = gnedin_prior(gnedin_hyperparameter = 0.5),
-  item_clustering = gnedin_prior(gnedin_hyperparameter = 0.5),
+  shape = 1,
+  rate = 1,
+  ranking_clustering = gnedin_prior(gnedin_hyper = 0.5),
+  item_clustering = gnedin_prior(gnedin_hyper = 0.5),
   identifiability = pl_identifiability(),
+  latent_strength = NULL,
   ability_prior = NULL,
   ranking_prior = NULL,
   item_prior = NULL
@@ -19,9 +21,9 @@ pl_lbm_model(
 
 ## Arguments
 
-- latent_strength:
+- shape, rate:
 
-  Gamma prior for positive cell strengths.
+  Shape and rate of the Gamma prior on every \\\lambda_i\\.
 
 - ranking_clustering:
 
@@ -29,15 +31,23 @@ pl_lbm_model(
 
 - item_clustering:
 
-  Prior on latent item blocks.
+  Prior on the item partition \\z\\; see
+  [`gnedin_prior()`](https://laposanti.github.io/BTSBM/reference/gnedin_prior.md),
+  [`dirichlet_process_prior()`](https://laposanti.github.io/BTSBM/reference/dirichlet_process_prior.md),
+  [`pitman_yor_prior()`](https://laposanti.github.io/BTSBM/reference/pitman_yor_prior.md)
+  or
+  [`dirichlet_multinomial_prior()`](https://laposanti.github.io/BTSBM/reference/dirichlet_multinomial_prior.md).
 
 - identifiability:
 
-  PL reporting constraint.
+  PL reporting constraint, see
+  [`pl_identifiability()`](https://laposanti.github.io/BTSBM/reference/pl_identifiability.md).
 
-- ability_prior:
+- latent_strength, ability_prior:
 
-  Deprecated alias for `latent_strength`.
+  Deprecated. A prior object from
+  [`latent_strength()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md);
+  if supplied it overrides `shape` and `rate`.
 
 - ranking_prior:
 

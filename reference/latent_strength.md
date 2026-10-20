@@ -1,10 +1,10 @@
-# Define a Gamma prior for positive latent strengths
+# Gamma prior object for positive strengths (low-level)
 
-A Plackett–Luce likelihood only identifies relative strengths. This
-prior is defined on the positive, unnormalised strengths used by the
-sampler;
-[`pl_identifiability()`](https://laposanti.github.io/BTSBM/reference/pl_identifiability.md)
-controls the scale used when strengths are reported.
+Model constructors such as
+[`bt_model()`](https://laposanti.github.io/BTSBM/reference/bt_model.md)
+now take `shape` and `rate` directly, so most users never need this
+function. It is kept for compatibility with code written for earlier
+development versions.
 
 ## Usage
 

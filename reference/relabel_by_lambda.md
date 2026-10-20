@@ -56,11 +56,12 @@ A named list with components:
 
 - `minVI_partition`:
 
-  Partition estimated by minimizing posterior expected VI using salso.
+  Partition estimated by minimizing posterior expected VI (using salso
+  when installed, otherwise a built-in search).
 
 - `partition_binder`:
 
-  Partition estimated by Binder's loss using salso.
+  Partition estimated by Binder's loss.
 
 - `n_clusters_each_iter`:
 
@@ -111,7 +112,7 @@ salso using the generalized variation of information and Binder losses.
 
 - `lambda_samples` may be sparse (NAs for non-occupied labels).
 
-- salso must be available for the point-estimate summaries.
+- salso is used for the point estimates when installed.
 
 ## References
 

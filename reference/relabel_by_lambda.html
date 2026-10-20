@@ -112,10 +112,10 @@ cluster's \(\lambda\) after relabelling.</p></dd>
 
 <dt><code>minVI_partition</code></dt>
 <dd><p>Partition estimated by minimizing posterior expected VI
-using <span class="pkg">salso</span>.</p></dd>
+(using <span class="pkg">salso</span> when installed, otherwise a built-in search).</p></dd>
 
 <dt><code>partition_binder</code></dt>
-<dd><p>Partition estimated by Binder's loss using <span class="pkg">salso</span>.</p></dd>
+<dd><p>Partition estimated by Binder's loss.</p></dd>
 
 <dt><code>n_clusters_each_iter</code></dt>
 <dd><p>Integer vector (length S) of occupied cluster counts per iteration.</p></dd>
@@ -161,7 +161,7 @@ the generalized variation of information and Binder losses.</p>
 
 <ul><li><p><code>x_samples</code> must be integer-valued with no missing items per row.</p></li>
 <li><p><code>lambda_samples</code> may be sparse (NAs for non-occupied labels).</p></li>
-<li><p><span class="pkg">salso</span> must be available for the point-estimate summaries.</p></li>
+<li><p><span class="pkg">salso</span> is used for the point estimates when installed.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

@@ -7,9 +7,11 @@ separate vector of item strengths.
 
 ``` r
 pl_mixture_model(
-  latent_strength = .default_latent_strength(),
-  ranking_clustering = gnedin_prior(gnedin_hyperparameter = 0.5),
+  shape = 1,
+  rate = 1,
+  ranking_clustering = gnedin_prior(gnedin_hyper = 0.5),
   identifiability = pl_identifiability(),
+  latent_strength = NULL,
   ability_prior = NULL,
   ranking_prior = NULL
 )
@@ -17,9 +19,9 @@ pl_mixture_model(
 
 ## Arguments
 
-- latent_strength:
+- shape, rate:
 
-  Gamma prior for positive component strengths.
+  Shape and rate of the Gamma prior on every \\\lambda_i\\.
 
 - ranking_clustering:
 
@@ -27,11 +29,14 @@ pl_mixture_model(
 
 - identifiability:
 
-  PL reporting constraint.
+  PL reporting constraint, see
+  [`pl_identifiability()`](https://laposanti.github.io/BTSBM/reference/pl_identifiability.md).
 
-- ability_prior:
+- latent_strength, ability_prior:
 
-  Deprecated alias for `latent_strength`.
+  Deprecated. A prior object from
+  [`latent_strength()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md);
+  if supplied it overrides `shape` and `rate`.
 
 - ranking_prior:
 

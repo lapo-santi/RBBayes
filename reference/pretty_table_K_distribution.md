@@ -1,10 +1,8 @@
-# Format a block-count posterior distribution as a pretty- table
+# Format a block-count posterior distribution as a table (superseded)
 
-Given a common fit object (or lower-level relabelled output), this
-function produces a horizontal table with the posterior distribution of
-K, the number of occupied item blocks. It formats the result with
-[`knitr::kable`](https://rdrr.io/pkg/knitr/man/kable.html) and
-[`kableExtra::kable_styling`](https://rdrr.io/pkg/kableExtra/man/kable_styling.html).
+Superseded by
+[`posterior_K_table()`](https://laposanti.github.io/BTSBM/reference/posterior_K_table.md),
+which has a clearer name and returns a data frame by default.
 
 ## Usage
 
@@ -54,6 +52,12 @@ A `kableExtra` / `knitr_kable` object (suitable for LaTeX or HTML,
 depending on `format`).
 
 ## Details
+
+Given a common fit object (or lower-level relabelled output), this
+function produces a horizontal table with the posterior distribution of
+K, the number of occupied item blocks. It formats the result with
+[`knitr::kable`](https://rdrr.io/pkg/knitr/man/kable.html) and
+[`kableExtra::kable_styling`](https://rdrr.io/pkg/kableExtra/man/kable_styling.html).
 
 Values whose posterior probability is no larger than `p_min` are
 omitted.

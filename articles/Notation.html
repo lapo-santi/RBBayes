@@ -67,7 +67,7 @@
 
       <h1>Notation and object dimensions for the common BTSBM interface</h1>
             
-            <h4 data-toc-skip class="date">2026-10-16</h4>
+            <h4 data-toc-skip class="date">2026-10-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/lapo-santi/RBBayes/blob/main/vignettes/Notation.Rmd" class="external-link"><code>vignettes/Notation.Rmd</code></a></small>
       <div class="d-none name"><code>Notation.Rmd</code></div>
@@ -152,9 +152,9 @@ structure.</p>
 <tr class="even">
 <td><code><a href="../reference/bt_sbm_model.html">bt_sbm_model()</a></code></td>
 <td>Bradley–Terry</td>
-<td>item labels <span class="math inline">\(x_i\)</span>
+<td>item labels <span class="math inline">\(z_i\)</span>
 </td>
-<td>block strength <span class="math inline">\(\lambda_{x_i}\)</span>
+<td>block strength <span class="math inline">\(\lambda_{z_i}\)</span>
 </td>
 </tr>
 <tr class="odd">
@@ -167,26 +167,26 @@ structure.</p>
 <tr class="even">
 <td><code><a href="../reference/pl_sbm_model.html">pl_sbm_model()</a></code></td>
 <td>Plackett–Luce</td>
-<td>item labels <span class="math inline">\(x_i\)</span>
+<td>item labels <span class="math inline">\(z_i\)</span>
 </td>
-<td>block strength <span class="math inline">\(\lambda_{x_i}\)</span>
+<td>block strength <span class="math inline">\(\lambda_{z_i}\)</span>
 </td>
 </tr>
 <tr class="odd">
 <td><code><a href="../reference/pl_mixture_model.html">pl_mixture_model()</a></code></td>
 <td>Plackett–Luce</td>
-<td>ranking labels <span class="math inline">\(z_\ell\)</span>
+<td>ranking labels <span class="math inline">\(c_\ell\)</span>
 </td>
-<td>profile-specific strength <span class="math inline">\(\lambda_{z_\ell i}\)</span>
+<td>profile-specific strength <span class="math inline">\(\lambda_{c_\ell i}\)</span>
 </td>
 </tr>
 <tr class="even">
 <td><code><a href="../reference/pl_lbm_model.html">pl_lbm_model()</a></code></td>
 <td>Plackett–Luce</td>
 <td>
-<span class="math inline">\(x_i\)</span> and <span class="math inline">\(z_\ell\)</span>
+<span class="math inline">\(z_i\)</span> and <span class="math inline">\(c_\ell\)</span>
 </td>
-<td>profile-by-item-block strength <span class="math inline">\(\lambda_{z_\ell x_i}\)</span>
+<td>profile-by-item-block strength <span class="math inline">\(\lambda_{c_\ell z_i}\)</span>
 </td>
 </tr>
 </tbody>
@@ -195,7 +195,7 @@ structure.</p>
 <p><span class="math display">\[
 \Pr(i\text{ defeats }j)=\frac{\lambda_i}{\lambda_i+\lambda_j},
 \]</span></p>
-<p>with <span class="math inline">\(\lambda_i\)</span> replaced by <span class="math inline">\(\lambda_{x_i}\)</span> in a BT–SBM. For a
+<p>with <span class="math inline">\(\lambda_i\)</span> replaced by <span class="math inline">\(\lambda_{z_i}\)</span> in a BT–SBM. For a
 Plackett–Luce ranking, the probability of the item selected at each
 position is its positive strength divided by the total strength of the
 remaining risk set.</p>
@@ -203,10 +203,11 @@ remaining risk set.</p>
 <div class="section level2">
 <h2 id="prior-and-control-objects">Prior and control objects<a class="anchor" aria-label="anchor" href="#prior-and-control-objects"></a>
 </h2>
-<p>Positive strengths use <code>latent_strength(shape, rate)</code>.
+<p>Positive strengths get i.i.d. Gamma priors, specified directly in the
+model constructor, e.g. <code>bt_model(shape = 2, rate = 1)</code>.
 Latent partitions use one of the following common constructors:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyperparameter <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyper <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/dirichlet_process_prior.html">dirichlet_process_prior</a></span><span class="op">(</span>concentration <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/pitman_yor_prior.html">pitman_yor_prior</a></span><span class="op">(</span>concentration <span class="op">=</span> <span class="fl">1</span>, discount <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/finite_partition.html">finite_partition</a></span><span class="op">(</span>max_clusters <span class="op">=</span> <span class="fl">4</span>, concentration <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
@@ -246,14 +247,14 @@ structure.</p>
 <tbody>
 <tr class="odd">
 <td><code>item_cluster</code></td>
-<td>sampled <span class="math inline">\(x_i\)</span>
+<td>sampled <span class="math inline">\(z_i\)</span>
 </td>
 <td>
 <code>S x n</code> integer matrix</td>
 </tr>
 <tr class="even">
 <td><code>ranking_cluster</code></td>
-<td>sampled <span class="math inline">\(z_\ell\)</span>
+<td>sampled <span class="math inline">\(c_\ell\)</span>
 </td>
 <td>
 <code>S x L</code> integer matrix</td>
@@ -315,8 +316,8 @@ directly:</p>
 <span><span class="fu"><a href="../reference/mcmc_diagnostics.html">mcmc_diagnostics</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
 <p>For a BT–SBM, the paper-oriented outputs use the same fit object:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/pretty_table_K_distribution.html">pretty_table_K_distribution</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_block_adjacency.html">plot_block_adjacency</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/posterior_K_table.html">posterior_K_table</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plot_ordered_adjacency.html">plot_ordered_adjacency</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_assignment_probabilities.html">plot_assignment_probabilities</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_rank_intervals.html">plot_rank_intervals</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
 <p><code><a href="../reference/plot_assignment_probabilities.html">plot_assignment_probabilities()</a></code> conditions on the
@@ -347,8 +348,8 @@ this same observation-level definition.</p>
 <span></span>
 <span><span class="va">pairwise</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tennis_toy.html">tennis_toy</a></span><span class="op">(</span>matches_per_pair <span class="op">=</span> <span class="fl">8</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bt_sbm_model.html">bt_sbm_model</a></span><span class="op">(</span></span>
-<span>  latent_strength <span class="op">=</span> <span class="fu"><a href="../reference/latent_strength.html">latent_strength</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">4</span>, rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyperparameter <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
+<span>  shape <span class="op">=</span> <span class="fl">4</span>, rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyper <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span></span>
 <span>  <span class="va">pairwise</span>,</span>
@@ -360,8 +361,8 @@ this same observation-level definition.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">draws</span><span class="op">$</span><span class="va">n_item_clusters</span><span class="op">)</span> <span class="co"># S</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu"><a href="../reference/log_lik.html">log_lik</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">)</span>                 <span class="co"># S x D</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/pretty_table_K_distribution.html">pretty_table_K_distribution</a></span><span class="op">(</span><span class="va">fit</span>, p_min <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_block_adjacency.html">plot_block_adjacency</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/posterior_K_table.html">posterior_K_table</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plot_ordered_adjacency.html">plot_ordered_adjacency</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_assignment_probabilities.html">plot_assignment_probabilities</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">

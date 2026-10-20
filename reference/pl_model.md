@@ -1,30 +1,37 @@
 # Define a simple Plackett–Luce model
 
-Define a simple Plackett–Luce model
+Item strengths are i.i.d. \\\mathrm{Gamma}(\mathrm{shape},
+\mathrm{rate})\\. By default reported strengths are divided by their sum
+in every draw, so they are shares that add to one.
 
 ## Usage
 
 ``` r
 pl_model(
-  latent_strength = .default_latent_strength(),
+  shape = 1,
+  rate = 1,
   identifiability = pl_identifiability(),
+  latent_strength = NULL,
   ability_prior = NULL
 )
 ```
 
 ## Arguments
 
-- latent_strength:
+- shape, rate:
 
-  Gamma prior for positive item strengths.
+  Shape and rate of the Gamma prior on every \\\lambda_i\\.
 
 - identifiability:
 
-  PL reporting constraint.
+  PL reporting constraint, see
+  [`pl_identifiability()`](https://laposanti.github.io/BTSBM/reference/pl_identifiability.md).
 
-- ability_prior:
+- latent_strength, ability_prior:
 
-  Deprecated alias for `latent_strength`.
+  Deprecated. A prior object from
+  [`latent_strength()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md);
+  if supplied it overrides `shape` and `rate`.
 
 ## Value
 

@@ -1,4 +1,4 @@
-# Simulate a clearly separated twenty-player tennis league
+# Simulate a tiered twenty-player tennis league
 
 Simulate a complete league with user-specified block strengths and
 sizes. A common random permutation shuffles both axes.
@@ -10,7 +10,7 @@ tennis_tiered_toy(
   matches_per_pair = 20L,
   seed = 101L,
   n_blocks = length(latent_strength),
-  latent_strength = c(64, 16, 4, 1),
+  latent_strength = c(12, 6, 2, 1),
   players_per_block = 5L,
   item_labels = NULL,
   format = c("data", "edgelist")
@@ -33,7 +33,9 @@ tennis_tiered_toy(
 
 - latent_strength:
 
-  Positive vector with one strength per generating block.
+  Positive vector with one strength per generating block. The default
+  `c(12, 6, 2, 1)` is on the same scale as the default Gamma prior and
+  gives tiers that are separable but not perfectly so.
 
 - players_per_block:
 

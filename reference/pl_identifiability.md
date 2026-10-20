@@ -1,19 +1,22 @@
-# Set the identifiable representation for Plackett–Luce abilities
+# Set the reporting scale for Plackett–Luce strengths
 
-Set the identifiable representation for Plackett–Luce abilities
+A Plackett–Luce likelihood only identifies strength ratios. By default
+each saved strength vector is divided by its sum (`"sum"`), so reported
+strengths are shares that add to one, exactly like the normalised
+Bradley–Terry strengths. `"logmean0"` (geometric mean one) is kept for
+compatibility.
 
 ## Usage
 
 ``` r
-pl_identifiability(method = c("logmean0", "none"))
+pl_identifiability(method = c("sum", "none", "logmean0"))
 ```
 
 ## Arguments
 
 - method:
 
-  Normalisation method. `"logmean0"` gives each reported ability vector
-  geometric mean one.
+  One of `"sum"` (default), `"none"` or `"logmean0"`.
 
 ## Value
 

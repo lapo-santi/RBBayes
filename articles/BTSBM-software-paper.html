@@ -69,7 +69,7 @@
                         <h4 data-toc-skip class="author">Lapo Santi and
 Nial Friel</h4>
             
-            <h4 data-toc-skip class="date">2026-10-16</h4>
+            <h4 data-toc-skip class="date">2026-10-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/lapo-santi/RBBayes/blob/main/vignettes/BTSBM-software-paper.Rmd" class="external-link"><code>vignettes/BTSBM-software-paper.Rmd</code></a></small>
       <div class="d-none name"><code>BTSBM-software-paper.Rmd</code></div>
@@ -96,8 +96,8 @@ one system wins an evaluation. The classical Bradley–Terry model assigns
 every item its own positive strength and therefore induces a strict
 order. That resolution can be too fine when nearby items are not
 credibly separable.</p>
-<p>The BT–SBM instead assigns item <span class="math inline">\(i\)</span> to a latent block <span class="math inline">\(x_i\)</span>. Items in the same block share a
-strength <span class="math inline">\(\lambda_{x_i}\)</span>; occupied
+<p>The BT–SBM instead assigns item <span class="math inline">\(i\)</span> to a latent block <span class="math inline">\(z_i\)</span>. Items in the same block share a
+strength <span class="math inline">\(\lambda_{z_i}\)</span>; occupied
 blocks are ordered by strength. The result is a probabilistic tiered
 ranking rather than a forced item-by-item ordering. Posterior output
 keeps uncertainty visible through a distribution over the number of
@@ -113,8 +113,8 @@ summaries, plots, diagnostics, and predictive-comparison functions.</p>
 <span></span>
 <span><span class="va">pairwise</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_bt_data.html">as_bt_data</a></span><span class="op">(</span><span class="va">wins</span><span class="op">)</span></span>
 <span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bt_sbm_model.html">bt_sbm_model</a></span><span class="op">(</span></span>
-<span>  latent_strength <span class="op">=</span> <span class="fu"><a href="../reference/latent_strength.html">latent_strength</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">2</span>, rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyperparameter <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span>  shape <span class="op">=</span> <span class="fl">2</span>, rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyper <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span></span>
 <span>  <span class="va">pairwise</span>,</span>
@@ -217,13 +217,10 @@ constructors return a <code>btsbm_model</code> and are fitted by
 <p><strong>Usage</strong></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/bt_sbm_model.html">bt_sbm_model</a></span><span class="op">(</span></span>
-<span>  latent_strength <span class="op">=</span> <span class="fu"><a href="../reference/latent_strength.html">latent_strength</a></span><span class="op">(</span></span>
-<span>    shape <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>    rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span></span>
-<span>    gnedin_hyperparameter <span class="op">=</span> <span class="fl">0.5</span></span>
-<span>  <span class="op">)</span>,</span>
+<span>  shape <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="va">shape</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyper <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
+<span>  latent_strength <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ability_prior <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  item_prior <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -239,17 +236,21 @@ constructors return a <code>btsbm_model</code> and are fitted by
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><code>latent_strength</code></td>
-<td>Gamma prior for positive block strengths, created by
-<code><a href="../reference/latent_strength.html">latent_strength()</a></code>.</td>
+<td>
+<code>shape</code>, <code>rate</code>
+</td>
+<td>Gamma prior for the block strengths: <span class="math inline">\(\lambda_k \sim\)</span> iid Gamma(shape,
+rate).</td>
 </tr>
 <tr class="even">
 <td><code>item_clustering</code></td>
-<td>Prior on the latent item partition.</td>
+<td>Prior on the latent item partition <span class="math inline">\(z\)</span>.</td>
 </tr>
 <tr class="odd">
-<td><code>ability_prior</code></td>
-<td>Deprecated alias for <code>latent_strength</code>.</td>
+<td>
+<code>latent_strength</code>, <code>ability_prior</code>
+</td>
+<td>Deprecated: a prior object from <code><a href="../reference/latent_strength.html">latent_strength()</a></code>.</td>
 </tr>
 <tr class="even">
 <td><code>item_prior</code></td>
@@ -261,18 +262,18 @@ constructors return a <code>btsbm_model</code> and are fitted by
 <p>A <code>btsbm_model</code> specification. It records scientific
 choices without starting the sampler.</p>
 <p><strong>Details</strong></p>
-<p>Each item has a block label <span class="math inline">\(x_i\in\{1,\ldots,K\}\)</span> and each occupied
+<p>Each item has a block label <span class="math inline">\(z_i\in\{1,\ldots,K\}\)</span> and each occupied
 block has a positive strength <span class="math inline">\(\lambda_k\)</span>. The probability of a win
 is</p>
 <p><span class="math display">\[
 \Pr(i\text{ defeats }j\mid x,\lambda)
-=\frac{\lambda_{x_i}}{\lambda_{x_i}+\lambda_{x_j}},
+=\frac{\lambda_{z_i}}{\lambda_{z_i}+\lambda_{z_j}},
 \]</span></p>
 <p>so the aggregated observation satisfies</p>
 <p><span class="math display">\[
 w_{ij}\mid n_{ij},x,\lambda
 \sim\operatorname{Binomial}\!\left(
-n_{ij},\frac{\lambda_{x_i}}{\lambda_{x_i}+\lambda_{x_j}}
+n_{ij},\frac{\lambda_{z_i}}{\lambda_{z_i}+\lambda_{z_j}}
 \right).
 \]</span></p>
 <p>The prior over <span class="math inline">\(x=(x_1,\ldots,x_n)\)</span> is a named model
@@ -289,7 +290,7 @@ component rather than a collection of sampler-specific arguments.</p>
 <tbody>
 <tr class="odd">
 <td>Random finite number of blocks</td>
-<td><code>gnedin_prior(gnedin_hyperparameter = 0.8)</code></td>
+<td><code>gnedin_prior(gnedin_hyper = 0.8)</code></td>
 </tr>
 <tr class="even">
 <td>Dirichlet-process partition</td>
@@ -308,8 +309,8 @@ component rather than a collection of sampler-specific arguments.</p>
 <p><strong>Examples</strong></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_gnedin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bt_sbm_model.html">bt_sbm_model</a></span><span class="op">(</span></span>
-<span>  latent_strength <span class="op">=</span> <span class="fu"><a href="../reference/latent_strength.html">latent_strength</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">2</span>, rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyperparameter <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span>  shape <span class="op">=</span> <span class="fl">2</span>, rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyper <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">model_finite</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bt_sbm_model.html">bt_sbm_model</a></span><span class="op">(</span></span>
@@ -451,13 +452,14 @@ need to call a separate relabel step when using the
 <p><strong>Example</strong></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bt_sbm_model.html">bt_sbm_model</a></span><span class="op">(</span></span>
-<span>  latent_strength <span class="op">=</span> <span class="fu"><a href="../reference/latent_strength.html">latent_strength</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">2</span>, rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyperparameter <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span>  shape <span class="op">=</span> <span class="fl">2</span>, rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyper <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span><span class="va">pairwise</span>, <span class="va">model</span>, <span class="va">control</span><span class="op">)</span></span>
 <span><span class="va">fit</span></span>
-<span><span class="co">#&gt; &lt;btsbm_fit&gt; bt / item_sbm with 200 saved draws</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;btsbm_fit&gt; Bradley-Terry stochastic block model (BT-SBM), items share block strengths </span></span>
+<span><span class="co">#&gt;   18 items; 200 retained posterior draws. Use summary() for results.</span></span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  item_cluster <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">draws</span><span class="op">$</span><span class="va">item_cluster</span><span class="op">)</span>,</span>
@@ -972,7 +974,7 @@ by the common fit interface.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">simple_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span></span>
 <span>  <span class="va">pairwise</span>,</span>
-<span>  <span class="fu"><a href="../reference/bt_model.html">bt_model</a></span><span class="op">(</span>latent_strength <span class="op">=</span> <span class="fu"><a href="../reference/latent_strength.html">latent_strength</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">2</span>, rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/bt_model.html">bt_model</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">2</span>, rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/mcmc_control.html">mcmc_control</a></span><span class="op">(</span>iter <span class="op">=</span> <span class="fl">400</span>, warmup <span class="op">=</span> <span class="fl">200</span>, seed <span class="op">=</span> <span class="fl">125</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>

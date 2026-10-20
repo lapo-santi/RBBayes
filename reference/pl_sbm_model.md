@@ -6,9 +6,11 @@ Define a Plackett–Luce stochastic block model
 
 ``` r
 pl_sbm_model(
-  latent_strength = .default_latent_strength(),
-  item_clustering = gnedin_prior(gnedin_hyperparameter = 0.5),
+  shape = 1,
+  rate = 1,
+  item_clustering = gnedin_prior(gnedin_hyper = 0.5),
   identifiability = pl_identifiability(),
+  latent_strength = NULL,
   ability_prior = NULL,
   item_prior = NULL
 )
@@ -16,26 +18,29 @@ pl_sbm_model(
 
 ## Arguments
 
-- latent_strength:
+- shape, rate:
 
-  Gamma prior for positive block strengths.
+  Shape and rate of the Gamma prior on every \\\lambda_i\\.
 
 - item_clustering:
 
-  Prior on latent item blocks. Use
+  Prior on the item partition \\z\\; see
   [`gnedin_prior()`](https://laposanti.github.io/BTSBM/reference/gnedin_prior.md),
   [`dirichlet_process_prior()`](https://laposanti.github.io/BTSBM/reference/dirichlet_process_prior.md),
-  [`pitman_yor_prior()`](https://laposanti.github.io/BTSBM/reference/pitman_yor_prior.md),
+  [`pitman_yor_prior()`](https://laposanti.github.io/BTSBM/reference/pitman_yor_prior.md)
   or
-  [`finite_partition()`](https://laposanti.github.io/BTSBM/reference/finite_partition.md).
+  [`dirichlet_multinomial_prior()`](https://laposanti.github.io/BTSBM/reference/dirichlet_multinomial_prior.md).
 
 - identifiability:
 
-  PL reporting constraint.
+  PL reporting constraint, see
+  [`pl_identifiability()`](https://laposanti.github.io/BTSBM/reference/pl_identifiability.md).
 
-- ability_prior:
+- latent_strength, ability_prior:
 
-  Deprecated alias for `latent_strength`.
+  Deprecated. A prior object from
+  [`latent_strength()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md);
+  if supplied it overrides `shape` and `rate`.
 
 - item_prior:
 

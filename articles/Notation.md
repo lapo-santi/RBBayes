@@ -58,29 +58,30 @@ structure.
 | Constructor | Likelihood | Sampled partition | Strength used by an observation |
 |----|----|----|----|
 | [`bt_model()`](https://laposanti.github.io/BTSBM/reference/bt_model.md) | Bradley–Terry | none | item strength \\\lambda_i\\ |
-| [`bt_sbm_model()`](https://laposanti.github.io/BTSBM/reference/bt_sbm_model.md) | Bradley–Terry | item labels \\x_i\\ | block strength \\\lambda\_{x_i}\\ |
+| [`bt_sbm_model()`](https://laposanti.github.io/BTSBM/reference/bt_sbm_model.md) | Bradley–Terry | item labels \\z_i\\ | block strength \\\lambda\_{z_i}\\ |
 | [`pl_model()`](https://laposanti.github.io/BTSBM/reference/pl_model.md) | Plackett–Luce | none | item strength \\\lambda_i\\ |
-| [`pl_sbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_sbm_model.md) | Plackett–Luce | item labels \\x_i\\ | block strength \\\lambda\_{x_i}\\ |
-| [`pl_mixture_model()`](https://laposanti.github.io/BTSBM/reference/pl_mixture_model.md) | Plackett–Luce | ranking labels \\z\_\ell\\ | profile-specific strength \\\lambda\_{z\_\ell i}\\ |
-| [`pl_lbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_lbm_model.md) | Plackett–Luce | \\x_i\\ and \\z\_\ell\\ | profile-by-item-block strength \\\lambda\_{z\_\ell x_i}\\ |
+| [`pl_sbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_sbm_model.md) | Plackett–Luce | item labels \\z_i\\ | block strength \\\lambda\_{z_i}\\ |
+| [`pl_mixture_model()`](https://laposanti.github.io/BTSBM/reference/pl_mixture_model.md) | Plackett–Luce | ranking labels \\c\_\ell\\ | profile-specific strength \\\lambda\_{c\_\ell i}\\ |
+| [`pl_lbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_lbm_model.md) | Plackett–Luce | \\z_i\\ and \\c\_\ell\\ | profile-by-item-block strength \\\lambda\_{c\_\ell z_i}\\ |
 
 For Bradley–Terry models,
 
 \\ \Pr(i\text{ defeats }j)=\frac{\lambda_i}{\lambda_i+\lambda_j}, \\
 
-with \\\lambda_i\\ replaced by \\\lambda\_{x_i}\\ in a BT–SBM. For a
+with \\\lambda_i\\ replaced by \\\lambda\_{z_i}\\ in a BT–SBM. For a
 Plackett–Luce ranking, the probability of the item selected at each
 position is its positive strength divided by the total strength of the
 remaining risk set.
 
 ## Prior and control objects
 
-Positive strengths use `latent_strength(shape, rate)`. Latent partitions
-use one of the following common constructors:
+Positive strengths get i.i.d. Gamma priors, specified directly in the
+model constructor, e.g. `bt_model(shape = 2, rate = 1)`. Latent
+partitions use one of the following common constructors:
 
 ``` r
 
-gnedin_prior(gnedin_hyperparameter = 0.5)
+gnedin_prior(gnedin_hyper = 0.5)
 dirichlet_process_prior(concentration = 1)
 pitman_yor_prior(concentration = 1, discount = 0.2)
 finite_partition(max_clusters = 4, concentration = 1)
@@ -112,8 +113,8 @@ The contents of `fit$draws` depend on the selected structure.
 
 | Draw component | Meaning | Dimension or form |
 |----|----|----|
-| `item_cluster` | sampled \\x_i\\ | `S x n` integer matrix |
-| `ranking_cluster` | sampled \\z\_\ell\\ | `S x L` integer matrix |
+| `item_cluster` | sampled \\z_i\\ | `S x n` integer matrix |
+| `ranking_cluster` | sampled \\c\_\ell\\ | `S x L` integer matrix |
 | `n_item_clusters` | occupied item blocks | length `S` |
 | `n_ranking_clusters` | occupied ranking profiles | length `S` |
 | `latent_strength` | sampler-scale strengths | matrix for simple models; list of length `S` for variable-dimensional models |
@@ -145,8 +146,8 @@ For a BT–SBM, the paper-oriented outputs use the same fit object:
 
 ``` r
 
-pretty_table_K_distribution(fit)
-plot_block_adjacency(fit)
+posterior_K_table(fit)
+plot_ordered_adjacency(fit)
 plot_assignment_probabilities(fit)
 plot_rank_intervals(fit)
 ```
@@ -177,8 +178,8 @@ library(RBBayes)
 
 pairwise <- tennis_toy(matches_per_pair = 8, seed = 1)
 model <- bt_sbm_model(
-  latent_strength = latent_strength(shape = 4, rate = exp(digamma(4))),
-  item_clustering = gnedin_prior(gnedin_hyperparameter = 0.5)
+  shape = 4, rate = exp(digamma(4)),
+  item_clustering = gnedin_prior(gnedin_hyper = 0.5)
 )
 fit <- fit_model(
   pairwise,
@@ -190,8 +191,8 @@ dim(fit$draws$item_cluster)       # S x n
 length(fit$draws$n_item_clusters) # S
 dim(log_lik(fit))                 # S x D
 
-pretty_table_K_distribution(fit, p_min = 0)
-plot_block_adjacency(fit)
+posterior_K_table(fit)
+plot_ordered_adjacency(fit)
 plot_assignment_probabilities(fit)
 ```
 

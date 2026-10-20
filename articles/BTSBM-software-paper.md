@@ -19,8 +19,8 @@ every item its own positive strength and therefore induces a strict
 order. That resolution can be too fine when nearby items are not
 credibly separable.
 
-The BT–SBM instead assigns item \\i\\ to a latent block \\x_i\\. Items
-in the same block share a strength \\\lambda\_{x_i}\\; occupied blocks
+The BT–SBM instead assigns item \\i\\ to a latent block \\z_i\\. Items
+in the same block share a strength \\\lambda\_{z_i}\\; occupied blocks
 are ordered by strength. The result is a probabilistic tiered ranking
 rather than a forced item-by-item ordering. Posterior output keeps
 uncertainty visible through a distribution over the number of blocks, a
@@ -40,8 +40,8 @@ diag(wins) <- 0L
 
 pairwise <- as_bt_data(wins)
 model <- bt_sbm_model(
-  latent_strength = latent_strength(shape = 2, rate = exp(digamma(2))),
-  item_clustering = gnedin_prior(gnedin_hyperparameter = 0.8)
+  shape = 2, rate = exp(digamma(2)),
+  item_clustering = gnedin_prior(gnedin_hyper = 0.8)
 )
 fit <- fit_model(
   pairwise,
@@ -148,13 +148,10 @@ Both constructors return a `btsbm_model` and are fitted by
 ``` r
 
 bt_sbm_model(
-  latent_strength = latent_strength(
-    shape = 4,
-    rate = exp(digamma(4))
-  ),
-  item_clustering = gnedin_prior(
-    gnedin_hyperparameter = 0.5
-  ),
+  shape = 4,
+  rate = exp(digamma(shape)),
+  item_clustering = gnedin_prior(gnedin_hyper = 0.5),
+  latent_strength = NULL,
   ability_prior = NULL,
   item_prior = NULL
 )
@@ -164,9 +161,9 @@ bt_sbm_model(
 
 | Argument | Description |
 |----|----|
-| `latent_strength` | Gamma prior for positive block strengths, created by [`latent_strength()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md). |
-| `item_clustering` | Prior on the latent item partition. |
-| `ability_prior` | Deprecated alias for `latent_strength`. |
+| `shape`, `rate` | Gamma prior for the block strengths: \\\lambda_k \sim\\ iid Gamma(shape, rate). |
+| `item_clustering` | Prior on the latent item partition \\z\\. |
+| `latent_strength`, `ability_prior` | Deprecated: a prior object from [`latent_strength()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md). |
 | `item_prior` | Deprecated alias for `item_clustering`. |
 
 **Value**
@@ -176,23 +173,23 @@ starting the sampler.
 
 **Details**
 
-Each item has a block label \\x_i\in\\1,\ldots,K\\\\ and each occupied
+Each item has a block label \\z_i\in\\1,\ldots,K\\\\ and each occupied
 block has a positive strength \\\lambda_k\\. The probability of a win is
 
 \\ \Pr(i\text{ defeats }j\mid x,\lambda)
-=\frac{\lambda\_{x_i}}{\lambda\_{x_i}+\lambda\_{x_j}}, \\
+=\frac{\lambda\_{z_i}}{\lambda\_{z_i}+\lambda\_{z_j}}, \\
 
 so the aggregated observation satisfies
 
 \\ w\_{ij}\mid n\_{ij},x,\lambda \sim\operatorname{Binomial}\\\left(
-n\_{ij},\frac{\lambda\_{x_i}}{\lambda\_{x_i}+\lambda\_{x_j}} \right). \\
+n\_{ij},\frac{\lambda\_{z_i}}{\lambda\_{z_i}+\lambda\_{z_j}} \right). \\
 
 The prior over \\x=(x_1,\ldots,x_n)\\ is a named model component rather
 than a collection of sampler-specific arguments.
 
 | Scientific choice | Constructor |
 |----|----|
-| Random finite number of blocks | `gnedin_prior(gnedin_hyperparameter = 0.8)` |
+| Random finite number of blocks | `gnedin_prior(gnedin_hyper = 0.8)` |
 | Dirichlet-process partition | `dirichlet_process_prior(concentration = 1)` |
 | Pitman–Yor partition | `pitman_yor_prior(concentration = 1, discount = 0.2)` |
 | Fixed upper bound | `finite_partition(max_clusters = 4, concentration = 1)` |
@@ -202,8 +199,8 @@ than a collection of sampler-specific arguments.
 ``` r
 
 model_gnedin <- bt_sbm_model(
-  latent_strength = latent_strength(shape = 2, rate = exp(digamma(2))),
-  item_clustering = gnedin_prior(gnedin_hyperparameter = 0.8)
+  shape = 2, rate = exp(digamma(2)),
+  item_clustering = gnedin_prior(gnedin_hyper = 0.8)
 )
 
 model_finite <- bt_sbm_model(
@@ -311,13 +308,14 @@ functions documented below.
 ``` r
 
 model <- bt_sbm_model(
-  latent_strength = latent_strength(shape = 2, rate = exp(digamma(2))),
-  item_clustering = gnedin_prior(gnedin_hyperparameter = 0.8)
+  shape = 2, rate = exp(digamma(2)),
+  item_clustering = gnedin_prior(gnedin_hyper = 0.8)
 )
 
 fit <- fit_model(pairwise, model, control)
 fit
-#> <btsbm_fit> bt / item_sbm with 200 saved draws
+#> <btsbm_fit> Bradley-Terry stochastic block model (BT-SBM), items share block strengths 
+#>   18 items; 200 retained posterior draws. Use summary() for results.
 ```
 
 ``` r
@@ -656,7 +654,7 @@ when they use the same observations.
 
 simple_fit <- fit_model(
   pairwise,
-  bt_model(latent_strength = latent_strength(shape = 2, rate = exp(digamma(2)))),
+  bt_model(shape = 2, rate = exp(digamma(2))),
   mcmc_control(iter = 400, warmup = 200, seed = 125)
 )
 

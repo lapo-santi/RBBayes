@@ -56,9 +56,11 @@ separate vector of item strengths.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pl_mixture_model</span><span class="op">(</span></span>
-<span>  latent_strength <span class="op">=</span> <span class="fu">.default_latent_strength</span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  ranking_clustering <span class="op">=</span> <span class="fu"><a href="gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyperparameter <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
+<span>  shape <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  rate <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  ranking_clustering <span class="op">=</span> <span class="fu"><a href="gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyper <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
 <span>  identifiability <span class="op">=</span> <span class="fu"><a href="pl_identifiability.html">pl_identifiability</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  latent_strength <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ability_prior <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ranking_prior <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -68,8 +70,9 @@ separate vector of item strengths.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-latent-strength">latent_strength<a class="anchor" aria-label="anchor" href="#arg-latent-strength"></a></dt>
-<dd><p>Gamma prior for positive component strengths.</p></dd>
+<dl><dt id="arg-shape-rate">shape, rate<a class="anchor" aria-label="anchor" href="#arg-shape-rate"></a></dt>
+<dd><p>Shape and rate of the Gamma prior on every
+\(\lambda_i\).</p></dd>
 
 
 <dt id="arg-ranking-clustering">ranking_clustering<a class="anchor" aria-label="anchor" href="#arg-ranking-clustering"></a></dt>
@@ -77,11 +80,12 @@ separate vector of item strengths.</p>
 
 
 <dt id="arg-identifiability">identifiability<a class="anchor" aria-label="anchor" href="#arg-identifiability"></a></dt>
-<dd><p>PL reporting constraint.</p></dd>
+<dd><p>PL reporting constraint, see <code><a href="pl_identifiability.html">pl_identifiability()</a></code>.</p></dd>
 
 
-<dt id="arg-ability-prior">ability_prior<a class="anchor" aria-label="anchor" href="#arg-ability-prior"></a></dt>
-<dd><p>Deprecated alias for <code>latent_strength</code>.</p></dd>
+<dt id="arg-latent-strength-ability-prior">latent_strength, ability_prior<a class="anchor" aria-label="anchor" href="#arg-latent-strength-ability-prior"></a></dt>
+<dd><p>Deprecated. A prior object from
+<code><a href="latent_strength.html">latent_strength()</a></code>; if supplied it overrides <code>shape</code> and <code>rate</code>.</p></dd>
 
 
 <dt id="arg-ranking-prior">ranking_prior<a class="anchor" aria-label="anchor" href="#arg-ranking-prior"></a></dt>

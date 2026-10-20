@@ -63,18 +63,19 @@ prior lets the number of tiers be learned from the data.
 ``` r
 
 model <- bt_sbm_model(
-  latent_strength = latent_strength(shape = 4, rate = exp(digamma(4))),
-  item_clustering = gnedin_prior(gnedin_hyperparameter = 0.5)
+  shape = 4, rate = exp(digamma(4)),
+  item_clustering = gnedin_prior(gnedin_hyper = 0.5)
 )
 model
-#> <btsbm_model> Bradley--Terry with latent item clustering 
-#>   latent strength: Gamma(shape = 4 , rate = 3.511761 )
-#>   item clustering:<clustering_prior> Gnedin(gnedin_hyperparameter = 0.5)
+#> <btsbm_model> Bradley-Terry stochastic block model (BT-SBM), items share block strengths 
+#>   strength prior:   lambda_k ~ iid Gamma(shape = 4, rate = 3.512)
+#>   item partition:    z ~ Gnedin(gnedin_hyper = 0.5)
 ```
 
-The latent_strength() prior must be positive. item_clustering is a prior
-over possible player tiers. You can use finite_partition(max_clusters =
-3) when a strict upper limit is scientifically justified.
+`shape` and `rate` define the Gamma prior on each block strength
+\\\lambda_k\\. item_clustering is a prior over possible player tiers.
+You can use finite_partition(max_clusters = 3) when a strict upper limit
+is scientifically justified.
 
 ## 3. Fit the model
 
@@ -91,7 +92,8 @@ fit <- fit_model(
   mcmc_control(iter = 400, warmup = 200, seed = 2)
 )
 fit
-#> <btsbm_fit> bt / item_sbm with 200 saved draws
+#> <btsbm_fit> Bradley-Terry stochastic block model (BT-SBM), items share block strengths 
+#>   6 items; 200 retained posterior draws. Use summary() for results.
 ```
 
 ## 4. Keep uncertainty in the number of tiers visible
@@ -102,12 +104,12 @@ it is more informative than reporting only the most frequent value.
 
 ``` r
 
-pretty_table_K_distribution(fit, p_min = 0)
+posterior_K_table(fit)
+#>   K draws probability
+#> 1 1    18       0.090
+#> 2 2   177       0.885
+#> 3 3     5       0.025
 ```
-
-| Quantity              |    1 |     2 |     3 |
-|:----------------------|-----:|------:|------:|
-| Posterior probability | 0.09 | 0.885 | 0.025 |
 
 Concentrated probability on one value means the data resolve the number
 of tiers clearly. Probability spread across adjacent values means that
@@ -127,7 +129,7 @@ ones.
 
 ``` r
 
-plot_block_adjacency(fit)
+plot_ordered_adjacency(fit)
 ```
 
 ![Observed win rates reordered by the representative BT--SBM partition.

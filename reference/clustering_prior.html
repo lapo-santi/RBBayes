@@ -66,10 +66,11 @@ upper bound through <code>max_clusters</code>.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">clustering_prior</span><span class="op">(</span></span>
 <span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gnedin"</span>, <span class="st">"dirichlet_process"</span>, <span class="st">"pitman_yor"</span>, <span class="st">"finite_dirichlet"</span><span class="op">)</span>,</span>
-<span>  gnedin_hyperparameter <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  gnedin_hyper <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  concentration <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  discount <span class="op">=</span> <span class="fl">0.2</span>,</span>
-<span>  max_clusters <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  max_clusters <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gnedin_hyperparameter <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -82,9 +83,9 @@ upper bound through <code>max_clusters</code>.</p>
 or <code>"finite_dirichlet"</code>.</p></dd>
 
 
-<dt id="arg-gnedin-hyperparameter">gnedin_hyperparameter<a class="anchor" aria-label="anchor" href="#arg-gnedin-hyperparameter"></a></dt>
-<dd><p>Gnedin hyperparameter in <code>(0, 1)</code>. Larger
-values favour more occupied groups a priori.</p></dd>
+<dt id="arg-gnedin-hyper">gnedin_hyper<a class="anchor" aria-label="anchor" href="#arg-gnedin-hyper"></a></dt>
+<dd><p>Gnedin hyperparameter \(\gamma\) in <code>(0, 1)</code>.
+Larger values favour more occupied groups a priori.</p></dd>
 
 
 <dt id="arg-concentration">concentration<a class="anchor" aria-label="anchor" href="#arg-concentration"></a></dt>
@@ -99,6 +100,10 @@ or finite-Dirichlet prior.</p></dd>
 <dt id="arg-max-clusters">max_clusters<a class="anchor" aria-label="anchor" href="#arg-max-clusters"></a></dt>
 <dd><p>Required maximum number of groups for
 <code>family = "finite_dirichlet"</code>.</p></dd>
+
+
+<dt id="arg-gnedin-hyperparameter">gnedin_hyperparameter<a class="anchor" aria-label="anchor" href="#arg-gnedin-hyperparameter"></a></dt>
+<dd><p>Deprecated alias for <code>gnedin_hyper</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

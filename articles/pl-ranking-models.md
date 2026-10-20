@@ -63,11 +63,12 @@ illustration; use longer, multiple chains in a real analysis.
 
 simple_pl <- fit_model(
   sushi,
-  pl_model(latent_strength = latent_strength(shape = 1, rate = 1)),
+  pl_model(shape = 1, rate = 1),
   mcmc_control(iter = 600, warmup = 300, seed = 1)
 )
 simple_pl
-#> <btsbm_fit> pl / none with 300 saved draws
+#> <btsbm_fit> Plackett-Luce (PL), one strength per item 
+#>   10 items; 300 retained posterior draws. Use summary() for results.
 ```
 
 This plot is usually the main analysis result. The point is the
@@ -102,7 +103,7 @@ not support a precise order inside every group.
 tiered_pl <- fit_model(
   sushi,
   pl_sbm_model(
-    item_clustering = gnedin_prior(gnedin_hyperparameter = 0.5)
+    item_clustering = gnedin_prior(gnedin_hyper = 0.5)
   ),
   mcmc_control(iter = 600, warmup = 300, seed = 2)
 )
