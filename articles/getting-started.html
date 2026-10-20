@@ -125,18 +125,17 @@ rather than a completely reliable order from first to last. Here, the
 Gnedin prior lets the number of tiers be learned from the data.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bt_sbm_model.html">bt_sbm_model</a></span><span class="op">(</span></span>
-<span>  shape <span class="op">=</span> <span class="fl">4</span>, rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  shape_lambda <span class="op">=</span> <span class="fl">4</span>, rate_lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyper <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">model</span></span>
 <span><span class="co">#&gt; &lt;btsbm_model&gt; Bradley-Terry stochastic block model (BT-SBM), items share block strengths </span></span>
-<span><span class="co">#&gt;   strength prior:   lambda_k ~ iid Gamma(shape = 4, rate = 3.512)</span></span>
+<span><span class="co">#&gt;   strength prior:   lambda_k ~ iid Gamma(shape_lambda = 4, rate_lambda = 3.512)</span></span>
 <span><span class="co">#&gt;   item partition:    z ~ Gnedin(gnedin_hyper = 0.5)</span></span></code></pre></div>
-<p><code>shape</code> and <code>rate</code> define the Gamma prior on
-each block strength <span class="math inline">\(\lambda_k\)</span>.
-item_clustering is a prior over possible player tiers. You can use
-finite_partition(max_clusters = 3) when a strict upper limit is
-scientifically justified.</p>
+<p><code>shape_lambda</code> and <code>rate_lambda</code> define the
+Gamma prior on each block strength <span class="math inline">\(\lambda_k\)</span>. item_clustering is a prior
+over possible player tiers. You can use finite_partition(max_clusters =
+3) when a strict upper limit is scientifically justified.</p>
 </div>
 <div class="section level2">
 <h2 id="fit-the-model">3. Fit the model<a class="anchor" aria-label="anchor" href="#fit-the-model"></a>

@@ -4,15 +4,15 @@ Item \\i\\ belongs to block \\z_i \in \\1, \ldots, K\\\\ and all items
 in block \\k\\ share the strength \\\lambda_k\\: \$\$\Pr(i \text{ beats
 } j \mid z, \lambda) = \frac{\lambda\_{z_i}}{\lambda\_{z_i} +
 \lambda\_{z_j}}.\$\$ Block strengths are i.i.d.
-\\\mathrm{Gamma}(\mathrm{shape}, \mathrm{rate})\\ and the partition
-\\z\\ receives the prior `item_clustering`.
+\\\mathrm{Gamma}(\mathrm{shape\\lambda}, \mathrm{rate\\lambda})\\ and
+the partition \\z\\ receives the prior `item_clustering`.
 
 ## Usage
 
 ``` r
 bt_sbm_model(
-  shape = 4,
-  rate = exp(digamma(shape)),
+  shape_lambda = 4,
+  rate_lambda = exp(digamma(shape_lambda)),
   item_clustering = gnedin_prior(gnedin_hyper = 0.5),
   latent_strength = NULL,
   ability_prior = NULL,
@@ -22,9 +22,9 @@ bt_sbm_model(
 
 ## Arguments
 
-- shape, rate:
+- shape_lambda, rate_lambda:
 
-  Shape and rate of the Gamma prior on every \\\lambda_i\\.
+  Shape and rate of the Gamma prior on every strength \\\lambda\\.
 
 - item_clustering:
 
@@ -39,7 +39,7 @@ bt_sbm_model(
 
   Deprecated. A prior object from
   [`latent_strength()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md);
-  if supplied it overrides `shape` and `rate`.
+  if supplied it overrides `shape_lambda` and `rate_lambda`.
 
 - item_prior:
 
@@ -52,8 +52,8 @@ A `btsbm_model`.
 ## Examples
 
 ``` r
-bt_sbm_model(shape = 2, item_clustering = gnedin_prior(gnedin_hyper = 0.5))
+bt_sbm_model(shape_lambda = 2, item_clustering = gnedin_prior(gnedin_hyper = 0.5))
 #> <btsbm_model> Bradley-Terry stochastic block model (BT-SBM), items share block strengths 
-#>   strength prior:   lambda_k ~ iid Gamma(shape = 2, rate = 1.526)
+#>   strength prior:   lambda_k ~ iid Gamma(shape_lambda = 2, rate_lambda = 1.526)
 #>   item partition:    z ~ Gnedin(gnedin_hyper = 0.5)
 ```

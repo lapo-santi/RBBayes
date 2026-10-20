@@ -40,7 +40,7 @@ diag(wins) <- 0L
 
 pairwise <- as_bt_data(wins)
 model <- bt_sbm_model(
-  shape = 2, rate = exp(digamma(2)),
+  shape_lambda = 2, rate_lambda = exp(digamma(2)),
   item_clustering = gnedin_prior(gnedin_hyper = 0.8)
 )
 fit <- fit_model(
@@ -148,8 +148,8 @@ Both constructors return a `btsbm_model` and are fitted by
 ``` r
 
 bt_sbm_model(
-  shape = 4,
-  rate = exp(digamma(shape)),
+  shape_lambda = 4,
+  rate_lambda = exp(digamma(shape_lambda)),
   item_clustering = gnedin_prior(gnedin_hyper = 0.5),
   latent_strength = NULL,
   ability_prior = NULL,
@@ -161,7 +161,7 @@ bt_sbm_model(
 
 | Argument | Description |
 |----|----|
-| `shape`, `rate` | Gamma prior for the block strengths: \\\lambda_k \sim\\ iid Gamma(shape, rate). |
+| `shape_lambda`, `rate_lambda` | Gamma prior for the block strengths: \\\lambda_k \sim\\ iid Gamma(shape_lambda, rate_lambda). |
 | `item_clustering` | Prior on the latent item partition \\z\\. |
 | `latent_strength`, `ability_prior` | Deprecated: a prior object from [`latent_strength()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md). |
 | `item_prior` | Deprecated alias for `item_clustering`. |
@@ -199,7 +199,7 @@ than a collection of sampler-specific arguments.
 ``` r
 
 model_gnedin <- bt_sbm_model(
-  shape = 2, rate = exp(digamma(2)),
+  shape_lambda = 2, rate_lambda = exp(digamma(2)),
   item_clustering = gnedin_prior(gnedin_hyper = 0.8)
 )
 
@@ -308,7 +308,7 @@ functions documented below.
 ``` r
 
 model <- bt_sbm_model(
-  shape = 2, rate = exp(digamma(2)),
+  shape_lambda = 2, rate_lambda = exp(digamma(2)),
   item_clustering = gnedin_prior(gnedin_hyper = 0.8)
 )
 
@@ -654,7 +654,7 @@ when they use the same observations.
 
 simple_fit <- fit_model(
   pairwise,
-  bt_model(shape = 2, rate = exp(digamma(2))),
+  bt_model(shape_lambda = 2, rate_lambda = exp(digamma(2))),
   mcmc_control(iter = 400, warmup = 200, seed = 125)
 )
 

@@ -9,12 +9,12 @@
 in block \(k\) share the strength \(\lambda_k\):
 $$\Pr(i \text{ beats } j \mid z, \lambda) =
   \frac{\lambda_{z_i}}{\lambda_{z_i} + \lambda_{z_j}}.$$
-Block strengths are i.i.d. \(\mathrm{Gamma}(\mathrm{shape}, \mathrm{rate})\)
+Block strengths are i.i.d. \(\mathrm{Gamma}(\mathrm{shape\_lambda}, \mathrm{rate\_lambda})\)
 and the partition \(z\) receives the prior item_clustering."><meta property="og:description" content="Item \(i\) belongs to block \(z_i \in \{1, \ldots, K\}\) and all items
 in block \(k\) share the strength \(\lambda_k\):
 $$\Pr(i \text{ beats } j \mid z, \lambda) =
   \frac{\lambda_{z_i}}{\lambda_{z_i} + \lambda_{z_j}}.$$
-Block strengths are i.i.d. \(\mathrm{Gamma}(\mathrm{shape}, \mathrm{rate})\)
+Block strengths are i.i.d. \(\mathrm{Gamma}(\mathrm{shape\_lambda}, \mathrm{rate\_lambda})\)
 and the partition \(z\) receives the prior item_clustering."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -61,15 +61,15 @@ and the partition \(z\) receives the prior item_clustering."></head><body>
 in block \(k\) share the strength \(\lambda_k\):
 $$\Pr(i \text{ beats } j \mid z, \lambda) =
   \frac{\lambda_{z_i}}{\lambda_{z_i} + \lambda_{z_j}}.$$
-Block strengths are i.i.d. \(\mathrm{Gamma}(\mathrm{shape}, \mathrm{rate})\)
+Block strengths are i.i.d. \(\mathrm{Gamma}(\mathrm{shape\_lambda}, \mathrm{rate\_lambda})\)
 and the partition \(z\) receives the prior <code>item_clustering</code>.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">bt_sbm_model</span><span class="op">(</span></span>
-<span>  shape <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="va">shape</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  shape_lambda <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  rate_lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="va">shape_lambda</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  item_clustering <span class="op">=</span> <span class="fu"><a href="gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyper <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
 <span>  latent_strength <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ability_prior <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -81,9 +81,9 @@ and the partition \(z\) receives the prior <code>item_clustering</code>.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-shape-rate">shape, rate<a class="anchor" aria-label="anchor" href="#arg-shape-rate"></a></dt>
-<dd><p>Shape and rate of the Gamma prior on every
-\(\lambda_i\).</p></dd>
+<dl><dt id="arg-shape-lambda-rate-lambda">shape_lambda, rate_lambda<a class="anchor" aria-label="anchor" href="#arg-shape-lambda-rate-lambda"></a></dt>
+<dd><p>Shape and rate of the Gamma prior on
+every strength \(\lambda\).</p></dd>
 
 
 <dt id="arg-item-clustering">item_clustering<a class="anchor" aria-label="anchor" href="#arg-item-clustering"></a></dt>
@@ -94,7 +94,7 @@ and the partition \(z\) receives the prior <code>item_clustering</code>.</p>
 
 <dt id="arg-latent-strength-ability-prior">latent_strength, ability_prior<a class="anchor" aria-label="anchor" href="#arg-latent-strength-ability-prior"></a></dt>
 <dd><p>Deprecated. A prior object from
-<code><a href="latent_strength.html">latent_strength()</a></code>; if supplied it overrides <code>shape</code> and <code>rate</code>.</p></dd>
+<code><a href="latent_strength.html">latent_strength()</a></code>; if supplied it overrides <code>shape_lambda</code> and <code>rate_lambda</code>.</p></dd>
 
 
 <dt id="arg-item-prior">item_prior<a class="anchor" aria-label="anchor" href="#arg-item-prior"></a></dt>
@@ -108,9 +108,9 @@ and the partition \(z\) receives the prior <code>item_clustering</code>.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">bt_sbm_model</span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">2</span>, item_clustering <span class="op">=</span> <span class="fu"><a href="gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyper <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">bt_sbm_model</span><span class="op">(</span>shape_lambda <span class="op">=</span> <span class="fl">2</span>, item_clustering <span class="op">=</span> <span class="fu"><a href="gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyper <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;btsbm_model&gt; Bradley-Terry stochastic block model (BT-SBM), items share block strengths </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   strength prior:   lambda_k ~ iid Gamma(shape = 2, rate = 1.526)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   strength prior:   lambda_k ~ iid Gamma(shape_lambda = 2, rate_lambda = 1.526)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   item partition:    z ~ Gnedin(gnedin_hyper = 0.5)</span>
 </code></pre></div>
     </div>

@@ -76,8 +76,8 @@ remaining risk set.
 ## Prior and control objects
 
 Positive strengths get i.i.d. Gamma priors, specified directly in the
-model constructor, e.g. `bt_model(shape = 2, rate = 1)`. Latent
-partitions use one of the following common constructors:
+model constructor, e.g. `bt_model(shape_lambda = 2, rate_lambda = 1)`.
+Latent partitions use one of the following common constructors:
 
 ``` r
 
@@ -178,7 +178,7 @@ library(RBBayes)
 
 pairwise <- tennis_toy(matches_per_pair = 8, seed = 1)
 model <- bt_sbm_model(
-  shape = 4, rate = exp(digamma(4)),
+  shape_lambda = 4, rate_lambda = exp(digamma(4)),
   item_clustering = gnedin_prior(gnedin_hyper = 0.5)
 )
 fit <- fit_model(

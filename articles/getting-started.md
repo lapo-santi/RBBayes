@@ -63,19 +63,19 @@ prior lets the number of tiers be learned from the data.
 ``` r
 
 model <- bt_sbm_model(
-  shape = 4, rate = exp(digamma(4)),
+  shape_lambda = 4, rate_lambda = exp(digamma(4)),
   item_clustering = gnedin_prior(gnedin_hyper = 0.5)
 )
 model
 #> <btsbm_model> Bradley-Terry stochastic block model (BT-SBM), items share block strengths 
-#>   strength prior:   lambda_k ~ iid Gamma(shape = 4, rate = 3.512)
+#>   strength prior:   lambda_k ~ iid Gamma(shape_lambda = 4, rate_lambda = 3.512)
 #>   item partition:    z ~ Gnedin(gnedin_hyper = 0.5)
 ```
 
-`shape` and `rate` define the Gamma prior on each block strength
-\\\lambda_k\\. item_clustering is a prior over possible player tiers.
-You can use finite_partition(max_clusters = 3) when a strict upper limit
-is scientifically justified.
+`shape_lambda` and `rate_lambda` define the Gamma prior on each block
+strength \\\lambda_k\\. item_clustering is a prior over possible player
+tiers. You can use finite_partition(max_clusters = 3) when a strict
+upper limit is scientifically justified.
 
 ## 3. Fit the model
 

@@ -7,8 +7,8 @@ separate vector of item strengths.
 
 ``` r
 pl_mixture_model(
-  shape = 1,
-  rate = 1,
+  shape_lambda = 1,
+  rate_lambda = 1,
   ranking_clustering = gnedin_prior(gnedin_hyper = 0.5),
   identifiability = pl_identifiability(),
   latent_strength = NULL,
@@ -19,9 +19,9 @@ pl_mixture_model(
 
 ## Arguments
 
-- shape, rate:
+- shape_lambda, rate_lambda:
 
-  Shape and rate of the Gamma prior on every \\\lambda_i\\.
+  Shape and rate of the Gamma prior on every strength \\\lambda\\.
 
 - ranking_clustering:
 
@@ -36,7 +36,7 @@ pl_mixture_model(
 
   Deprecated. A prior object from
   [`latent_strength()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md);
-  if supplied it overrides `shape` and `rate`.
+  if supplied it overrides `shape_lambda` and `rate_lambda`.
 
 - ranking_prior:
 

@@ -2,9 +2,9 @@
 
 Model constructors such as
 [`bt_model()`](https://laposanti.github.io/BTSBM/reference/bt_model.md)
-now take `shape` and `rate` directly, so most users never need this
-function. It is kept for compatibility with code written for earlier
-development versions.
+now take `shape_lambda` and `rate_lambda` directly, so most users never
+need this function. It is kept for compatibility with code written for
+earlier development versions.
 
 ## Usage
 

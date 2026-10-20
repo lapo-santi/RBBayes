@@ -204,8 +204,9 @@ remaining risk set.</p>
 <h2 id="prior-and-control-objects">Prior and control objects<a class="anchor" aria-label="anchor" href="#prior-and-control-objects"></a>
 </h2>
 <p>Positive strengths get i.i.d. Gamma priors, specified directly in the
-model constructor, e.g. <code>bt_model(shape = 2, rate = 1)</code>.
-Latent partitions use one of the following common constructors:</p>
+model constructor,
+e.g. <code>bt_model(shape_lambda = 2, rate_lambda = 1)</code>. Latent
+partitions use one of the following common constructors:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyper <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/dirichlet_process_prior.html">dirichlet_process_prior</a></span><span class="op">(</span>concentration <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
@@ -348,7 +349,7 @@ this same observation-level definition.</p>
 <span></span>
 <span><span class="va">pairwise</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tennis_toy.html">tennis_toy</a></span><span class="op">(</span>matches_per_pair <span class="op">=</span> <span class="fl">8</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bt_sbm_model.html">bt_sbm_model</a></span><span class="op">(</span></span>
-<span>  shape <span class="op">=</span> <span class="fl">4</span>, rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  shape_lambda <span class="op">=</span> <span class="fl">4</span>, rate_lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Special.html" class="external-link">digamma</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  item_clustering <span class="op">=</span> <span class="fu"><a href="../reference/gnedin_prior.html">gnedin_prior</a></span><span class="op">(</span>gnedin_hyper <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_model.html">fit_model</a></span><span class="op">(</span></span>
