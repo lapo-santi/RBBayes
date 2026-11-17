@@ -16,3 +16,4 @@
 ^tutorial-rendered$
 ^.*\.Rproj$
 ^cran-comments\.md$
+^LICENSE\.md$

@@ -31,7 +31,7 @@ Description: Implements Bayesian inference for Bradley–Terry paired-comparison
     Lapo Santi, Nial Friel "The Bradley–Terry stochastic block model",
     The Annals of Applied Statistics, Ann. Appl. Stat. 20(2), 
     1766-1787, <doi:10.1214/26-AOAS2193>
-License: MIT + file LICENSE
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
