@@ -32,3 +32,4 @@
 ^Rplots\.pdf$
 ^RELEASE-CHECKS\.md$
 ^release-blog-draft\.md$
+^CRAN-SUBMISSION$
