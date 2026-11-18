@@ -29,16 +29,16 @@ bt_sbm_model(
 - item_clustering:
 
   Prior on the item partition \\z\\; see
-  [`gnedin_prior()`](https://laposanti.github.io/BTSBM/reference/gnedin_prior.md),
-  [`dirichlet_process_prior()`](https://laposanti.github.io/BTSBM/reference/dirichlet_process_prior.md),
-  [`pitman_yor_prior()`](https://laposanti.github.io/BTSBM/reference/pitman_yor_prior.md)
+  [`gnedin_prior()`](https://lapo-santi.github.io/RBBayes/reference/gnedin_prior.md),
+  [`dirichlet_process_prior()`](https://lapo-santi.github.io/RBBayes/reference/dirichlet_process_prior.md),
+  [`pitman_yor_prior()`](https://lapo-santi.github.io/RBBayes/reference/pitman_yor_prior.md)
   or
-  [`dirichlet_multinomial_prior()`](https://laposanti.github.io/BTSBM/reference/dirichlet_multinomial_prior.md).
+  [`dirichlet_multinomial_prior()`](https://lapo-santi.github.io/RBBayes/reference/dirichlet_multinomial_prior.md).
 
 - latent_strength, ability_prior:
 
   Deprecated. A prior object from
-  [`latent_strength()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md);
+  [`latent_strength()`](https://lapo-santi.github.io/RBBayes/reference/latent_strength.md);
   if supplied it overrides `shape_lambda` and `rate_lambda`.
 
 - item_prior:

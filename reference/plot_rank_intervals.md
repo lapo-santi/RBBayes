@@ -2,7 +2,7 @@
 
 Draw a rank-interval plot from posterior rank summaries, posterior
 lambda draws, or the relabelled output returned by
-[`relabel_by_lambda()`](https://laposanti.github.io/BTSBM/reference/relabel_by_lambda.md).
+[`relabel_by_lambda()`](https://lapo-santi.github.io/RBBayes/reference/relabel_by_lambda.md).
 
 ## Usage
 
@@ -26,7 +26,7 @@ plot_rank_intervals(
 
   Either a posterior-rank summary, posterior lambda draws, a btsbm_fit
   object, or the output of
-  [`relabel_by_lambda()`](https://laposanti.github.io/BTSBM/reference/relabel_by_lambda.md).
+  [`relabel_by_lambda()`](https://lapo-santi.github.io/RBBayes/reference/relabel_by_lambda.md).
 
 - max_players:
 
@@ -40,7 +40,7 @@ plot_rank_intervals(
 - player_names:
 
   Optional player names passed through to
-  [`compute_expected_wins_rank_posterior()`](https://laposanti.github.io/BTSBM/reference/compute_expected_wins_rank_posterior.md).
+  [`compute_expected_wins_rank_posterior()`](https://lapo-santi.github.io/RBBayes/reference/compute_expected_wins_rank_posterior.md).
 
 - burn_in:
 
@@ -65,3 +65,10 @@ plot_rank_intervals(
 ## Value
 
 A `ggplot` object.
+
+## Examples
+
+``` r
+lambda <- rbind(c(1, 2), c(1.2, 1.8), c(0.9, 2.1))
+plot_rank_intervals(lambda)
+```

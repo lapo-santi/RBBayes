@@ -21,3 +21,14 @@ pl_identifiability(method = c("sum", "none", "logmean0"))
 ## Value
 
 An object of class `btsbm_pl_identifiability`.
+
+## Examples
+
+``` r
+pl_identifiability()
+#> $method
+#> [1] "sum"
+#> 
+#> attr(,"class")
+#> [1] "btsbm_pl_identifiability"
+```

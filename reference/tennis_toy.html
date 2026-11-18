@@ -15,7 +15,7 @@ Bradley–Terry and BT–SBM interfaces. It contains no real player results."></
 
     <a class="navbar-brand me-2" href="../index.html">RBBayes: Bayesian paired-comparison and ranking models</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,6 +76,27 @@ Bradley–Terry and BT–SBM interfaces. It contains no real player results.</p>
 generating player strengths and latent tiers.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">tennis_toy</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $wins</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Ace Baseline Crosscourt Dropshot Elite Forehand</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ace          0        5          5        6     7        8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Baseline     3        0          6        5     6        7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Crosscourt   3        2          0        4     5        5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Dropshot     2        3          4        0     5        6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Elite        1        2          3        3     0        5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Forehand     0        1          3        2     3        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $n_items</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $item_labels</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Ace"        "Baseline"   "Crosscourt" "Dropshot"   "Elite"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6] "Forehand"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

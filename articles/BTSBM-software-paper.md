@@ -71,7 +71,7 @@ model. *The Annals of Applied Statistics*, 20(2), 1766–1787.
 
 **Description**
 
-[`as_bt_data()`](https://laposanti.github.io/BTSBM/reference/as_bt_data.md)
+[`as_bt_data()`](https://lapo-santi.github.io/RBBayes/reference/as_bt_data.md)
 converts a square directed win-count matrix into the validated
 pairwise-data representation used by the common fitting interface.
 
@@ -100,7 +100,7 @@ methods.
 Let \\w\_{ij}\\ be the number of times item \\i\\ defeats item \\j\\,
 with \\w\_{ii}=0\\, and define \\n\_{ij}=w\_{ij}+w\_{ji}\\. RBBayes
 stores the matrix \\\mathbf W=(w\_{ij})\\ in the object returned by
-[`as_bt_data()`](https://laposanti.github.io/BTSBM/reference/as_bt_data.md)
+[`as_bt_data()`](https://lapo-santi.github.io/RBBayes/reference/as_bt_data.md)
 and computes match totals internally.
 
 **Example**
@@ -136,12 +136,12 @@ pairwise$wins[1:6, 1:6]
 
 **Description**
 
-[`bt_sbm_model()`](https://laposanti.github.io/BTSBM/reference/bt_sbm_model.md)
+[`bt_sbm_model()`](https://lapo-santi.github.io/RBBayes/reference/bt_sbm_model.md)
 defines a clustered Bradley–Terry model. The simple model is defined
 with
-[`bt_model()`](https://laposanti.github.io/BTSBM/reference/bt_model.md).
+[`bt_model()`](https://lapo-santi.github.io/RBBayes/reference/bt_model.md).
 Both constructors return a `btsbm_model` and are fitted by
-[`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_model.md).
+[`fit_model()`](https://lapo-santi.github.io/RBBayes/reference/fit_model.md).
 
 **Usage**
 
@@ -163,7 +163,7 @@ bt_sbm_model(
 |----|----|
 | `shape_lambda`, `rate_lambda` | Gamma prior for the block strengths: \\\lambda_k \sim\\ iid Gamma(shape_lambda, rate_lambda). |
 | `item_clustering` | Prior on the latent item partition \\z\\. |
-| `latent_strength`, `ability_prior` | Deprecated: a prior object from [`latent_strength()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md). |
+| `latent_strength`, `ability_prior` | Deprecated: a prior object from [`latent_strength()`](https://lapo-santi.github.io/RBBayes/reference/latent_strength.md). |
 | `item_prior` | Deprecated alias for `item_clustering`. |
 
 **Value**
@@ -212,7 +212,7 @@ model_finite <- bt_sbm_model(
 
 **Description**
 
-[`mcmc_control()`](https://laposanti.github.io/BTSBM/reference/mcmc_control.md)
+[`mcmc_control()`](https://lapo-santi.github.io/RBBayes/reference/mcmc_control.md)
 collects computational settings separately from the model specification.
 This makes it possible to reuse the same scientific model with different
 chain lengths, seeds, or initial states.
@@ -245,7 +245,7 @@ mcmc_control(
 | `init_item_cluster` | Optional initial item partition. |
 | `init_ranking_cluster` | Optional initial ranking partition for PL mixture and PL–LBM models. |
 | `verbose`, `progress_every` | Control progress reporting. |
-| `partition_moves` | Optional settings created by [`partition_moves()`](https://laposanti.github.io/BTSBM/reference/partition_moves.md). |
+| `partition_moves` | Optional settings created by [`partition_moves()`](https://lapo-santi.github.io/RBBayes/reference/partition_moves.md). |
 
 **Value**
 
@@ -263,7 +263,7 @@ control
 
 **Description**
 
-[`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_model.md)
+[`fit_model()`](https://lapo-santi.github.io/RBBayes/reference/fit_model.md)
 is the common fitting entry point for the simple and clustered
 Bradley–Terry and Plackett–Luce models.
 
@@ -278,9 +278,9 @@ fit_model(data, model, control = mcmc_control())
 
 | Argument | Description |
 |----|----|
-| `data` | A `btsbm_pairwise_data` or `btsbm_ranking_data` object created by [`as_bt_data()`](https://laposanti.github.io/BTSBM/reference/as_bt_data.md) or [`as_rankings()`](https://laposanti.github.io/BTSBM/reference/as_rankings.md). |
+| `data` | A `btsbm_pairwise_data` or `btsbm_ranking_data` object created by [`as_bt_data()`](https://lapo-santi.github.io/RBBayes/reference/as_bt_data.md) or [`as_rankings()`](https://lapo-santi.github.io/RBBayes/reference/as_rankings.md). |
 | `model` | A model object created by an RBBayes model constructor. |
-| `control` | An object created by [`mcmc_control()`](https://laposanti.github.io/BTSBM/reference/mcmc_control.md). |
+| `control` | An object created by [`mcmc_control()`](https://lapo-santi.github.io/RBBayes/reference/mcmc_control.md). |
 
 **Value**
 
@@ -385,7 +385,7 @@ pretty_table_K_distribution(
 
 **Description**
 
-[`plot_block_adjacency()`](https://laposanti.github.io/BTSBM/reference/plot_block_adjacency.md)
+[`plot_block_adjacency()`](https://lapo-santi.github.io/RBBayes/reference/plot_block_adjacency.md)
 draws observed win rates after ordering items by a representative
 posterior partition and then by marginal win proportion within each
 block. Boundary lines and the coloured side band mark block transitions.
@@ -526,7 +526,7 @@ of occupied blocks.
 
 Because all items in a block share a strength, their induced ranks are
 tied.
-[`plot_rank_intervals()`](https://laposanti.github.io/BTSBM/reference/plot_rank_intervals.md)
+[`plot_rank_intervals()`](https://lapo-santi.github.io/RBBayes/reference/plot_rank_intervals.md)
 summarizes posterior ordering without inventing within-block precision.
 
 **Usage**
@@ -575,9 +575,9 @@ plot_rank_intervals(fit, max_players = 12)
 
 **Description**
 
-[`mcmc_diagnostics()`](https://laposanti.github.io/BTSBM/reference/mcmc_diagnostics.md)
+[`mcmc_diagnostics()`](https://lapo-santi.github.io/RBBayes/reference/mcmc_diagnostics.md)
 computes lightweight scalar diagnostics, while
-[`plot_mcmc_traces()`](https://laposanti.github.io/BTSBM/reference/plot_mcmc_traces.md)
+[`plot_mcmc_traces()`](https://lapo-santi.github.io/RBBayes/reference/plot_mcmc_traces.md)
 shows whether saved draws move around a stable region. Trace plots are
 an initial diagnostic, not proof of convergence.
 
@@ -598,10 +598,10 @@ plot_mcmc_traces(fit, quantities = NULL)
 
 **Value**
 
-[`mcmc_diagnostics()`](https://laposanti.github.io/BTSBM/reference/mcmc_diagnostics.md)
+[`mcmc_diagnostics()`](https://lapo-santi.github.io/RBBayes/reference/mcmc_diagnostics.md)
 returns a data frame with effective sample size, Monte Carlo standard
 error, and lag-one autocorrelation for each available scalar trace.
-[`plot_mcmc_traces()`](https://laposanti.github.io/BTSBM/reference/plot_mcmc_traces.md)
+[`plot_mcmc_traces()`](https://lapo-santi.github.io/RBBayes/reference/plot_mcmc_traces.md)
 returns a `ggplot` object.
 
 **Example**
@@ -624,7 +624,7 @@ their agreement.
 
 **Description**
 
-[`loo_btsbm()`](https://laposanti.github.io/BTSBM/reference/loo_btsbm.md)
+[`loo_btsbm()`](https://lapo-santi.github.io/RBBayes/reference/loo_btsbm.md)
 runs Pareto-smoothed importance-sampling leave-one-out cross-validation
 using the pointwise log likelihood stored by the common fit interface.
 
@@ -677,17 +677,17 @@ if (requireNamespace("loo", quietly = TRUE)) {
 
 The public architecture separates five responsibilities:
 
-1.  [`as_bt_data()`](https://laposanti.github.io/BTSBM/reference/as_bt_data.md)
+1.  [`as_bt_data()`](https://lapo-santi.github.io/RBBayes/reference/as_bt_data.md)
     and
-    [`as_rankings()`](https://laposanti.github.io/BTSBM/reference/as_rankings.md)
+    [`as_rankings()`](https://lapo-santi.github.io/RBBayes/reference/as_rankings.md)
     validate observations.
 2.  Model constructors state the likelihood and latent structure.
 3.  Prior constructors state reusable strength and partition priors.
-4.  [`mcmc_control()`](https://laposanti.github.io/BTSBM/reference/mcmc_control.md)
+4.  [`mcmc_control()`](https://lapo-santi.github.io/RBBayes/reference/mcmc_control.md)
     holds computational settings.
-5.  [`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_model.md)
+5.  [`fit_model()`](https://lapo-santi.github.io/RBBayes/reference/fit_model.md)
     returns a common fit consumed by summaries, plots, diagnostics, and
-    [`log_lik()`](https://laposanti.github.io/BTSBM/reference/log_lik.md).
+    [`log_lik()`](https://lapo-santi.github.io/RBBayes/reference/log_lik.md).
 
 This contract also covers the package’s Plackett–Luce models. The
 model-specific sampler remains an implementation detail, so analyses do

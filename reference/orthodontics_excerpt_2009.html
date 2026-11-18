@@ -21,7 +21,7 @@ the reproducible table excerpt."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">RBBayes: Bayesian paired-comparison and ranking models</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,6 +80,189 @@ data with covariates and heterogeneous rankers. <em>Statistical Science</em>,
 37(1), 1–23. <a href="https://doi.org/10.1214/20-STS818" class="external-link">doi:10.1214/20-STS818</a></p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">orthodontics_excerpt_2009</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ranking_positions</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ranking_positions$A</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Expert_01 Expert_02 Expert_03 Expert_04 Expert_05 Expert_06 Expert_07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A1          1         3         5         2         4         1         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A2         11         5        10         9         9        12         9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A3          6        10         8        11        11         8        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A4          3         2         4         3         1         4         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A5          9         4         7         5         6         6         6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A6         10         9         3         6         5        11         5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A7          8         8        11         7        12         9        12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A8          4         1         1         4         3         2         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A9          2        12         9         8         8         5         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A10         7        11         6        10        10         7         8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A11         5         7         2         1         2         3        10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A12        12         6        12        12         7        10         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Expert_08 Expert_09 Expert_10 Expert_11 Expert_12 Expert_13 Expert_14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A1          2         5         5        10         8         2         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A2          7        11        12         4         7         5         6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A3          8        12         9         6        11        12        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A4         10         1         6         8         2         1         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A5          5         3         3         2         5        11         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A6          9         6         7         3         1         6         8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A7         11         8        10         7         9         8        12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A8          4         2         1         1         6         3         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A9          3         9         8        11        12         7         5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A10         6         7        11         9         3        10         9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A11         1        10         2         5         4         9         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A12        12         4         4        12        10         4        10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Expert_15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A1          2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A2          5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A3         11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A4          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A5          9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A6          7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A7         12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A8          6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A9          8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A10         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A11         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A12        10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ranking_positions$H</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Expert_01 Expert_02 Expert_03 Expert_04 Expert_05 Expert_06 Expert_07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H1          4         8         5         8         4        11         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H2          1         2         4         5         2         7         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H3          2         3         2         2         1         4         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H4          3         4         3         4         3         3         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H5         12        12        12        12        12        12        12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H6          6         5         1         1         6         2         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H7          8        11         6         9        10         9        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H8         11         6         8         3         7         1         6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H9          5         7        10        11         5        10        10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H10        10         9         9         7         9         5         5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H11         9        10         7        10        11         8         9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H12         7         1        11         6         8         6         8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Expert_08 Expert_09 Expert_10 Expert_11 Expert_12 Expert_13 Expert_14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H1          3         8         9         4         4         3        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H2          2         1         2         1         1         2         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H3          1         2         1         6         5         5         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H4          4         3         4         7         7         1         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H5         12        12        12        10        12        12         9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H6          5         7         3         5         3         7         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H7         11        10        11        11        11         6         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H8          6         6         6         8         8         4         8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H9         10        11         8         2         6        10        12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H10         7         5         7        12         9        11         5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H11         8         9        10         9        10         8         6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H12         9         4         5         3         2         9        10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Expert_15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H1          8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H2          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H3          3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H4          2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H5         12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H6          6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H7         10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H8          9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H9          4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H10         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H11        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H12         5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $item_covariates</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     upper_right_segment upper_anterior_segment upper_left_segment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A1                 1.56                   0.22               1.44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A2                 1.33                   0.22               1.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A3                 1.22                   0.33               1.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A4                 0.00                   0.00               0.11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A5                 1.33                   0.22               0.78</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A6                 1.11                   0.56               1.78</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A7                 1.22                   0.67               1.89</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A8                 1.44                   0.22               1.56</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A9                 1.11                   0.33               1.22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A10                0.67                   0.11               0.89</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A11                0.67                   0.89               1.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A12                0.67                   0.11               0.22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H1                 0.67                   0.22               0.78</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H2                 1.56                   0.56               0.22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H3                 0.56                   0.22               1.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H4                 0.56                   0.22               0.67</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H5                 1.22                   0.33               0.67</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H6                 0.56                   0.11               1.33</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H7                 0.56                   0.33               0.78</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H8                 0.78                   0.22               1.56</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H9                 0.44                   0.22               1.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H10                1.11                   0.33               1.78</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H11                0.67                   0.67               1.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H12                1.22                   0.78               1.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     lower_right_segment lower_anterior_segment lower_left_segment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A1                 1.00                   0.00               1.22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A2                 0.33                   0.00               0.33</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A3                 0.67                   0.11               1.44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A4                 1.78                   0.22               1.89</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A5                 1.22                   0.11               1.67</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A6                 0.89                   0.22               0.89</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A7                 0.89                   0.11               1.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A8                 0.89                   0.22               0.56</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A9                 0.44                   0.00               1.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A10                0.11                   0.00               0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A11                0.67                   1.33               2.44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A12                1.00                   0.00               0.56</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H1                 1.67                   0.56               0.78</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H2                 0.44                   0.00               0.11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H3                 0.33                   0.11               0.78</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H4                 0.44                   0.11               0.44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H5                 0.44                   0.00               0.33</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H6                 1.22                   0.00               1.33</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H7                 0.78                   0.00               1.22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H8                 0.89                   0.00               0.33</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H9                 0.00                   0.11               0.11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H10                0.22                   0.22               0.33</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H11                0.67                   0.56               0.56</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H12                0.33                   0.33               0.67</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     right_buccal_occlusion left_buccal_occlusion overjet overbite centerline</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A1                    0.00                  0.33    0.00     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A2                    0.00                  0.33    0.00     0.33       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A3                    0.00                  0.00    0.00     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A4                    0.33                  0.67    0.00     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A5                    0.33                  0.00    0.78     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A6                    0.67                  1.00    0.78     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A7                    0.67                  0.33    0.67     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A8                    2.00                  2.00    0.00     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A9                    2.33                  0.67    0.00     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A10                   0.67                  1.00    0.00     0.67       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A11                   1.33                  1.00    0.11     0.00       0.67</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A12                   0.33                  1.33    0.00     0.33       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H1                    0.67                  0.00    0.78     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H2                    0.00                  0.67    0.00     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H3                    0.00                  0.67    0.00     0.33       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H4                    0.67                  1.00    0.00     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H5                    1.00                  0.67    0.33     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H6                    1.00                  0.67    0.22     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H7                    2.00                  1.33    0.44     0.33       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H8                    1.67                  2.00    0.00     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H9                    1.00                  0.00    0.00     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H10                   1.33                  1.67    0.00     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H11                   1.00                  1.00    0.11     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> H12                   1.00                  0.67    0.56     0.00       0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $item_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "H" "H" "H" "H" "H" "H" "H"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [20] "H" "H" "H" "H" "H"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ranking_labels</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "Expert_01" "Expert_02" "Expert_03" "Expert_04" "Expert_05" "Expert_06"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "Expert_07" "Expert_08" "Expert_09" "Expert_10" "Expert_11" "Expert_12"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "Expert_13" "Expert_14" "Expert_15"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $source</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $source$citation</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Li, Yi and Liu (2022), Tables 3--4"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $source$note</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Published 24-case excerpt only; not the full clinical dataset."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

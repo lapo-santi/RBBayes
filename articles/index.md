@@ -3,12 +3,12 @@
 ### Articles
 
 - [Getting started: from results to a Bradley--Terry
-  analysis](https://laposanti.github.io/BTSBM/articles/getting-started.md):
+  analysis](https://lapo-santi.github.io/RBBayes/articles/getting-started.md):
 - [Ranking data: a beginner's guide to Plackett--Luce
-  models](https://laposanti.github.io/BTSBM/articles/pl-ranking-models.md):
+  models](https://lapo-santi.github.io/RBBayes/articles/pl-ranking-models.md):
 - [Toy datasets: choose a model and read its
-  output](https://laposanti.github.io/BTSBM/articles/toy-data-gallery.md):
+  output](https://lapo-santi.github.io/RBBayes/articles/toy-data-gallery.md):
 - [Notation and object dimensions for the common BTSBM
-  interface](https://laposanti.github.io/BTSBM/articles/Notation.md):
+  interface](https://lapo-santi.github.io/RBBayes/articles/Notation.md):
 - [Package
-  'RBBayes'](https://laposanti.github.io/BTSBM/articles/BTSBM-software-paper.md):
+  'RBBayes'](https://lapo-santi.github.io/RBBayes/articles/BTSBM-software-paper.md):

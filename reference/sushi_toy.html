@@ -19,7 +19,7 @@ data from the Sushi Preference Dataset."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">RBBayes: Bayesian paired-comparison and ranking models</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,6 +94,116 @@ The original Sushi Preference Dataset must be obtained from its authors;
 its licence does not allow redistribution.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">sushi_toy</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $rankings</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Rank_1 Rank_2 Rank_3 Rank_4 Rank_5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_1       9      1      5      2      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_2       4      2      6     10      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_3       7      5      8      3      6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_4      10      7      3      2      5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_5       5      3     10      4      8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_6       3      9      4      5     10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_7       1     10      2      3      5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_8       8      5      7      4      6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_9       1     10      2      3      9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_10      2      3      6      5      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_11      6      1      4      7      8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_12      3      4      5      6      9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_13     10      2      4      1      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_14      7      9      6      5      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_15     10      5      2      8      7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_16      2      3      7      9      8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_17      5      4      7      6      8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_18      7      3      5      2      6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_19      4      1      5      3      9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_20      6      1      3      9      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_21      3      2      7      9      6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_22      7      3      4      5      6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_23      9      4      1      2      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_24      1      9      5      8      4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_25      5      9      2      6     10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_26      5      7      6     10      4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_27      5      6      7      2      4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_28      4      2     10      3      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_29      5      7      2      1      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_30      5      7      3      4      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_31      2      5      7      9      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_32      9      7      6      5      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_33      1      2      8      3      7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_34      8      4      6      7      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_35      2      6      4      5     10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_36      6      4      8      3      5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_37      3      9      7      6      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_38      4     10      9      5      6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_39      4      8      2      6      5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_40      6      2      9      8      4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $rho</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Rank_1 Rank_2 Rank_3 Rank_4 Rank_5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_1       9      1      5      2      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_2       4      2      6     10      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_3       7      5      8      3      6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_4      10      7      3      2      5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_5       5      3     10      4      8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_6       3      9      4      5     10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_7       1     10      2      3      5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_8       8      5      7      4      6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_9       1     10      2      3      9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_10      2      3      6      5      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_11      6      1      4      7      8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_12      3      4      5      6      9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_13     10      2      4      1      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_14      7      9      6      5      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_15     10      5      2      8      7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_16      2      3      7      9      8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_17      5      4      7      6      8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_18      7      3      5      2      6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_19      4      1      5      3      9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_20      6      1      3      9      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_21      3      2      7      9      6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_22      7      3      4      5      6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_23      9      4      1      2      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_24      1      9      5      8      4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_25      5      9      2      6     10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_26      5      7      6     10      4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_27      5      6      7      2      4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_28      4      2     10      3      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_29      5      7      2      1      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_30      5      7      3      4      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_31      2      5      7      9      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_32      9      7      6      5      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_33      1      2      8      3      7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_34      8      4      6      7      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_35      2      6      4      5     10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_36      6      4      8      3      5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_37      3      9      7      6      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_38      4     10      9      5      6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_39      4      8      2      6      5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ranking_40      6      2      9      8      4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $n_items</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $n_rankings</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $rank_length</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ranking_labels</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "Ranking_1"  "Ranking_2"  "Ranking_3"  "Ranking_4"  "Ranking_5" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "Ranking_6"  "Ranking_7"  "Ranking_8"  "Ranking_9"  "Ranking_10"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "Ranking_11" "Ranking_12" "Ranking_13" "Ranking_14" "Ranking_15"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "Ranking_16" "Ranking_17" "Ranking_18" "Ranking_19" "Ranking_20"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "Ranking_21" "Ranking_22" "Ranking_23" "Ranking_24" "Ranking_25"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [26] "Ranking_26" "Ranking_27" "Ranking_28" "Ranking_29" "Ranking_30"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [31] "Ranking_31" "Ranking_32" "Ranking_33" "Ranking_34" "Ranking_35"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [36] "Ranking_36" "Ranking_37" "Ranking_38" "Ranking_39" "Ranking_40"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

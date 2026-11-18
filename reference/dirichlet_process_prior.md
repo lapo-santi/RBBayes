@@ -17,3 +17,10 @@ dirichlet_process_prior(concentration = 1)
 ## Value
 
 An object of class `btsbm_partition_prior`.
+
+## Examples
+
+``` r
+dirichlet_process_prior()
+#> <clustering_prior> Dirichlet process(concentration = 1) 
+```

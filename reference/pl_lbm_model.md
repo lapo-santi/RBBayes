@@ -32,21 +32,21 @@ pl_lbm_model(
 - item_clustering:
 
   Prior on the item partition \\z\\; see
-  [`gnedin_prior()`](https://laposanti.github.io/BTSBM/reference/gnedin_prior.md),
-  [`dirichlet_process_prior()`](https://laposanti.github.io/BTSBM/reference/dirichlet_process_prior.md),
-  [`pitman_yor_prior()`](https://laposanti.github.io/BTSBM/reference/pitman_yor_prior.md)
+  [`gnedin_prior()`](https://lapo-santi.github.io/RBBayes/reference/gnedin_prior.md),
+  [`dirichlet_process_prior()`](https://lapo-santi.github.io/RBBayes/reference/dirichlet_process_prior.md),
+  [`pitman_yor_prior()`](https://lapo-santi.github.io/RBBayes/reference/pitman_yor_prior.md)
   or
-  [`dirichlet_multinomial_prior()`](https://laposanti.github.io/BTSBM/reference/dirichlet_multinomial_prior.md).
+  [`dirichlet_multinomial_prior()`](https://lapo-santi.github.io/RBBayes/reference/dirichlet_multinomial_prior.md).
 
 - identifiability:
 
   PL reporting constraint, see
-  [`pl_identifiability()`](https://laposanti.github.io/BTSBM/reference/pl_identifiability.md).
+  [`pl_identifiability()`](https://lapo-santi.github.io/RBBayes/reference/pl_identifiability.md).
 
 - latent_strength, ability_prior:
 
   Deprecated. A prior object from
-  [`latent_strength()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md);
+  [`latent_strength()`](https://lapo-santi.github.io/RBBayes/reference/latent_strength.md);
   if supplied it overrides `shape_lambda` and `rate_lambda`.
 
 - ranking_prior:
@@ -60,3 +60,13 @@ pl_lbm_model(
 ## Value
 
 A `btsbm_model`.
+
+## Examples
+
+``` r
+pl_lbm_model()
+#> <btsbm_model> Plackett-Luce latent block model (PL-LBM) 
+#>   strength prior:   lambda_k ~ iid Gamma(shape_lambda = 1, rate_lambda = 1)
+#>   item partition:    z ~ Gnedin(gnedin_hyper = 0.5)
+#>   ranking partition: Gnedin(gnedin_hyper = 0.5)
+```

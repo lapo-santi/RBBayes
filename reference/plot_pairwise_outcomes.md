@@ -19,3 +19,9 @@ plot_pairwise_outcomes(pairwise)
 ## Value
 
 A ggplot object.
+
+## Examples
+
+``` r
+plot_pairwise_outcomes(tennis_toy())
+```

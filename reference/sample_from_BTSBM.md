@@ -109,3 +109,38 @@ The workflow is:
 By default, block labels are assigned deterministically as
 `rep(seq_len(K), length.out = n_players)` to mirror your example, but
 you can pass a custom label vector via `x`.
+
+## Examples
+
+``` r
+sample_from_BTSBM(n_players = 6, K = 2, seed = 1)
+#> $N
+#>      [,1] [,2] [,3] [,4] [,5] [,6]
+#> [1,]    0    5    6    0    0   11
+#> [2,]    5    0    0    0    0    0
+#> [3,]    6    0    0    4    7    9
+#> [4,]    0    0    4    0    0    3
+#> [5,]    0    0    7    0    0    0
+#> [6,]   11    0    9    3    0    0
+#> 
+#> $w
+#>      [,1] [,2] [,3] [,4] [,5] [,6]
+#> [1,]    0    3    2    0    0   11
+#> [2,]    2    0    0    0    0    0
+#> [3,]    4    0    0    3    3    7
+#> [4,]    0    0    1    0    0    2
+#> [5,]    0    0    4    0    0    0
+#> [6,]    0    0    2    1    0    0
+#> 
+#> $x
+#> [1] 1 2 1 2 1 2
+#> 
+#> $lambda
+#> [1] 0.080 0.184
+#> 
+#> $theta
+#>           [,1]      [,2]
+#> [1,] 0.5000000 0.6969697
+#> [2,] 0.3030303 0.5000000
+#> 
+```

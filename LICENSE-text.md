@@ -1,4 +1,4 @@
 # License
 
-    YEAR: 2025
-    COPYRIGHT HOLDER: Lapo
+    YEAR: 2026
+    COPYRIGHT HOLDER: Lapo Santi

@@ -21,3 +21,10 @@ finite_partition(max_clusters, concentration = 1)
 ## Value
 
 An object of class `btsbm_partition_prior`.
+
+## Examples
+
+``` r
+finite_partition(max_clusters = 4)
+#> <clustering_prior> finite Dirichlet(max_clusters = 4, concentration = 1) 
+```

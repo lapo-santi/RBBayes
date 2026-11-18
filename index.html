@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="index.html">RBBayes: Bayesian paired-comparison and ranking models</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,8 +78,7 @@
 <div class="section level3">
 <h3 id="quick-links">Quick Links<a class="anchor" aria-label="anchor" href="#quick-links"></a>
 </h3>
-<p>For a complete overview of all functions, see the 👉 <a href="https://laposanti.github.io/BTSBM/reference/index.html">Function Reference</a><br>
-For a step-by-step example using tennis data, visit the 👉 <a href="https://laposanti.github.io/BTSBM/articles/getting-started.html">Getting Started Vignette</a></p>
+<p>For a complete overview of all functions, see the 👉 <a href="https://lapo-santi.github.io/RBBayes/reference/index.html">Function Reference</a> For a step-by-step example using tennis data, visit the 👉 <a href="https://lapo-santi.github.io/RBBayes/articles/getting-started.html">Getting Started Vignette</a></p>
 <hr>
 </div>
 </div>
@@ -130,8 +129,7 @@ For a step-by-step example using tennis data, visit the 👉 <a href="https://la
 <li>Square matrix (<code>n × n</code>), where <code>wins[i, j]</code> = number of times player <em>i</em> beats <em>j</em>
 </li>
 <li>Diagonal must be 0 (<code>wins[i, i] = 0</code>)</li>
-<li>For each unordered pair <code>{i,j}</code>:<br>
-( n_{ij} = w_{ij} + w_{ji} )</li>
+<li>For each unordered pair <code>{i,j}</code>: ( n_{ij} = w_{ij} + w_{ji} )</li>
 </ul>
 <hr>
 </div>
@@ -213,9 +211,9 @@ For a step-by-step example using tennis data, visit the 👉 <a href="https://la
 </h2>
 <ol style="list-style-type: decimal">
 <li><p><strong>Prepare data</strong> with <code>as_bt_data(wins)</code></p></li>
-<li><p><strong>Inspect prior</strong> using <a href="https://laposanti.github.io/BTSBM/reference/gnedin_K_mean.html"><code>gnedin_K_mean()</code></a> and <a href="https://laposanti.github.io/BTSBM/reference/gnedin_K_var.html"><code>gnedin_K_var()</code></a></p></li>
+<li><p><strong>Inspect prior</strong> using <a href="https://lapo-santi.github.io/RBBayes/reference/gnedin_K_mean.html"><code>gnedin_K_mean()</code></a> and <a href="https://lapo-santi.github.io/RBBayes/reference/gnedin_K_var.html"><code>gnedin_K_var()</code></a></p></li>
 <li><p><strong>Specify a model</strong> with <code><a href="reference/bt_model.html">bt_model()</a></code> or <code><a href="reference/bt_sbm_model.html">bt_sbm_model()</a></code></p></li>
-<li><p><strong>Fit the model</strong> with <a href="https://laposanti.github.io/BTSBM/reference/fit_btsbm.html"><code>fit_model()</code></a></p></li>
+<li><p><strong>Fit the model</strong> with <a href="https://lapo-santi.github.io/RBBayes/reference/fit_btsbm.html"><code>fit_model()</code></a></p></li>
 <li><p><strong>Report block uncertainty</strong> with <code><a href="reference/pretty_table_K_distribution.html">pretty_table_K_distribution()</a></code>, <code><a href="reference/plot_block_adjacency.html">plot_block_adjacency()</a></code>, and <code><a href="reference/plot_assignment_probabilities.html">plot_assignment_probabilities()</a></code></p></li>
 </ol>
 <hr>
@@ -223,8 +221,8 @@ For a step-by-step example using tennis data, visit the 👉 <a href="https://la
 <div class="section level2">
 <h2 id="learn-more">Learn More<a class="anchor" aria-label="anchor" href="#learn-more"></a>
 </h2>
-<p>👉 <a href="https://laposanti.github.io/BTSBM/reference/index.html">Function Reference</a></p>
-<p>👉 <a href="https://laposanti.github.io/BTSBM/articles/getting-started.html">Getting Started Vignette</a></p>
+<p>👉 <a href="https://lapo-santi.github.io/RBBayes/reference/index.html">Function Reference</a></p>
+<p>👉 <a href="https://lapo-santi.github.io/RBBayes/articles/getting-started.html">Getting Started Vignette</a></p>
 <hr>
 </div>
 <div class="section level2">
@@ -261,7 +259,7 @@ For a step-by-step example using tennis data, visit the 👉 <a href="https://la
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://github.com/laposanti" class="external-link">Lapo Santi</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0009-0005-9363-3353" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<a href="https://github.com/laposanti" class="external-link">Lapo Santi</a> <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0009-0005-9363-3353" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li>
 <a href="https://maths.ucd.ie/~nial/" class="external-link">Nial Friel</a> <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-4778-0254" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li><a href="authors.html">More about authors...</a></li>

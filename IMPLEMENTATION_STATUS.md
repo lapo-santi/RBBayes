@@ -7,19 +7,19 @@ high-level interface supports:
 
 | Model | Status | Main entry point |
 |----|----|----|
-| Simple Bradley–Terry | working | [`bt_model()`](https://laposanti.github.io/BTSBM/reference/bt_model.md) + [`fit_btsbm()`](https://laposanti.github.io/BTSBM/reference/fit_btsbm.md) |
-| Bradley–Terry item SBM | working | [`bt_sbm_model()`](https://laposanti.github.io/BTSBM/reference/bt_sbm_model.md) + [`fit_btsbm()`](https://laposanti.github.io/BTSBM/reference/fit_btsbm.md) |
-| Simple Plackett–Luce | working | [`pl_model()`](https://laposanti.github.io/BTSBM/reference/pl_model.md) + [`fit_btsbm()`](https://laposanti.github.io/BTSBM/reference/fit_btsbm.md) |
-| Plackett–Luce item SBM | working | [`pl_sbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_sbm_model.md) + [`fit_btsbm()`](https://laposanti.github.io/BTSBM/reference/fit_btsbm.md) |
-| Plackett–Luce ranking mixture | working R reference sampler | [`pl_mixture_model()`](https://laposanti.github.io/BTSBM/reference/pl_mixture_model.md) |
-| Plackett–Luce latent block model | working R reference sampler | [`pl_lbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_lbm_model.md) |
+| Simple Bradley–Terry | working | [`bt_model()`](https://lapo-santi.github.io/RBBayes/reference/bt_model.md) + [`fit_btsbm()`](https://lapo-santi.github.io/RBBayes/reference/fit_btsbm.md) |
+| Bradley–Terry item SBM | working | [`bt_sbm_model()`](https://lapo-santi.github.io/RBBayes/reference/bt_sbm_model.md) + [`fit_btsbm()`](https://lapo-santi.github.io/RBBayes/reference/fit_btsbm.md) |
+| Simple Plackett–Luce | working | [`pl_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_model.md) + [`fit_btsbm()`](https://lapo-santi.github.io/RBBayes/reference/fit_btsbm.md) |
+| Plackett–Luce item SBM | working | [`pl_sbm_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_sbm_model.md) + [`fit_btsbm()`](https://lapo-santi.github.io/RBBayes/reference/fit_btsbm.md) |
+| Plackett–Luce ranking mixture | working R reference sampler | [`pl_mixture_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_mixture_model.md) |
+| Plackett–Luce latent block model | working R reference sampler | [`pl_lbm_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_lbm_model.md) |
 | Bradley–Terry mixture/co-clustering | deferred | – |
 
 PL code now uses the public names `rankings`, `latent_strength`,
 `item_clustering`, `ranking_clustering`, and `gnedin_hyperparameter`.
 The compatibility names
-[`as_pl_data()`](https://laposanti.github.io/BTSBM/reference/as_rankings.md),
-[`gamma_ability()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md),
+[`as_pl_data()`](https://lapo-santi.github.io/RBBayes/reference/as_rankings.md),
+[`gamma_ability()`](https://lapo-santi.github.io/RBBayes/reference/latent_strength.md),
 and the earlier model arguments remain available, but new examples and
 documentation use the descriptive vocabulary.
 
@@ -42,7 +42,7 @@ The current tests exercise each choice with a short PL–SBM fit.
     sufficient-statistic helpers into `R/` and `src/`. Expose
     ranking-cluster draws, mixture weights, ranking-level posterior
     similarity, and ranking-level
-    [`log_lik()`](https://laposanti.github.io/BTSBM/reference/log_lik.md).
+    [`log_lik()`](https://lapo-santi.github.io/RBBayes/reference/log_lik.md).
 2.  **Optimise PL–LBM.** Port the joint row/item allocation kernel from
     `PLuce/PL-SBM/R/plsbm_joint_clustering.R`. Store both partitions,
     the `ranking_cluster × item_cluster` latent-strength draws, and

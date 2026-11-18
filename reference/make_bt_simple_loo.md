@@ -40,3 +40,21 @@ A list with:
 
 - `obs_idx` — \\D \times 2\\ matrix of (i,j) indices defining each
   column.
+
+## Examples
+
+``` r
+lambda <- rbind(c(1, 2), c(1.2, 1.8), c(0.9, 2.1))
+w <- matrix(c(0, 3, 2, 0), 2, 2)
+make_bt_simple_loo(w, lambda)
+#> $ll
+#>           [,1]
+#> [1,] -1.111035
+#> [2,] -1.062473
+#> [3,] -1.175385
+#> 
+#> $obs_idx
+#>      row col
+#> [1,]   1   2
+#> 
+```

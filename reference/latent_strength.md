@@ -1,7 +1,7 @@
 # Gamma prior object for positive strengths (low-level)
 
 Model constructors such as
-[`bt_model()`](https://laposanti.github.io/BTSBM/reference/bt_model.md)
+[`bt_model()`](https://lapo-santi.github.io/RBBayes/reference/bt_model.md)
 now take `shape_lambda` and `rate_lambda` directly, so most users never
 need this function. It is kept for compatibility with code written for
 earlier development versions.
@@ -27,3 +27,10 @@ gamma_ability(shape = 1, rate = 1)
 ## Value
 
 An object of class `btsbm_strength_prior`.
+
+## Examples
+
+``` r
+latent_strength()
+#> <strength prior> Gamma(shape = 1, rate = 1)
+```

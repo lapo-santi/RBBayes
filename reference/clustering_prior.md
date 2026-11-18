@@ -51,3 +51,10 @@ clustering_prior(
 ## Value
 
 An object of class `btsbm_partition_prior`.
+
+## Examples
+
+``` r
+clustering_prior()
+#> <clustering_prior> Gnedin(gnedin_hyper = 0.5) 
+```

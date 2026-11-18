@@ -25,7 +25,7 @@ because individual strengths are not the natural summary there."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">RBBayes: Bayesian paired-comparison and ranking models</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,6 +95,28 @@ because individual strengths are not the natural summary there.</p>
     <p>An object of class <code>summary.btsbm_fit</code>, a named list.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="as_bt_data.html">as_bt_data</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># A short run illustrates the interface; use longer runs for inference.</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="fit_model.html">fit_model</a></span><span class="op">(</span><span class="va">data</span>, <span class="fu"><a href="bt_sbm_model.html">bt_sbm_model</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                 <span class="fu"><a href="mcmc_control.html">mcmc_control</a></span><span class="op">(</span>iter <span class="op">=</span> <span class="fl">60</span>, warmup <span class="op">=</span> <span class="fl">30</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The number of clusters equals the default maximum possible number of clusters.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Model:   Bradley-Terry stochastic block model (BT-SBM), items share block strengths</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Data:    2 items, 1 compared pairs, 5 comparisons</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Priors:  lambda_k ~ iid Gamma(shape_lambda = 4, rate_lambda = 3.512)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          item partition z ~ Gnedin(gnedin_hyper = 0.5)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> MCMC:    60 iterations, 30 warm-up, 30 retained draws (0.0 s)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Posterior number of blocks, Pr(K = k | y):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Point estimate of the partition (block 1 = strongest):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Block 1 (2 items): Item_1, Item_2</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

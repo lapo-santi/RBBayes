@@ -39,7 +39,7 @@ credible_ball(
 - z_hat:
 
   Optional point estimate; defaults to
-  [`partition_point_estimate()`](https://laposanti.github.io/BTSBM/reference/partition_point_estimate.md).
+  [`partition_point_estimate()`](https://lapo-santi.github.io/RBBayes/reference/partition_point_estimate.md).
 
 - credible_mass:
 
@@ -69,4 +69,22 @@ estimation and credible balls. *Bayesian Analysis*, 13(2), 559–626.
 
 ## See also
 
-[`plot_credible_ball()`](https://laposanti.github.io/BTSBM/reference/plot_credible_ball.md)
+[`plot_credible_ball()`](https://lapo-santi.github.io/RBBayes/reference/plot_credible_ball.md)
+
+## Examples
+
+``` r
+data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+# A short run illustrates the interface; use longer runs for inference.
+fit <- fit_model(data, bt_sbm_model(),
+                 mcmc_control(iter = 60, warmup = 30, seed = 1))
+credible_ball(fit)
+#> Warning: The number of clusters equals the default maximum possible number of clusters.
+#> <credible ball for the item partition z>
+#>   95% ball, VI radius -0.000 (contains 100.0% of draws; method: native)
+#>   Number of blocks K:
+#>     point estimate        1
+#>     upper vertical bound  1  (coarsest partition in the ball)
+#>     lower vertical bound  1  (finest partition in the ball)
+#>     horizontal bound      1  (furthest partition from the estimate)
+```

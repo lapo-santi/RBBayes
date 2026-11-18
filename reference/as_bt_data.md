@@ -42,3 +42,10 @@ as_bt_data(
 ## Value
 
 An object of class `btsbm_pairwise_data`.
+
+## Examples
+
+``` r
+as_bt_data(matrix(c(0, 2, 3, 0), 2, 2))
+#> <btsbm_pairwise_data> 2 items and 5 wins
+```

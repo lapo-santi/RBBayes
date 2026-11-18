@@ -102,7 +102,6 @@ otherwise items are named `Item_1, ..., Item_n`.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 set.seed(1)
 n <- 6L
 w <- matrix(0L, n, n)
@@ -113,5 +112,4 @@ fit <- gibbs_bt_sbm(
   w_ij = w, prior = "GN", gamma_GN = 0.5,
   T_iter = 200, T_burn = 100, verbose = FALSE
 )
-} # }
 ```

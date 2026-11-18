@@ -23,3 +23,10 @@ dirichlet_process_K_var(n, concentration = 1)
 ## Value
 
 A numeric scalar, the prior variance of the occupied-group count.
+
+## Examples
+
+``` r
+dirichlet_process_K_var(n = 10, concentration = 1)
+#> [1] 1.379201
+```

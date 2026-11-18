@@ -11,7 +11,7 @@ The package provides:
 2.  Explicit BT, PL, prior, and MCMC-control constructors
 
 3.  A common
-    [`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_model.md)
+    [`fit_model()`](https://lapo-santi.github.io/RBBayes/reference/fit_model.md)
     entry point and `btsbm_fit` result
 
 4.  Fit-level uncertainty summaries, diagnostics, and visualizations
@@ -24,10 +24,10 @@ Applications include, among the others, **sports analytics**,
 ### Quick Links
 
 For a complete overview of all functions, see the 👉 [Function
-Reference](https://laposanti.github.io/BTSBM/reference/index.html)  
+Reference](https://lapo-santi.github.io/RBBayes/reference/index.html)
 For a step-by-step example using tennis data, visit the 👉 [Getting
 Started
-Vignette](https://laposanti.github.io/BTSBM/articles/getting-started.html)
+Vignette](https://lapo-santi.github.io/RBBayes/articles/getting-started.html)
 
 ------------------------------------------------------------------------
 
@@ -59,8 +59,7 @@ To fit the model, first create one validated pairwise-data object:
 - Square matrix (`n × n`), where `wins[i, j]` = number of times player
   *i* beats *j*
 - Diagonal must be 0 (`wins[i, i] = 0`)
-- For each unordered pair `{i,j}`:  
-  ( n\_{ij} = w\_{ij} + w\_{ji} )
+- For each unordered pair `{i,j}`: ( n\_{ij} = w\_{ij} + w\_{ji} )
 
 ------------------------------------------------------------------------
 
@@ -153,33 +152,33 @@ blocks.
 1.  **Prepare data** with `as_bt_data(wins)`
 
 2.  **Inspect prior** using
-    [`gnedin_K_mean()`](https://laposanti.github.io/BTSBM/reference/gnedin_K_mean.html)
+    [`gnedin_K_mean()`](https://lapo-santi.github.io/RBBayes/reference/gnedin_K_mean.html)
     and
-    [`gnedin_K_var()`](https://laposanti.github.io/BTSBM/reference/gnedin_K_var.html)
+    [`gnedin_K_var()`](https://lapo-santi.github.io/RBBayes/reference/gnedin_K_var.html)
 
 3.  **Specify a model** with
-    [`bt_model()`](https://laposanti.github.io/BTSBM/reference/bt_model.md)
+    [`bt_model()`](https://lapo-santi.github.io/RBBayes/reference/bt_model.md)
     or
-    [`bt_sbm_model()`](https://laposanti.github.io/BTSBM/reference/bt_sbm_model.md)
+    [`bt_sbm_model()`](https://lapo-santi.github.io/RBBayes/reference/bt_sbm_model.md)
 
 4.  **Fit the model** with
-    [`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_btsbm.html)
+    [`fit_model()`](https://lapo-santi.github.io/RBBayes/reference/fit_btsbm.html)
 
 5.  **Report block uncertainty** with
-    [`pretty_table_K_distribution()`](https://laposanti.github.io/BTSBM/reference/pretty_table_K_distribution.md),
-    [`plot_block_adjacency()`](https://laposanti.github.io/BTSBM/reference/plot_block_adjacency.md),
+    [`pretty_table_K_distribution()`](https://lapo-santi.github.io/RBBayes/reference/pretty_table_K_distribution.md),
+    [`plot_block_adjacency()`](https://lapo-santi.github.io/RBBayes/reference/plot_block_adjacency.md),
     and
-    [`plot_assignment_probabilities()`](https://laposanti.github.io/BTSBM/reference/plot_assignment_probabilities.md)
+    [`plot_assignment_probabilities()`](https://lapo-santi.github.io/RBBayes/reference/plot_assignment_probabilities.md)
 
 ------------------------------------------------------------------------
 
 ## Learn More
 
 👉 [Function
-Reference](https://laposanti.github.io/BTSBM/reference/index.html)
+Reference](https://lapo-santi.github.io/RBBayes/reference/index.html)
 
 👉 [Getting Started
-Vignette](https://laposanti.github.io/BTSBM/articles/getting-started.html)
+Vignette](https://lapo-santi.github.io/RBBayes/articles/getting-started.html)
 
 ------------------------------------------------------------------------
 

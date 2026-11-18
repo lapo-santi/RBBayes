@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RBBayes: Bayesian paired-comparison and ranking models</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,7 +45,70 @@
       <small>Source: <a href="https://github.com/lapo-santi/RBBayes/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
-  </main></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0.0" id="rbbayes-100">RBBayes 1.0.0<a class="anchor" aria-label="anchor" href="#rbbayes-100"></a></h2>
+<div class="section level3">
+<h3 id="release-preparation-1-0-0">Release preparation<a class="anchor" aria-label="anchor" href="#release-preparation-1-0-0"></a></h3>
+<ul><li>Corrected package website links and made previously disabled examples runnable.</li>
+<li>Expanded the package description and identified the copyright holder.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="tutorial-driven-interface-revision-1-0-0">Tutorial-driven interface revision<a class="anchor" aria-label="anchor" href="#tutorial-driven-interface-revision-1-0-0"></a></h3>
+<ul><li>Model constructors take the Gamma prior directly: <code>bt_model(shape_lambda = 2, rate_lambda = 1)</code>, <code>bt_sbm_model(shape_lambda, rate_lambda, item_clustering)</code>, and likewise for PL models. The strengths are i.i.d. a priori; <code><a href="../reference/latent_strength.html">latent_strength()</a></code> objects are still accepted (deprecated). The default BT prior is now Gamma(4, exp(digamma(4))), matching BT–SBM.</li>
+<li>
+<code>gnedin_prior(gnedin_hyper = 0.5)</code>; <code>gnedin_hyperparameter</code> is a deprecated alias.</li>
+<li>Notation: <code>z_i</code> is the block of item <code>i</code>; <code>lambda_i</code> (BT) and <code>lambda_k</code> (BT–SBM) are strengths.</li>
+<li>New names: <code><a href="../reference/posterior_K_table.html">posterior_K_table()</a></code> (was <code><a href="../reference/pretty_table_K_distribution.html">pretty_table_K_distribution()</a></code>, which remains) and <code><a href="../reference/plot_ordered_adjacency.html">plot_ordered_adjacency()</a></code> (wraps <code><a href="../reference/plot_block_adjacency.html">plot_block_adjacency()</a></code>).</li>
+<li>MCMC parameters are named after items: <code>rel_strength[&lt;item&gt;]</code> (share of total strength), <code>lambda[&lt;item&gt;]</code>, <code>n_item_blocks</code>, <code>n_ranking_groups</code>. Old names <code>q[i]</code>, <code>theta[i]</code>, <code>K_item</code>, <code>K_ranking</code> are still accepted in <code>pars</code>.</li>
+<li>
+<code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> returns a <code>summary.btsbm_fit</code> with descriptive field names and a readable print method (data size, priors, MCMC run, posterior K and partition for block models, relative strengths otherwise).</li>
+<li>Plackett–Luce strengths are reported as shares summing to one by default (<code>pl_identifiability("sum")</code>), replacing the geometric-mean scale. <code><a href="../reference/strength_summary.html">strength_summary()</a></code> and <code><a href="../reference/plot_strength_summary.html">plot_strength_summary()</a></code> use relative strengths.</li>
+<li>New: <code><a href="../reference/partition_point_estimate.html">partition_point_estimate()</a></code>, <code><a href="../reference/credible_ball.html">credible_ball()</a></code> / <code><a href="../reference/plot_credible_ball.html">plot_credible_ball()</a></code> (Wade &amp; Ghahramani credible balls; optional <code>mcclust.ext</code> cross-check), <code><a href="../reference/block_stability.html">block_stability()</a></code>, <code><a href="../reference/prob_stronger.html">prob_stronger()</a></code> / <code><a href="../reference/plot_prob_stronger.html">plot_prob_stronger()</a></code> for Pr(lambda_i &gt; lambda_j | y).</li>
+<li>
+<code><a href="../reference/plot_assignment_probabilities.html">plot_assignment_probabilities()</a></code> uses a diverging colour scale centred at 0.5, prints probabilities, and states the conditioning K and number of draws.</li>
+<li>
+<code><a href="../reference/plot_posterior_similarity.html">plot_posterior_similarity()</a></code> orders items by the estimated partition and outlines its blocks.</li>
+<li>Block colours: colour-blind-safe palette for up to 8 blocks, distinct HCL colours beyond; short user palettes are interpolated instead of failing.</li>
+<li>
+<code>salso</code>, <code>mcclust</code> and <code>kableExtra</code> moved to Suggests; a built-in VI search is used when <code>salso</code> is absent, so installation is lighter for students.</li>
+<li>
+<code><a href="../reference/tennis_tiered_toy.html">tennis_tiered_toy()</a></code> defaults to strengths <code>c(12, 6, 2, 1)</code> and the edge list carries the true tiers in <code>attr(, "truth")</code>.</li>
+<li>A hands-on tutorial is installed at <code>system.file("tutorial", "RBBayes-tutorial.Rmd", package = "RBBayes")</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="package-rename-1-0-0">Package rename<a class="anchor" aria-label="anchor" href="#package-rename-1-0-0"></a></h3>
+<ul><li>The installable package is now <code>RBBayes</code>. Use <code><a href="https://github.com/lapo-santi/RBBayes" class="external-link">library(RBBayes)</a></code> after installing from <code>lapo-santi/RBBayes</code>; the repository address is unchanged.</li>
+<li>Existing function names and fitted-object classes remain compatible.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="pairwise-data-workflow-updates-1-0-0">Pairwise-data workflow updates<a class="anchor" aria-label="anchor" href="#pairwise-data-workflow-updates-1-0-0"></a></h3>
+<ul><li>
+<code><a href="../reference/as_bt_data.html">as_bt_data()</a></code> also accepts directed edge-list data frames, with explicit winner, loser and optional count columns. Repeated edges are aggregated.</li>
+<li>
+<code><a href="../reference/tennis_tiered_toy.html">tennis_tiered_toy()</a></code> accepts generating block counts, strength vectors, player counts and names, and can return an aggregated edge list.</li>
+<li>
+<code><a href="../reference/dirichlet_process_K_var.html">dirichlet_process_K_var()</a></code> provides a dedicated prior-variance function; <code><a href="../reference/prior_variance_K.html">prior_variance_K()</a></code> delegates to it for Dirichlet-process priors.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="development-interface-updates-1-0-0">Development interface updates<a class="anchor" aria-label="anchor" href="#development-interface-updates-1-0-0"></a></h3>
+<ul><li>Use <code><a href="../reference/fit_model.html">fit_model()</a></code> as the common BT/PL fitting entry point. Earlier fitter names remain available for compatibility.</li>
+<li>Convert fits directly with <code><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix()</a></code>, <code><a href="https://rdrr.io/r/base/array.html" class="external-link">as.array()</a></code>, <code><a href="https://rdrr.io/pkg/coda/man/mcmc.html" class="external-link">coda::as.mcmc()</a></code> and <code><a href="https://rdrr.io/pkg/coda/man/mcmc.list.html" class="external-link">coda::as.mcmc.list()</a></code>. Relative item strengths and occupied-group counts provide fixed-dimensional draws for coda and bayesplot.</li>
+<li>Combine independent runs using <code><a href="../reference/mcmc_interoperability.html">as_draws_array()</a></code> and <code><a href="../reference/mcmc_interoperability.html">as_mcmc_chains()</a></code>, preserving chain identity and checking compatible data and model definitions.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="btsbm-1-0-0">BTSBM 0.1.0<a class="anchor" aria-label="anchor" href="#btsbm-1-0-0"></a></h3>
+</div>
+<div class="section level3">
+<h3 id="initial-cran-submission-1-0-0">Initial CRAN submission<a class="anchor" aria-label="anchor" href="#initial-cran-submission-1-0-0"></a></h3>
+<ul><li>Initial release of BTSBM.</li>
+<li>Added Gibbs samplers for Bradley-Terry stochastic block models.</li>
+<li>Added posterior relabelling and partition summaries.</li>
+<li>Added plotting utilities for adjacency, assignment uncertainty, lambda uncertainty, and rank intervals.</li>
+<li>Added ATP demo data and introductory vignettes.</li>
+</ul></div>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

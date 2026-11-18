@@ -25,14 +25,22 @@ pl_model(
 - identifiability:
 
   PL reporting constraint, see
-  [`pl_identifiability()`](https://laposanti.github.io/BTSBM/reference/pl_identifiability.md).
+  [`pl_identifiability()`](https://lapo-santi.github.io/RBBayes/reference/pl_identifiability.md).
 
 - latent_strength, ability_prior:
 
   Deprecated. A prior object from
-  [`latent_strength()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md);
+  [`latent_strength()`](https://lapo-santi.github.io/RBBayes/reference/latent_strength.md);
   if supplied it overrides `shape_lambda` and `rate_lambda`.
 
 ## Value
 
 A `btsbm_model`.
+
+## Examples
+
+``` r
+pl_model()
+#> <btsbm_model> Plackett-Luce (PL), one strength per item 
+#>   strength prior:   lambda_i ~ iid Gamma(shape_lambda = 1, rate_lambda = 1)
+```

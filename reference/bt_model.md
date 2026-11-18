@@ -28,7 +28,7 @@ bt_model(
 - latent_strength, ability_prior:
 
   Deprecated. A prior object from
-  [`latent_strength()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md);
+  [`latent_strength()`](https://lapo-santi.github.io/RBBayes/reference/latent_strength.md);
   if supplied it overrides `shape_lambda` and `rate_lambda`.
 
 ## Value

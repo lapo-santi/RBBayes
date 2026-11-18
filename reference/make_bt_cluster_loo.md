@@ -50,8 +50,12 @@ A list with:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-# After running your clustered sampler and relabeling:
-# ll_obj <- make_bt_cluster_loo(w, n, out$lambda_samples_relabel, out$x_samples_relabel)
-} # }
+w <- matrix(c(0, 2, 3, 0), 2, 2)
+lambda <- rbind(c(1, 2), c(1.2, 1.8))
+z <- rbind(c(1L, 2L), c(1L, 2L))
+ll_obj <- make_bt_cluster_loo(w, lambda, z)
+ll_obj$ll
+#>           [,1]
+#> [1,] -1.804182
+#> [2,] -1.467938
 ```

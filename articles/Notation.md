@@ -13,9 +13,9 @@ fit <- fit_model(data, model, mcmc_control())
 
 The data object validates the observations, the model object states the
 likelihood and latent structure, and
-[`mcmc_control()`](https://laposanti.github.io/BTSBM/reference/mcmc_control.md)
+[`mcmc_control()`](https://lapo-santi.github.io/RBBayes/reference/mcmc_control.md)
 contains computational settings.
-[`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_model.md)
+[`fit_model()`](https://lapo-santi.github.io/RBBayes/reference/fit_model.md)
 always returns a `btsbm_fit` object. The lower-level `gibbs_bt_*()`
 functions remain available for compatibility, but new analyses should
 use this common architecture.
@@ -33,7 +33,7 @@ and the number of comparisons for an unordered pair is
 
 \\ n\_{ij}=w\_{ij}+w\_{ji}. \\
 
-[`as_bt_data()`](https://laposanti.github.io/BTSBM/reference/as_bt_data.md)
+[`as_bt_data()`](https://lapo-santi.github.io/RBBayes/reference/as_bt_data.md)
 stores these quantities as `data$wins`, `data$n_items`, and
 `data$item_labels`. Users do not supply \\\mathbf N\\; it is computed
 when needed.
@@ -45,7 +45,7 @@ matrix \\\boldsymbol\rho\\ lists item identifiers from most to least
 preferred. A row may be a complete ranking or a top-\\m\\ prefix from
 one common universe of \\n\\ available items.
 
-[`as_rankings()`](https://laposanti.github.io/BTSBM/reference/as_rankings.md)
+[`as_rankings()`](https://lapo-santi.github.io/RBBayes/reference/as_rankings.md)
 stores `data$rankings` with dimension `L x m`, together with
 `data$n_rankings`, `data$rank_length`, `data$n_items`, and stable item
 and ranking labels.
@@ -57,12 +57,12 @@ structure.
 
 | Constructor | Likelihood | Sampled partition | Strength used by an observation |
 |----|----|----|----|
-| [`bt_model()`](https://laposanti.github.io/BTSBM/reference/bt_model.md) | Bradley–Terry | none | item strength \\\lambda_i\\ |
-| [`bt_sbm_model()`](https://laposanti.github.io/BTSBM/reference/bt_sbm_model.md) | Bradley–Terry | item labels \\z_i\\ | block strength \\\lambda\_{z_i}\\ |
-| [`pl_model()`](https://laposanti.github.io/BTSBM/reference/pl_model.md) | Plackett–Luce | none | item strength \\\lambda_i\\ |
-| [`pl_sbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_sbm_model.md) | Plackett–Luce | item labels \\z_i\\ | block strength \\\lambda\_{z_i}\\ |
-| [`pl_mixture_model()`](https://laposanti.github.io/BTSBM/reference/pl_mixture_model.md) | Plackett–Luce | ranking labels \\c\_\ell\\ | profile-specific strength \\\lambda\_{c\_\ell i}\\ |
-| [`pl_lbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_lbm_model.md) | Plackett–Luce | \\z_i\\ and \\c\_\ell\\ | profile-by-item-block strength \\\lambda\_{c\_\ell z_i}\\ |
+| [`bt_model()`](https://lapo-santi.github.io/RBBayes/reference/bt_model.md) | Bradley–Terry | none | item strength \\\lambda_i\\ |
+| [`bt_sbm_model()`](https://lapo-santi.github.io/RBBayes/reference/bt_sbm_model.md) | Bradley–Terry | item labels \\z_i\\ | block strength \\\lambda\_{z_i}\\ |
+| [`pl_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_model.md) | Plackett–Luce | none | item strength \\\lambda_i\\ |
+| [`pl_sbm_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_sbm_model.md) | Plackett–Luce | item labels \\z_i\\ | block strength \\\lambda\_{z_i}\\ |
+| [`pl_mixture_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_mixture_model.md) | Plackett–Luce | ranking labels \\c\_\ell\\ | profile-specific strength \\\lambda\_{c\_\ell i}\\ |
+| [`pl_lbm_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_lbm_model.md) | Plackett–Luce | \\z_i\\ and \\c\_\ell\\ | profile-by-item-block strength \\\lambda\_{c\_\ell z_i}\\ |
 
 For Bradley–Terry models,
 
@@ -126,7 +126,7 @@ Raw cluster numbers have no meaning across MCMC draws. Paper-style
 BT–SBM summaries relabel each draw by decreasing block strength, so
 cluster 1 is the strongest occupied block. Pairwise co-clustering
 summaries, such as
-[`posterior_similarity()`](https://laposanti.github.io/BTSBM/reference/posterior_similarity.md),
+[`posterior_similarity()`](https://lapo-santi.github.io/RBBayes/reference/posterior_similarity.md),
 are label-invariant and do not require this step.
 
 ## Posterior summaries and plots
@@ -152,7 +152,7 @@ plot_assignment_probabilities(fit)
 plot_rank_intervals(fit)
 ```
 
-[`plot_assignment_probabilities()`](https://laposanti.github.io/BTSBM/reference/plot_assignment_probabilities.md)
+[`plot_assignment_probabilities()`](https://lapo-santi.github.io/RBBayes/reference/plot_assignment_probabilities.md)
 conditions on the posterior modal number of item blocks by default.
 Supply `max_n_clust = K` to condition on another sampled value. This
 separates uncertainty in item membership from uncertainty in the number
@@ -203,9 +203,9 @@ plot_assignment_probabilities(fit)
 - Ranking rows must contain distinct integer item identifiers in
   `1:item_count`.
 - BT models require data from
-  [`as_bt_data()`](https://laposanti.github.io/BTSBM/reference/as_bt_data.md);
+  [`as_bt_data()`](https://lapo-santi.github.io/RBBayes/reference/as_bt_data.md);
   PL models require data from
-  [`as_rankings()`](https://laposanti.github.io/BTSBM/reference/as_rankings.md).
+  [`as_rankings()`](https://lapo-santi.github.io/RBBayes/reference/as_rankings.md).
 - `warmup` must be smaller than `iter`, and partition priors must
   satisfy their documented parameter constraints.
 

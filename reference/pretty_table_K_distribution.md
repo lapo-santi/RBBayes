@@ -1,7 +1,7 @@
 # Format a block-count posterior distribution as a table (superseded)
 
 Superseded by
-[`posterior_K_table()`](https://laposanti.github.io/BTSBM/reference/posterior_K_table.md),
+[`posterior_K_table()`](https://lapo-santi.github.io/RBBayes/reference/posterior_K_table.md),
 which has a clearer name and returns a data frame by default.
 
 ## Usage
@@ -21,7 +21,7 @@ pretty_table_K_distribution(
 - post:
 
   A `btsbm_fit` with an item partition, or the output of
-  [`relabel_by_lambda()`](https://laposanti.github.io/BTSBM/reference/relabel_by_lambda.md).
+  [`relabel_by_lambda()`](https://lapo-santi.github.io/RBBayes/reference/relabel_by_lambda.md).
 
 - format:
 
@@ -61,3 +61,27 @@ K, the number of occupied item blocks. It formats the result with
 
 Values whose posterior probability is no larger than `p_min` are
 omitted.
+
+## Examples
+
+``` r
+post <- list(block_count_distribution = data.frame(
+  num_blocks = c(1, 2), count = c(2, 3), prob = c(0.4, 0.6)))
+pretty_table_K_distribution(post)
+#> <table class="table" style="margin-left: auto; margin-right: auto;">
+#>  <thead>
+#>   <tr>
+#>    <th style="text-align:left;"> Quantity </th>
+#>    <th style="text-align:right;"> 1 </th>
+#>    <th style="text-align:right;"> 2 </th>
+#>   </tr>
+#>  </thead>
+#> <tbody>
+#>   <tr>
+#>    <td style="text-align:left;"> Posterior probability </td>
+#>    <td style="text-align:right;"> 0.4 </td>
+#>    <td style="text-align:right;"> 0.6 </td>
+#>   </tr>
+#> </tbody>
+#> </table>
+```

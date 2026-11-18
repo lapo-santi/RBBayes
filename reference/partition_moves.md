@@ -35,3 +35,26 @@ partition_moves(
 ## Value
 
 An object of class `btsbm_partition_moves`.
+
+## Examples
+
+``` r
+partition_moves()
+#> $split_merge
+#> [1] 0
+#> 
+#> $ranking_split_merge
+#> [1] 0
+#> 
+#> $item_split_merge
+#> [1] 0
+#> 
+#> $pair_proposal
+#> [1] "uniform"
+#> 
+#> $restricted_scans
+#> [1] 1
+#> 
+#> attr(,"class")
+#> [1] "btsbm_partition_moves"
+```

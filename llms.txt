@@ -11,7 +11,7 @@ The package provides:
 2.  Explicit BT, PL, prior, and MCMC-control constructors
 
 3.  A common
-    [`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_model.md)
+    [`fit_model()`](https://lapo-santi.github.io/RBBayes/reference/fit_model.md)
     entry point and `btsbm_fit` result
 
 4.  Fit-level uncertainty summaries, diagnostics, and visualizations
@@ -24,10 +24,10 @@ Applications include, among the others, **sports analytics**,
 ### Quick Links
 
 For a complete overview of all functions, see the 👉 [Function
-Reference](https://laposanti.github.io/BTSBM/reference/index.html)  
+Reference](https://lapo-santi.github.io/RBBayes/reference/index.html)
 For a step-by-step example using tennis data, visit the 👉 [Getting
 Started
-Vignette](https://laposanti.github.io/BTSBM/articles/getting-started.html)
+Vignette](https://lapo-santi.github.io/RBBayes/articles/getting-started.html)
 
 ------------------------------------------------------------------------
 
@@ -59,8 +59,7 @@ To fit the model, first create one validated pairwise-data object:
 - Square matrix (`n × n`), where `wins[i, j]` = number of times player
   *i* beats *j*
 - Diagonal must be 0 (`wins[i, i] = 0`)
-- For each unordered pair `{i,j}`:  
-  ( n\_{ij} = w\_{ij} + w\_{ji} )
+- For each unordered pair `{i,j}`: ( n\_{ij} = w\_{ij} + w\_{ji} )
 
 ------------------------------------------------------------------------
 
@@ -153,33 +152,33 @@ blocks.
 1.  **Prepare data** with `as_bt_data(wins)`
 
 2.  **Inspect prior** using
-    [`gnedin_K_mean()`](https://laposanti.github.io/BTSBM/reference/gnedin_K_mean.html)
+    [`gnedin_K_mean()`](https://lapo-santi.github.io/RBBayes/reference/gnedin_K_mean.html)
     and
-    [`gnedin_K_var()`](https://laposanti.github.io/BTSBM/reference/gnedin_K_var.html)
+    [`gnedin_K_var()`](https://lapo-santi.github.io/RBBayes/reference/gnedin_K_var.html)
 
 3.  **Specify a model** with
-    [`bt_model()`](https://laposanti.github.io/BTSBM/reference/bt_model.md)
+    [`bt_model()`](https://lapo-santi.github.io/RBBayes/reference/bt_model.md)
     or
-    [`bt_sbm_model()`](https://laposanti.github.io/BTSBM/reference/bt_sbm_model.md)
+    [`bt_sbm_model()`](https://lapo-santi.github.io/RBBayes/reference/bt_sbm_model.md)
 
 4.  **Fit the model** with
-    [`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_btsbm.html)
+    [`fit_model()`](https://lapo-santi.github.io/RBBayes/reference/fit_btsbm.html)
 
 5.  **Report block uncertainty** with
-    [`pretty_table_K_distribution()`](https://laposanti.github.io/BTSBM/reference/pretty_table_K_distribution.md),
-    [`plot_block_adjacency()`](https://laposanti.github.io/BTSBM/reference/plot_block_adjacency.md),
+    [`pretty_table_K_distribution()`](https://lapo-santi.github.io/RBBayes/reference/pretty_table_K_distribution.md),
+    [`plot_block_adjacency()`](https://lapo-santi.github.io/RBBayes/reference/plot_block_adjacency.md),
     and
-    [`plot_assignment_probabilities()`](https://laposanti.github.io/BTSBM/reference/plot_assignment_probabilities.md)
+    [`plot_assignment_probabilities()`](https://lapo-santi.github.io/RBBayes/reference/plot_assignment_probabilities.md)
 
 ------------------------------------------------------------------------
 
 ## Learn More
 
 👉 [Function
-Reference](https://laposanti.github.io/BTSBM/reference/index.html)
+Reference](https://lapo-santi.github.io/RBBayes/reference/index.html)
 
 👉 [Getting Started
-Vignette](https://laposanti.github.io/BTSBM/articles/getting-started.html)
+Vignette](https://lapo-santi.github.io/RBBayes/articles/getting-started.html)
 
 ------------------------------------------------------------------------
 
@@ -194,240 +193,240 @@ model.* *The Annals of Applied Statistics*, 20(2), 1766–1787.
 
 ## All functions
 
-- [`ATP_2000_2025`](https://laposanti.github.io/BTSBM/reference/ATP_2000_2025.md)
+- [`ATP_2000_2025`](https://lapo-santi.github.io/RBBayes/reference/ATP_2000_2025.md)
   : ATP Paired-Comparison Panels, 2000–2025
 
-- [`as_bt_data()`](https://laposanti.github.io/BTSBM/reference/as_bt_data.md)
+- [`as_bt_data()`](https://lapo-santi.github.io/RBBayes/reference/as_bt_data.md)
   : Create validated Bradley–Terry pairwise data
 
-- [`as_rankings()`](https://laposanti.github.io/BTSBM/reference/as_rankings.md)
-  [`as_pl_data()`](https://laposanti.github.io/BTSBM/reference/as_rankings.md)
+- [`as_rankings()`](https://lapo-santi.github.io/RBBayes/reference/as_rankings.md)
+  [`as_pl_data()`](https://lapo-santi.github.io/RBBayes/reference/as_rankings.md)
   : Create validated Plackett–Luce ranking data
 
-- [`block_stability()`](https://laposanti.github.io/BTSBM/reference/block_stability.md)
+- [`block_stability()`](https://lapo-santi.github.io/RBBayes/reference/block_stability.md)
   : How stable is each estimated block?
 
-- [`block_winprob_table_from_lambdas()`](https://laposanti.github.io/BTSBM/reference/block_winprob_table_from_lambdas.md)
+- [`block_winprob_table_from_lambdas()`](https://lapo-santi.github.io/RBBayes/reference/block_winprob_table_from_lambdas.md)
   : Block-level Bradley-Terry win probabilities from player strengths
 
-- [`bt_model()`](https://laposanti.github.io/BTSBM/reference/bt_model.md)
+- [`bt_model()`](https://lapo-santi.github.io/RBBayes/reference/bt_model.md)
   : Define a simple Bradley–Terry model
 
-- [`bt_sbm_model()`](https://laposanti.github.io/BTSBM/reference/bt_sbm_model.md)
+- [`bt_sbm_model()`](https://lapo-santi.github.io/RBBayes/reference/bt_sbm_model.md)
   : Define a Bradley–Terry stochastic block model
 
-- [`clean_players_names()`](https://laposanti.github.io/BTSBM/reference/clean_players_names.md)
+- [`clean_players_names()`](https://lapo-santi.github.io/RBBayes/reference/clean_players_names.md)
   : Format player/item names as "Surname F."
 
-- [`clustering_prior()`](https://laposanti.github.io/BTSBM/reference/clustering_prior.md)
+- [`clustering_prior()`](https://lapo-santi.github.io/RBBayes/reference/clustering_prior.md)
   : Choose a prior for a latent partition
 
-- [`compare_bt_models_loo()`](https://laposanti.github.io/BTSBM/reference/compare_bt_models_loo.md)
+- [`compare_bt_models_loo()`](https://lapo-santi.github.io/RBBayes/reference/compare_bt_models_loo.md)
   : Compare BT models with Pareto-smoothed importance sampling LOO
 
-- [`compute_expected_wins_rank_posterior()`](https://laposanti.github.io/BTSBM/reference/compute_expected_wins_rank_posterior.md)
+- [`compute_expected_wins_rank_posterior()`](https://lapo-santi.github.io/RBBayes/reference/compute_expected_wins_rank_posterior.md)
   : Posterior rank summaries from player-strength draws
 
-- [`credible_ball()`](https://laposanti.github.io/BTSBM/reference/credible_ball.md)
+- [`credible_ball()`](https://lapo-santi.github.io/RBBayes/reference/credible_ball.md)
   : Credible ball for the item partition
 
-- [`dirichlet_multinomial_prior()`](https://laposanti.github.io/BTSBM/reference/dirichlet_multinomial_prior.md)
+- [`dirichlet_multinomial_prior()`](https://lapo-santi.github.io/RBBayes/reference/dirichlet_multinomial_prior.md)
   : Dirichlet–multinomial prior for a latent partition
 
-- [`dirichlet_process_K_var()`](https://laposanti.github.io/BTSBM/reference/dirichlet_process_K_var.md)
+- [`dirichlet_process_K_var()`](https://lapo-santi.github.io/RBBayes/reference/dirichlet_process_K_var.md)
   : Prior variance of the occupied-group count under a Dirichlet process
 
-- [`dirichlet_process_prior()`](https://laposanti.github.io/BTSBM/reference/dirichlet_process_prior.md)
+- [`dirichlet_process_prior()`](https://lapo-santi.github.io/RBBayes/reference/dirichlet_process_prior.md)
   : Dirichlet-process prior for a latent partition
 
-- [`eurovision_toy()`](https://laposanti.github.io/BTSBM/reference/eurovision_toy.md)
+- [`eurovision_toy()`](https://lapo-santi.github.io/RBBayes/reference/eurovision_toy.md)
   : Eurovision-inspired toy ranking data
 
-- [`exploratory_adjacency()`](https://laposanti.github.io/BTSBM/reference/exploratory_adjacency.md)
+- [`exploratory_adjacency()`](https://lapo-santi.github.io/RBBayes/reference/exploratory_adjacency.md)
   : Adjacency heatmap (wins per matches)
 
-- [`finite_partition()`](https://laposanti.github.io/BTSBM/reference/finite_partition.md)
+- [`finite_partition()`](https://lapo-santi.github.io/RBBayes/reference/finite_partition.md)
   : Define a finite-Dirichlet prior for a latent partition
 
-- [`fit_btsbm()`](https://laposanti.github.io/BTSBM/reference/fit_btsbm.md)
+- [`fit_btsbm()`](https://lapo-santi.github.io/RBBayes/reference/fit_btsbm.md)
   : Compatibility entry point for Bayesian preference models
 
-- [`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_model.md)
+- [`fit_model()`](https://lapo-santi.github.io/RBBayes/reference/fit_model.md)
   : Fit a Bayesian Bradley–Terry or Plackett–Luce model
 
-- [`fit_preference()`](https://laposanti.github.io/BTSBM/reference/fit_preference.md)
+- [`fit_preference()`](https://lapo-santi.github.io/RBBayes/reference/fit_preference.md)
   : Fit a Bayesian preference model
 
-- [`gibbs_bt_sbm()`](https://laposanti.github.io/BTSBM/reference/gibbs_bt_sbm.md)
+- [`gibbs_bt_sbm()`](https://lapo-santi.github.io/RBBayes/reference/gibbs_bt_sbm.md)
   : Gibbs sampler for the Bradley–Terry Stochastic Block Model (BT–SBM)
 
-- [`gibbs_bt_simple()`](https://laposanti.github.io/BTSBM/reference/gibbs_bt_simple.md)
+- [`gibbs_bt_simple()`](https://lapo-santi.github.io/RBBayes/reference/gibbs_bt_simple.md)
   : Simple Bradley–Terry Gibbs sampler (no clustering)
 
-- [`gnedin_K_mean()`](https://laposanti.github.io/BTSBM/reference/gnedin_K_mean.md)
+- [`gnedin_K_mean()`](https://lapo-santi.github.io/RBBayes/reference/gnedin_K_mean.md)
   : Expected number of clusters under the Gnedin prior
 
-- [`gnedin_K_var()`](https://laposanti.github.io/BTSBM/reference/gnedin_K_var.md)
+- [`gnedin_K_var()`](https://lapo-santi.github.io/RBBayes/reference/gnedin_K_var.md)
   : Variance of the number of clusters under the Gnedin prior
 
-- [`gnedin_prior()`](https://laposanti.github.io/BTSBM/reference/gnedin_prior.md)
+- [`gnedin_prior()`](https://lapo-santi.github.io/RBBayes/reference/gnedin_prior.md)
   : Gnedin prior for a latent partition
 
-- [`implied_ability()`](https://laposanti.github.io/BTSBM/reference/implied_ability.md)
+- [`implied_ability()`](https://lapo-santi.github.io/RBBayes/reference/implied_ability.md)
   : Compute implied item abilities from a fit
 
-- [`lambda_to_theta()`](https://laposanti.github.io/BTSBM/reference/lambda_to_theta.md)
+- [`lambda_to_theta()`](https://lapo-santi.github.io/RBBayes/reference/lambda_to_theta.md)
   : Map \\\lambda\\ to Bradley–Terry \\\theta = \lambda_i / (\lambda_i +
   \lambda_j)\\
 
-- [`latent_strength()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md)
-  [`gamma_ability()`](https://laposanti.github.io/BTSBM/reference/latent_strength.md)
+- [`latent_strength()`](https://lapo-santi.github.io/RBBayes/reference/latent_strength.md)
+  [`gamma_ability()`](https://lapo-santi.github.io/RBBayes/reference/latent_strength.md)
   : Gamma prior object for positive strengths (low-level)
 
-- [`log_lik()`](https://laposanti.github.io/BTSBM/reference/log_lik.md)
+- [`log_lik()`](https://lapo-santi.github.io/RBBayes/reference/log_lik.md)
   : Compute pointwise log likelihoods from an RBBayes fit
 
-- [`loo_btsbm()`](https://laposanti.github.io/BTSBM/reference/loo_btsbm.md)
+- [`loo_btsbm()`](https://lapo-santi.github.io/RBBayes/reference/loo_btsbm.md)
   : Run Pareto-smoothed importance-sampling LOO for a fit
 
-- [`make_bt_cluster_loo()`](https://laposanti.github.io/BTSBM/reference/make_bt_cluster_loo.md)
+- [`make_bt_cluster_loo()`](https://lapo-santi.github.io/RBBayes/reference/make_bt_cluster_loo.md)
   : Log-likelihood matrix for the BT–SBM (clustered) model
 
-- [`make_bt_simple_loo()`](https://laposanti.github.io/BTSBM/reference/make_bt_simple_loo.md)
+- [`make_bt_simple_loo()`](https://lapo-santi.github.io/RBBayes/reference/make_bt_simple_loo.md)
   :
 
   Log-likelihood matrix for the *simple* Bradley–Terry model
 
-- [`mcmc_control()`](https://laposanti.github.io/BTSBM/reference/mcmc_control.md)
+- [`mcmc_control()`](https://lapo-santi.github.io/RBBayes/reference/mcmc_control.md)
   : Set MCMC controls for an RBBayes fit
 
-- [`mcmc_diagnostics()`](https://laposanti.github.io/BTSBM/reference/mcmc_diagnostics.md)
+- [`mcmc_diagnostics()`](https://lapo-santi.github.io/RBBayes/reference/mcmc_diagnostics.md)
   : Summarise MCMC mixing diagnostics
 
-- [`as.matrix(`*`<btsbm_fit>`*`)`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
-  [`as.array(`*`<btsbm_fit>`*`)`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
-  [`as_draws_array()`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
-  [`as.mcmc(`*`<btsbm_fit>`*`)`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
-  [`as.mcmc.list(`*`<btsbm_fit>`*`)`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
-  [`as_mcmc_chains()`](https://laposanti.github.io/BTSBM/reference/mcmc_interoperability.md)
+- [`as.matrix(`*`<btsbm_fit>`*`)`](https://lapo-santi.github.io/RBBayes/reference/mcmc_interoperability.md)
+  [`as.array(`*`<btsbm_fit>`*`)`](https://lapo-santi.github.io/RBBayes/reference/mcmc_interoperability.md)
+  [`as_draws_array()`](https://lapo-santi.github.io/RBBayes/reference/mcmc_interoperability.md)
+  [`as.mcmc(`*`<btsbm_fit>`*`)`](https://lapo-santi.github.io/RBBayes/reference/mcmc_interoperability.md)
+  [`as.mcmc.list(`*`<btsbm_fit>`*`)`](https://lapo-santi.github.io/RBBayes/reference/mcmc_interoperability.md)
+  [`as_mcmc_chains()`](https://lapo-santi.github.io/RBBayes/reference/mcmc_interoperability.md)
   : Convert a preference fit to a matrix of saved posterior draws
 
-- [`nfl_quarterbacks_2014()`](https://laposanti.github.io/BTSBM/reference/nfl_quarterbacks_2014.md)
+- [`nfl_quarterbacks_2014()`](https://lapo-santi.github.io/RBBayes/reference/nfl_quarterbacks_2014.md)
   : NFL quarterback rankings with item covariates
 
-- [`orthodontics_excerpt_2009()`](https://laposanti.github.io/BTSBM/reference/orthodontics_excerpt_2009.md)
+- [`orthodontics_excerpt_2009()`](https://lapo-santi.github.io/RBBayes/reference/orthodontics_excerpt_2009.md)
   : Orthodontics ranking-and-covariate excerpt
 
-- [`partition_moves()`](https://laposanti.github.io/BTSBM/reference/partition_moves.md)
+- [`partition_moves()`](https://lapo-santi.github.io/RBBayes/reference/partition_moves.md)
   : Set partition-move controls
 
-- [`partition_point_estimate()`](https://laposanti.github.io/BTSBM/reference/partition_point_estimate.md)
+- [`partition_point_estimate()`](https://lapo-santi.github.io/RBBayes/reference/partition_point_estimate.md)
   : Point estimate of the item partition
 
-- [`partition_prior()`](https://laposanti.github.io/BTSBM/reference/partition_prior.md)
+- [`partition_prior()`](https://lapo-santi.github.io/RBBayes/reference/partition_prior.md)
   : Legacy partition-prior interface
 
-- [`pitman_yor_prior()`](https://laposanti.github.io/BTSBM/reference/pitman_yor_prior.md)
+- [`pitman_yor_prior()`](https://lapo-santi.github.io/RBBayes/reference/pitman_yor_prior.md)
   : Pitman–Yor prior for a latent partition
 
-- [`pl_identifiability()`](https://laposanti.github.io/BTSBM/reference/pl_identifiability.md)
+- [`pl_identifiability()`](https://lapo-santi.github.io/RBBayes/reference/pl_identifiability.md)
   : Set the reporting scale for Plackett–Luce strengths
 
-- [`pl_lbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_lbm_model.md)
+- [`pl_lbm_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_lbm_model.md)
   : Define a Plackett–Luce latent block model
 
-- [`pl_lbm_toy()`](https://laposanti.github.io/BTSBM/reference/pl_lbm_toy.md)
+- [`pl_lbm_toy()`](https://lapo-santi.github.io/RBBayes/reference/pl_lbm_toy.md)
   : Structured Plackett–Luce latent-block-model toy data
 
-- [`pl_mixture_model()`](https://laposanti.github.io/BTSBM/reference/pl_mixture_model.md)
+- [`pl_mixture_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_mixture_model.md)
   : Define a Plackett–Luce ranking-mixture model
 
-- [`pl_model()`](https://laposanti.github.io/BTSBM/reference/pl_model.md)
+- [`pl_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_model.md)
   : Define a simple Plackett–Luce model
 
-- [`pl_sbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_sbm_model.md)
+- [`pl_sbm_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_sbm_model.md)
   : Define a Plackett–Luce stochastic block model
 
-- [`plot_assignment_probabilities()`](https://laposanti.github.io/BTSBM/reference/plot_assignment_probabilities.md)
+- [`plot_assignment_probabilities()`](https://lapo-santi.github.io/RBBayes/reference/plot_assignment_probabilities.md)
   : Figure 4 plotting function Assignment probability heatmap (BT-SBM)
 
-- [`plot_block_adjacency()`](https://laposanti.github.io/BTSBM/reference/plot_block_adjacency.md)
+- [`plot_block_adjacency()`](https://lapo-santi.github.io/RBBayes/reference/plot_block_adjacency.md)
   : Figure 3 plotting function Block-ordered adjacency heatmap (BT-SBM)
 
-- [`plot_credible_ball()`](https://laposanti.github.io/BTSBM/reference/plot_credible_ball.md)
+- [`plot_credible_ball()`](https://lapo-santi.github.io/RBBayes/reference/plot_credible_ball.md)
   : Plot the credible ball for the item partition
 
-- [`plot_lambda_uncertainty()`](https://laposanti.github.io/BTSBM/reference/plot_lambda_uncertainty.md)
+- [`plot_lambda_uncertainty()`](https://lapo-santi.github.io/RBBayes/reference/plot_lambda_uncertainty.md)
   : Figure 5 plotting function Lambda uncertainty plot (per player)
 
-- [`plot_mcmc_traces()`](https://laposanti.github.io/BTSBM/reference/plot_mcmc_traces.md)
+- [`plot_mcmc_traces()`](https://lapo-santi.github.io/RBBayes/reference/plot_mcmc_traces.md)
   : Plot saved MCMC traces
 
-- [`plot_ordered_adjacency()`](https://laposanti.github.io/BTSBM/reference/plot_ordered_adjacency.md)
+- [`plot_ordered_adjacency()`](https://lapo-santi.github.io/RBBayes/reference/plot_ordered_adjacency.md)
   : Plot the observed outcomes ordered by the estimated blocks
 
-- [`plot_pairwise_outcomes()`](https://laposanti.github.io/BTSBM/reference/plot_pairwise_outcomes.md)
+- [`plot_pairwise_outcomes()`](https://lapo-santi.github.io/RBBayes/reference/plot_pairwise_outcomes.md)
   : Plot observed pairwise win counts
 
-- [`plot_posterior_similarity()`](https://laposanti.github.io/BTSBM/reference/plot_posterior_similarity.md)
+- [`plot_posterior_similarity()`](https://lapo-santi.github.io/RBBayes/reference/plot_posterior_similarity.md)
   : Plot the posterior similarity of items or rankings
 
-- [`plot_prob_stronger()`](https://laposanti.github.io/BTSBM/reference/plot_prob_stronger.md)
+- [`plot_prob_stronger()`](https://lapo-santi.github.io/RBBayes/reference/plot_prob_stronger.md)
   : Plot posterior probabilities that one item is stronger than another
 
-- [`plot_rank_intervals()`](https://laposanti.github.io/BTSBM/reference/plot_rank_intervals.md)
+- [`plot_rank_intervals()`](https://lapo-santi.github.io/RBBayes/reference/plot_rank_intervals.md)
   : Plot posterior rank intervals
 
-- [`plot_ranking_positions()`](https://laposanti.github.io/BTSBM/reference/plot_ranking_positions.md)
+- [`plot_ranking_positions()`](https://lapo-santi.github.io/RBBayes/reference/plot_ranking_positions.md)
   : Plot how often items appear at each ranking position
 
-- [`plot_strength_summary()`](https://laposanti.github.io/BTSBM/reference/plot_strength_summary.md)
+- [`plot_strength_summary()`](https://lapo-santi.github.io/RBBayes/reference/plot_strength_summary.md)
   : Plot posterior item strengths and their uncertainty
 
-- [`posterior_K_table()`](https://laposanti.github.io/BTSBM/reference/posterior_K_table.md)
+- [`posterior_K_table()`](https://lapo-santi.github.io/RBBayes/reference/posterior_K_table.md)
   : Posterior distribution of the number of blocks K
 
-- [`posterior_similarity()`](https://laposanti.github.io/BTSBM/reference/posterior_similarity.md)
+- [`posterior_similarity()`](https://lapo-santi.github.io/RBBayes/reference/posterior_similarity.md)
   : Compute posterior similarity for an inferred partition
 
-- [`posterior_strength()`](https://laposanti.github.io/BTSBM/reference/posterior_strength.md)
+- [`posterior_strength()`](https://lapo-santi.github.io/RBBayes/reference/posterior_strength.md)
   : Summarise posterior item strengths
 
-- [`pretty_table_K_distribution()`](https://laposanti.github.io/BTSBM/reference/pretty_table_K_distribution.md)
+- [`pretty_table_K_distribution()`](https://lapo-santi.github.io/RBBayes/reference/pretty_table_K_distribution.md)
   : Format a block-count posterior distribution as a table (superseded)
 
-- [`print(`*`<btsbm_fit>`*`)`](https://laposanti.github.io/BTSBM/reference/print.btsbm_fit.md)
+- [`print(`*`<btsbm_fit>`*`)`](https://lapo-santi.github.io/RBBayes/reference/print.btsbm_fit.md)
   : Print an RBBayes fit
 
-- [`prior_mean_K()`](https://laposanti.github.io/BTSBM/reference/prior_mean_K.md)
+- [`prior_mean_K()`](https://lapo-santi.github.io/RBBayes/reference/prior_mean_K.md)
   : Prior expected number of occupied groups
 
-- [`prior_variance_K()`](https://laposanti.github.io/BTSBM/reference/prior_variance_K.md)
+- [`prior_variance_K()`](https://lapo-santi.github.io/RBBayes/reference/prior_variance_K.md)
   : Prior variance of the number of occupied groups
 
-- [`prob_stronger()`](https://laposanti.github.io/BTSBM/reference/prob_stronger.md)
+- [`prob_stronger()`](https://lapo-santi.github.io/RBBayes/reference/prob_stronger.md)
   : Posterior probability that one item is stronger than another
 
-- [`relabel_by_lambda()`](https://laposanti.github.io/BTSBM/reference/relabel_by_lambda.md)
+- [`relabel_by_lambda()`](https://lapo-santi.github.io/RBBayes/reference/relabel_by_lambda.md)
   : Relabel partitions by decreasing \\\lambda\\, compute point
   estimates, and quantify uncertainty via credible balls
 
-- [`sample_from_BTSBM()`](https://laposanti.github.io/BTSBM/reference/sample_from_BTSBM.md)
+- [`sample_from_BTSBM()`](https://lapo-santi.github.io/RBBayes/reference/sample_from_BTSBM.md)
   : Sample a Bradley–Terry Stochastic Block Model (BT-SBM) tournament
 
-- [`strength_summary()`](https://laposanti.github.io/BTSBM/reference/strength_summary.md)
+- [`strength_summary()`](https://lapo-santi.github.io/RBBayes/reference/strength_summary.md)
   : Summarise posterior item strengths with credible intervals
 
-- [`summary(`*`<btsbm_fit>`*`)`](https://laposanti.github.io/BTSBM/reference/summary.btsbm_fit.md)
+- [`summary(`*`<btsbm_fit>`*`)`](https://lapo-santi.github.io/RBBayes/reference/summary.btsbm_fit.md)
   : Summarise an RBBayes fit
 
-- [`sushi_toy()`](https://laposanti.github.io/BTSBM/reference/sushi_toy.md)
+- [`sushi_toy()`](https://lapo-santi.github.io/RBBayes/reference/sushi_toy.md)
   : Sushi-inspired toy ranking data
 
-- [`tennis_tiered_toy()`](https://laposanti.github.io/BTSBM/reference/tennis_tiered_toy.md)
+- [`tennis_tiered_toy()`](https://lapo-santi.github.io/RBBayes/reference/tennis_tiered_toy.md)
   : Simulate a tiered twenty-player tennis league
 
-- [`tennis_toy()`](https://laposanti.github.io/BTSBM/reference/tennis_toy.md)
+- [`tennis_toy()`](https://lapo-santi.github.io/RBBayes/reference/tennis_toy.md)
   : Tennis-league toy paired-comparison data
 
 # Articles
@@ -435,12 +434,12 @@ model.* *The Annals of Applied Statistics*, 20(2), 1766–1787.
 ### Articles
 
 - [Getting started: from results to a Bradley--Terry
-  analysis](https://laposanti.github.io/BTSBM/articles/getting-started.md):
+  analysis](https://lapo-santi.github.io/RBBayes/articles/getting-started.md):
 - [Ranking data: a beginner's guide to Plackett--Luce
-  models](https://laposanti.github.io/BTSBM/articles/pl-ranking-models.md):
+  models](https://lapo-santi.github.io/RBBayes/articles/pl-ranking-models.md):
 - [Toy datasets: choose a model and read its
-  output](https://laposanti.github.io/BTSBM/articles/toy-data-gallery.md):
+  output](https://lapo-santi.github.io/RBBayes/articles/toy-data-gallery.md):
 - [Notation and object dimensions for the common BTSBM
-  interface](https://laposanti.github.io/BTSBM/articles/Notation.md):
+  interface](https://lapo-santi.github.io/RBBayes/articles/Notation.md):
 - [Package
-  'RBBayes'](https://laposanti.github.io/BTSBM/articles/BTSBM-software-paper.md):
+  'RBBayes'](https://lapo-santi.github.io/RBBayes/articles/BTSBM-software-paper.md):

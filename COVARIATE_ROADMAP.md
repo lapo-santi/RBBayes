@@ -5,11 +5,11 @@ that covariate-assisted inference is implemented yet.
 
 ## What is available now
 
-[`nfl_quarterbacks_2014()`](https://laposanti.github.io/BTSBM/reference/nfl_quarterbacks_2014.md)
+[`nfl_quarterbacks_2014()`](https://lapo-santi.github.io/RBBayes/reference/nfl_quarterbacks_2014.md)
 reproduces the published NFL example as a small, fully documented data
 fixture. It includes 13 incomplete expert ranking lists and eleven
 player-level covariates.
-[`orthodontics_excerpt_2009()`](https://laposanti.github.io/BTSBM/reference/orthodontics_excerpt_2009.md)
+[`orthodontics_excerpt_2009()`](https://lapo-santi.github.io/RBBayes/reference/orthodontics_excerpt_2009.md)
 makes the published 24-case, two-group table excerpt available in the
 same transparent form. The full clinical orthodontics dataset (108
 cases, 69 experts, nine groups) is not supplied with the article and
@@ -89,7 +89,7 @@ distinguish:
   intervals;
 - `posterior_residual_strength()` — what the covariates did not explain;
   and
-- [`posterior_strength()`](https://laposanti.github.io/BTSBM/reference/posterior_strength.md)
+- [`posterior_strength()`](https://lapo-santi.github.io/RBBayes/reference/posterior_strength.md)
   — the combined ranking quantity.
 
 ## Latent structure models
@@ -113,7 +113,7 @@ conservative default.
 ## Required engineering sequence
 
 1.  Generalise
-    [`as_rankings()`](https://laposanti.github.io/BTSBM/reference/as_rankings.md)
+    [`as_rankings()`](https://lapo-santi.github.io/RBBayes/reference/as_rankings.md)
     to accept variable-length top-m lists and position matrices with
     `NA` for unranked items.
 2.  Add the simple PL covariate model, clear prior constructors, and

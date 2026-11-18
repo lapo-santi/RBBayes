@@ -131,3 +131,10 @@ exploratory_adjacency(
 ## Value
 
 A `ggplot` object.
+
+## Examples
+
+``` r
+w <- matrix(c(0, 3, 2, 0), 2, 2)
+exploratory_adjacency(w)
+```

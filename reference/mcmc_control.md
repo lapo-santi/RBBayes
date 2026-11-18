@@ -55,8 +55,43 @@ mcmc_control(
 - partition_moves:
 
   Optional result of
-  [`partition_moves()`](https://laposanti.github.io/BTSBM/reference/partition_moves.md).
+  [`partition_moves()`](https://lapo-santi.github.io/RBBayes/reference/partition_moves.md).
 
 ## Value
 
 An object of class `btsbm_mcmc_control`.
+
+## Examples
+
+``` r
+mcmc_control(iter = 100, warmup = 50, seed = 1)
+#> $iter
+#> [1] 100
+#> 
+#> $warmup
+#> [1] 50
+#> 
+#> $seed
+#> [1] 1
+#> 
+#> $store
+#> [1] "minimal"
+#> 
+#> $init_item_cluster
+#> NULL
+#> 
+#> $init_ranking_cluster
+#> NULL
+#> 
+#> $verbose
+#> [1] FALSE
+#> 
+#> $progress_every
+#> [1] 1000
+#> 
+#> $partition_moves
+#> NULL
+#> 
+#> attr(,"class")
+#> [1] "btsbm_mcmc_control"
+```

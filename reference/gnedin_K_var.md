@@ -47,7 +47,7 @@ Pitman, J. (2006). *Combinatorial Stochastic Processes*. Springer.
 
 ## See also
 
-[`gnedin_K_mean()`](https://laposanti.github.io/BTSBM/reference/gnedin_K_mean.md)
+[`gnedin_K_mean()`](https://lapo-santi.github.io/RBBayes/reference/gnedin_K_mean.md)
 
 ## Examples
 

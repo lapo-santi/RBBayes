@@ -34,10 +34,10 @@ implementation of that combination, not a special architecture.
 ## Initial implementation status
 
 The first implementation increment has started. It includes
-[`as_bt_data()`](https://laposanti.github.io/BTSBM/reference/as_bt_data.md),
-[`as_rankings()`](https://laposanti.github.io/BTSBM/reference/as_rankings.md)
+[`as_bt_data()`](https://lapo-santi.github.io/RBBayes/reference/as_bt_data.md),
+[`as_rankings()`](https://lapo-santi.github.io/RBBayes/reference/as_rankings.md)
 (with
-[`as_pl_data()`](https://laposanti.github.io/BTSBM/reference/as_rankings.md)
+[`as_pl_data()`](https://lapo-santi.github.io/RBBayes/reference/as_rankings.md)
 retained as a compatibility alias), shared model/control constructors,
 the S3 `btsbm_fit` contract, and pure-R Gibbs samplers for simple PL and
 PL–SBM. Tests cover input validation, fit dimensions, ranking-level log
@@ -122,14 +122,14 @@ simple nested lattice:
 
 | Model | Latent labels | Ability used for item (i) in row () |
 |----|----|----|
-| [`pl_model()`](https://laposanti.github.io/BTSBM/reference/pl_model.md) | none | (\_i) |
-| [`pl_sbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_sbm_model.md) | (x_i) | (\_{x_i}) |
-| [`pl_mixture_model()`](https://laposanti.github.io/BTSBM/reference/pl_mixture_model.md) | (z\_) | (*{z*,i}) |
-| [`pl_lbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_lbm_model.md) | (z\_, x_i) | (*{z*,x_i}) |
+| [`pl_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_model.md) | none | (\_i) |
+| [`pl_sbm_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_sbm_model.md) | (x_i) | (\_{x_i}) |
+| [`pl_mixture_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_mixture_model.md) | (z\_) | (*{z*,i}) |
+| [`pl_lbm_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_lbm_model.md) | (z\_, x_i) | (*{z*,x_i}) |
 
-[`pl_sbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_sbm_model.md)
+[`pl_sbm_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_sbm_model.md)
 is PLuce’s `mode = "item_clustering"`.
-[`pl_mixture_model()`](https://laposanti.github.io/BTSBM/reference/pl_mixture_model.md)
+[`pl_mixture_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_mixture_model.md)
 is `mode = "sample_clustering"`: it clusters whole ranking rows, not
 ranking positions or individual choices. For a finite mixture it has a
 fixed number (C) of row clusters and Dirichlet weights. The Gnedin
@@ -137,7 +137,7 @@ version infers occupied (C), optionally accelerated with split–merge
 moves. The model is a mixture of PL ability vectors, one for each
 ranking-row cluster.
 
-[`pl_lbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_lbm_model.md)
+[`pl_lbm_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_lbm_model.md)
 is PLuce’s `mode = "joint_clustering"`, and is the preferred public name
 for the PL co-clustering model. It has a (CK) ability matrix:
 row-cluster (c) ranks item-block (k) with weight (\_{c k}). Both
@@ -211,11 +211,11 @@ pl_sbm_model(
 ```
 
 All implemented PL clustering models accept
-[`gnedin_prior()`](https://laposanti.github.io/BTSBM/reference/gnedin_prior.md),
-[`dirichlet_process_prior()`](https://laposanti.github.io/BTSBM/reference/dirichlet_process_prior.md),
-[`pitman_yor_prior()`](https://laposanti.github.io/BTSBM/reference/pitman_yor_prior.md),
+[`gnedin_prior()`](https://lapo-santi.github.io/RBBayes/reference/gnedin_prior.md),
+[`dirichlet_process_prior()`](https://lapo-santi.github.io/RBBayes/reference/dirichlet_process_prior.md),
+[`pitman_yor_prior()`](https://lapo-santi.github.io/RBBayes/reference/pitman_yor_prior.md),
 or `finite_partition(max_clusters = ...)`.
-[`clustering_prior()`](https://laposanti.github.io/BTSBM/reference/clustering_prior.md)
+[`clustering_prior()`](https://lapo-santi.github.io/RBBayes/reference/clustering_prior.md)
 exposes the same choice through one explicit `family` argument. Legacy
 constructors remain as compatibility aliases during migration.
 
@@ -233,7 +233,7 @@ pairwise <- as_bt_data(wins = w_ij)
 ranking_data <- as_rankings(rankings, item_count = n)
 ```
 
-[`as_bt_data()`](https://laposanti.github.io/BTSBM/reference/as_bt_data.md)
+[`as_bt_data()`](https://lapo-santi.github.io/RBBayes/reference/as_bt_data.md)
 should validate zero/self comparisons, non-negative counts, unique item
 ids, and whether aggregation is allowed. For the first PL release,
 `as_rankings(rankings, item_count)` validates a dense integer `L × m`
@@ -243,7 +243,7 @@ row, and every row has the same full availability universe. Its
 later input forms can retain external ids.
 
 An
-[`as_pl_data()`](https://laposanti.github.io/BTSBM/reference/as_rankings.md)
+[`as_pl_data()`](https://lapo-santi.github.io/RBBayes/reference/as_rankings.md)
 long-form method with `ranking_id`, `item_id`, `rank`, and an explicit
 availability table is the correct next input extension. It should not
 delay the PLuce-parity port, and it should not be silently emulated by
@@ -294,7 +294,7 @@ Do not give every fitting function a long list of `alpha_PY`,
 validates only the parameters it needs, makes defaults visible, and can
 be used in every implemented partition.
 
-[`mcmc_control()`](https://laposanti.github.io/BTSBM/reference/mcmc_control.md)
+[`mcmc_control()`](https://lapo-santi.github.io/RBBayes/reference/mcmc_control.md)
 should hold iteration counts, seed, stored state, and algorithmic moves.
 This folds the many PLuce tuning arguments into a clear structure, for
 example
@@ -304,7 +304,7 @@ and separate `item_updates` and `ranking_updates` settings for PL–LBM.
 ### A stable fit contract
 
 Every call to
-[`fit_btsbm()`](https://laposanti.github.io/BTSBM/reference/fit_btsbm.md)
+[`fit_btsbm()`](https://lapo-santi.github.io/RBBayes/reference/fit_btsbm.md)
 should return an S3 `btsbm_fit` object with a common top-level shape:
 
 ``` r
@@ -341,7 +341,7 @@ as `implied_ability(fit, ranking = ..., summary = ...)`, which returns
 the ability vector conditional on a selected ranking row/cluster or an
 explicitly declared averaging rule. The accessor may produce the
 rectangular quantities needed for a plot, while
-[`log_lik()`](https://laposanti.github.io/BTSBM/reference/log_lik.md)
+[`log_lik()`](https://lapo-santi.github.io/RBBayes/reference/log_lik.md)
 and prediction use the model-native `ability` with its allocations. This
 prevents a component-averaged ability from being mistaken for a
 likelihood parameter.
@@ -357,7 +357,7 @@ posterior_similarity(fit, target = "item")
 predict(fit, newdata, type = "probability")
 ```
 
-[`log_lik()`](https://laposanti.github.io/BTSBM/reference/log_lik.md)
+[`log_lik()`](https://lapo-santi.github.io/RBBayes/reference/log_lik.md)
 must return `S × R`, where columns are conditionally independent units:
 observed pair/count cells or individual contests for BT, and whole
 ranking rows for every PL mode. It should carry a `unit_index`
@@ -435,7 +435,7 @@ There are three different exchangeabilities:
 3.  ranking-row and item-block labels in PL–LBM.
 
 The current
-[`relabel_by_lambda()`](https://laposanti.github.io/BTSBM/reference/relabel_by_lambda.md)
+[`relabel_by_lambda()`](https://lapo-santi.github.io/RBBayes/reference/relabel_by_lambda.md)
 is appropriate only for a one-dimensional ordered ability-block model.
 Replace it internally with a generic `canonicalize_draws()` dispatcher:
 
@@ -456,7 +456,7 @@ not pass separate `x_samples` and `lambda_samples` by hand.
 ## Concrete refactor: the current BT–SBM function
 
 Today,
-[`gibbs_bt_sbm()`](https://laposanti.github.io/BTSBM/reference/gibbs_bt_sbm.md)
+[`gibbs_bt_sbm()`](https://lapo-santi.github.io/RBBayes/reference/gibbs_bt_sbm.md)
 validates a matrix, chooses an urn with
 [`switch()`](https://rdrr.io/r/base/switch.html), manages labels and
 latent variables, runs the Markov chain, and returns an unnamed list. It
@@ -515,9 +515,9 @@ gibbs_bt_sbm <- function(w_ij, a = 4, prior = c("DP", "PY", "DM", "GN"),
 ```
 
 The new
-[`fit_btsbm()`](https://laposanti.github.io/BTSBM/reference/fit_btsbm.md)
+[`fit_btsbm()`](https://lapo-santi.github.io/RBBayes/reference/fit_btsbm.md)
 owns validation, storage, diagnostics, and the shared fit contract.
-[`bt_sbm_model()`](https://laposanti.github.io/BTSBM/reference/bt_sbm_model.md)
+[`bt_sbm_model()`](https://lapo-santi.github.io/RBBayes/reference/bt_sbm_model.md)
 owns model selection. A BT kernel owns only the augmentation and
 conditional updates. `as_legacy_bt_sbm_fit()` returns the old
 `x_samples`, `lambda_samples`, `K_per_iter`, and `z_samples` names
@@ -537,9 +537,9 @@ moving their meaning into data, model, and control objects:
 
 | Current PLuce mode | New constructor | Main raw draws |
 |----|----|----|
-| `"item_clustering"` | [`pl_sbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_sbm_model.md) | `item_cluster`, `ability[K]` |
-| `"sample_clustering"` | [`pl_mixture_model()`](https://laposanti.github.io/BTSBM/reference/pl_mixture_model.md) | `ranking_cluster`, `ability[C × n]` |
-| `"joint_clustering"` | [`pl_lbm_model()`](https://laposanti.github.io/BTSBM/reference/pl_lbm_model.md) | `ranking_cluster`, `item_cluster`, `ability[C × K]` |
+| `"item_clustering"` | [`pl_sbm_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_sbm_model.md) | `item_cluster`, `ability[K]` |
+| `"sample_clustering"` | [`pl_mixture_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_mixture_model.md) | `ranking_cluster`, `ability[C × n]` |
+| `"joint_clustering"` | [`pl_lbm_model()`](https://lapo-santi.github.io/RBBayes/reference/pl_lbm_model.md) | `ranking_cluster`, `item_cluster`, `ability[C × K]` |
 
 For example, a PL–LBM fit becomes:
 
@@ -599,7 +599,7 @@ fit_PL <- function(rho, mode = c("item_clustering", "sample_clustering", "joint_
 
 This deliberately does not reproduce the PLuce runtime loader. Its C++
 kernels become registered package code, `...` is validated by
-[`mcmc_control()`](https://laposanti.github.io/BTSBM/reference/mcmc_control.md),
+[`mcmc_control()`](https://lapo-santi.github.io/RBBayes/reference/mcmc_control.md),
 and each returned fit has the same `btsbm_fit` contract as the existing
 BT models.
 
@@ -608,22 +608,22 @@ BT models.
 These are structural concerns visible in the current package, not
 reasons to change the statistical model:
 
-- [`make_bt_simple_loo()`](https://laposanti.github.io/BTSBM/reference/make_bt_simple_loo.md),
-  [`make_bt_cluster_loo()`](https://laposanti.github.io/BTSBM/reference/make_bt_cluster_loo.md),
+- [`make_bt_simple_loo()`](https://lapo-santi.github.io/RBBayes/reference/make_bt_simple_loo.md),
+  [`make_bt_cluster_loo()`](https://lapo-santi.github.io/RBBayes/reference/make_bt_cluster_loo.md),
   and
-  [`compare_bt_models_loo()`](https://laposanti.github.io/BTSBM/reference/compare_bt_models_loo.md)
+  [`compare_bt_models_loo()`](https://lapo-santi.github.io/RBBayes/reference/compare_bt_models_loo.md)
   are defined in both `R/utils.R` and `R/loo_helper.R`. There must be
   one implementation, tested through the generic
-  [`log_lik()`](https://laposanti.github.io/BTSBM/reference/log_lik.md)
+  [`log_lik()`](https://lapo-santi.github.io/RBBayes/reference/log_lik.md)
   path.
-- [`gibbs_bt_sbm()`](https://laposanti.github.io/BTSBM/reference/gibbs_bt_sbm.md)
+- [`gibbs_bt_sbm()`](https://lapo-santi.github.io/RBBayes/reference/gibbs_bt_sbm.md)
   allocates `L_cap_trace` and documents `L_cap_per_iter`, but does not
   fill or return it. The implementation and documented fit contract need
   to agree before it becomes a compatibility API.
 - Fit results are raw lists, while downstream functions sometimes expect
   raw labels and sometimes relabelled arrays. A classed fit object
   removes this implicit, fragile contract.
-- [`relabel_by_lambda()`](https://laposanti.github.io/BTSBM/reference/relabel_by_lambda.md)
+- [`relabel_by_lambda()`](https://lapo-santi.github.io/RBBayes/reference/relabel_by_lambda.md)
   directly invokes optional `salso` functionality and is specialised to
   one item partition. Posterior summaries should test for optional
   packages when called and dispatch by model structure.
@@ -637,7 +637,7 @@ reasons to change the statistical model:
 - PLuce’s `rho` kernels assume one dense item universe for every ranking
   row, one-based item ids, and no repeated item in a row. Enforce those
   conditions in
-  [`as_pl_data()`](https://laposanti.github.io/BTSBM/reference/as_rankings.md)
+  [`as_pl_data()`](https://lapo-santi.github.io/RBBayes/reference/as_rankings.md)
   before calling C++; do not leave validation distributed across three
   samplers.
 - PLuce currently contains both the active `PL-SBM` tree and a
@@ -651,16 +651,16 @@ reasons to change the statistical model:
     then remove duplicate LOO implementations and fix the documented
     sampler-output mismatch.
 2.  Introduce
-    [`as_bt_data()`](https://laposanti.github.io/BTSBM/reference/as_bt_data.md),
-    [`as_pl_data()`](https://laposanti.github.io/BTSBM/reference/as_rankings.md),
+    [`as_bt_data()`](https://lapo-santi.github.io/RBBayes/reference/as_bt_data.md),
+    [`as_pl_data()`](https://lapo-santi.github.io/RBBayes/reference/as_rankings.md),
     `btsbm_fit`,
-    [`mcmc_control()`](https://laposanti.github.io/BTSBM/reference/mcmc_control.md),
+    [`mcmc_control()`](https://lapo-santi.github.io/RBBayes/reference/mcmc_control.md),
     and
-    [`log_lik()`](https://laposanti.github.io/BTSBM/reference/log_lik.md).
+    [`log_lik()`](https://lapo-santi.github.io/RBBayes/reference/log_lik.md).
     Keep
-    [`gibbs_bt_simple()`](https://laposanti.github.io/BTSBM/reference/gibbs_bt_simple.md)
+    [`gibbs_bt_simple()`](https://lapo-santi.github.io/RBBayes/reference/gibbs_bt_simple.md)
     and
-    [`gibbs_bt_sbm()`](https://laposanti.github.io/BTSBM/reference/gibbs_bt_sbm.md)
+    [`gibbs_bt_sbm()`](https://lapo-santi.github.io/RBBayes/reference/gibbs_bt_sbm.md)
     as wrappers.
 3.  Port and test the common PL exponential-race augmentation from PLuce
     using fixed `rho` fixtures: complete rankings, top-(m) rankings,
@@ -671,7 +671,7 @@ reasons to change the statistical model:
 5.  Port PL mixture (`plsbm_sample_mixture.R`) for both finite and
     Gnedin row partitions. Add ranking-row PSM/minVI summaries,
     finite-mixture weights, split–merge diagnostics, and ranking-level
-    [`log_lik()`](https://laposanti.github.io/BTSBM/reference/log_lik.md).
+    [`log_lik()`](https://lapo-santi.github.io/RBBayes/reference/log_lik.md).
 6.  Port PL–LBM (`plsbm_joint_clustering.R`) last: joint (C,K) traces,
     separate item/ranking PSMs, `C × K` identified ability rows, and
     independent split–merge diagnostics for each partition. Test against

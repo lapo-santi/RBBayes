@@ -114,8 +114,13 @@ A `ggplot` object.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-# fit with keep_lambda=TRUE
+set.seed(1)
+w_ij <- matrix(c(0, 3, 2, 0), 2, 2,
+               dimnames = list(c("A", "B"), c("A", "B")))
+draws <- gibbs_bt_sbm(w_ij, prior = "GN", gamma_GN = 0.5,
+                      T_iter = 50, T_burn = 25, verbose = FALSE)
+fit <- relabel_by_lambda(draws$x_samples, draws$lambda_samples)
+#> Warning: The number of clusters equals the default maximum possible number of clusters.
+#> Warning: The number of clusters equals the default maximum possible number of clusters.
 p <- plot_lambda_uncertainty(fit, prob = 0.90)
-} # }
 ```

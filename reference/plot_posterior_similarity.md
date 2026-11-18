@@ -49,5 +49,16 @@ For item partitions, rows are ordered by the point estimate of the
 partition (blocks outlined, block 1 strongest). Values below one inside
 an outlined block do not mean the items move to another block: in a
 given draw the block may simply be split into finer sub-blocks. Use
-[`block_stability()`](https://laposanti.github.io/BTSBM/reference/block_stability.md)
+[`block_stability()`](https://lapo-santi.github.io/RBBayes/reference/block_stability.md)
 to see whether the missing mass goes to splitting or to merging.
+
+## Examples
+
+``` r
+data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+# A short run illustrates the interface; use longer runs for inference.
+fit <- fit_model(data, bt_sbm_model(),
+                 mcmc_control(iter = 60, warmup = 30, seed = 1))
+plot_posterior_similarity(fit)
+#> Warning: The number of clusters equals the default maximum possible number of clusters.
+```

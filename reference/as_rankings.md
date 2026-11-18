@@ -63,3 +63,10 @@ Caron, F. and Doucet, A. (2012). Efficient Bayesian inference for
 generalized Bradley–Terry models. *Journal of Computational and
 Graphical Statistics*, 21(1), 174–196.
 [doi:10.1080/10618600.2012.638220](https://doi.org/10.1080/10618600.2012.638220)
+
+## Examples
+
+``` r
+as_rankings(rbind(c(1, 2, 3), c(2, 3, 1)))
+#> <btsbm_ranking_data> 2 rankings of length 3 from 3 items
+```

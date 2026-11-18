@@ -58,3 +58,35 @@ compute_expected_wins_rank_posterior(
 
 A list containing rank draws, a posterior rank-probability matrix, and
 summary statistics for each player.
+
+## Examples
+
+``` r
+lambda <- rbind(c(1, 2), c(1.2, 1.8), c(0.9, 2.1))
+compute_expected_wins_rank_posterior(lambda)
+#> $rank_samples
+#>      Player_1 Player_2
+#> [1,]        2        1
+#> [2,]        2        1
+#> [3,]        2        1
+#> 
+#> $rank_prob
+#>          R1 R1.5 R2
+#> Player_1  0    0  1
+#> Player_2  1    0  0
+#> 
+#> $summary
+#>     player rank_mean rank_median rank_low rank_high
+#> 1 Player_1         2           2        2         2
+#> 2 Player_2         1           1        1         1
+#> 
+#> $keep
+#> [1] 1 2 3
+#> 
+#> $grid
+#> [1] 1.0 1.5 2.0
+#> 
+#> $ties_method
+#> [1] "average"
+#> 
+```

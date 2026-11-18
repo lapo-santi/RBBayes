@@ -32,3 +32,10 @@ Extended stochastic block models with application to criminal networks.
 The Annals of Applied Statistics, 16. The DP/PY/DM mean calculation
 follows the accompanying ESBM expected_cl_py helper.
 <https://github.com/danieledurante/ESBM/blob/master/Source/esbm.R>
+
+## Examples
+
+``` r
+prior_mean_K(n = 10, prior = gnedin_prior(0.5))
+#> [1] 2.837732
+```

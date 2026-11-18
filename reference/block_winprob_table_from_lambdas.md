@@ -49,3 +49,30 @@ block_winprob_table_from_lambdas(
 
 A list with block win probabilities, contributing pair counts,
 point-estimated player strengths, and block labels/sizes.
+
+## Examples
+
+``` r
+lambda <- rbind(c(1, 2), c(1.2, 1.8), c(0.9, 2.1))
+block_winprob_table_from_lambdas(lambda, z = c(1, 2))
+#> $P_block
+#>           Block_1   Block_2
+#> Block_1        NA 0.3444444
+#> Block_2 0.6555556        NA
+#> 
+#> $N_pairs
+#>         Block_1 Block_2
+#> Block_1       0       1
+#> Block_2       1       0
+#> 
+#> $lambda_point
+#> [1] 1.033333 1.966667
+#> 
+#> $block_sizes
+#> Block_1 Block_2 
+#>       1       1 
+#> 
+#> $block_labels
+#> [1] 1 2
+#> 
+```

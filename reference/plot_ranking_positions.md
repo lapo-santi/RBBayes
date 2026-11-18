@@ -19,3 +19,9 @@ plot_ranking_positions(rankings)
 ## Value
 
 A ggplot object.
+
+## Examples
+
+``` r
+plot_ranking_positions(sushi_toy(n_rankings = 10))
+```

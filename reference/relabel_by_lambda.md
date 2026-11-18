@@ -130,14 +130,16 @@ the Royal Society A: Mathematical, Physical and Engineering Sciences
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 set.seed(42)
 S <- 50; N <- 15
 x_samps <- matrix(sample(1:4, S*N, TRUE), S, N)
 # Sparse lambda per-iter: labels up to 6, only first 4 occupied typically
 lam_list <- replicate(S, { v <- rep(NA_real_, 6); v[1:4] <- rexp(4, 1); v }, simplify = FALSE)
 out <- relabel_by_lambda(x_samps, lam_list)
+#> Warning: The number of clusters equals the default maximum possible number of clusters.
 out$minVI_partition[1:10]
+#>  [1] 1 1 1 1 1 1 1 1 1 1
 out$K_VI_lower; out$K_VI_upper
-} # }
+#> NULL
+#> NULL
 ```

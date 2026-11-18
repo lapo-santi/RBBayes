@@ -21,3 +21,10 @@ pitman_yor_prior(concentration = 1, discount = 0.2)
 ## Value
 
 An object of class `btsbm_partition_prior`.
+
+## Examples
+
+``` r
+pitman_yor_prior()
+#> <clustering_prior> Pitman--Yor(concentration = 1, discount = 0.2) 
+```
