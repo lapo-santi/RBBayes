@@ -9,7 +9,8 @@ Authors@R:
         family = "Santi",
         email = "lapo.santi@gmail.com",
         role = c("aut", "cre", "cph"),
-        comment = c(ORCID = "0009-0005-9363-3353")
+        comment = c(ORCID = "0009-0005-9363-3353",
+                    affiliation = "University of Oslo")
       ),
       person(
         given = "Nial",
