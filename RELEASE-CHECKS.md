@@ -77,3 +77,19 @@ checks and resolution of licensing questions.
   <https://github.com/lapo-santi/RBBayes/actions/runs/44265903706>
   (source commit 8e206f9). This supersedes the earlier failed run and
   pending status.
+
+## Confirmed ATP source and software acknowledgement
+
+The maintainer identified
+<https://www.kaggle.com/datasets/sijovm/atpdata> as the ATP source.
+Kaggle metadata inspected on 18 November 2026 lists “Other (specified in
+description)” as the licence. The description credits Tennis Abstract
+and Jeff Sackmann but supplies no explicit redistribution terms.
+Permission remains unresolved. The metadata lists a January 2023 update;
+the provenance of any observations from 2024–2025 still needs
+confirmation against the actual downloaded files.
+
+The maintainer confirmed that speedyBBT was an inspiration, rather than
+a source of adapted code. Acknowledgements credit Rowland Seymour,
+Christine Stawitz and Heather Turner in README.md and
+inst/ACKNOWLEDGEMENTS.
