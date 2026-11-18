@@ -63,9 +63,22 @@
 <ul><li>Full local check, Windows development check and R-hub results: see final run records below.</li>
 <li>URL checker: the DOI 10.1080/10618600.2012.638220 returned HTTP 403; retain the correct scholarly identifier rather than inventing a replacement.</li>
 <li>Licensing: GPL (&gt;= 3) is declared. No original Sushi Preference Dataset rows are redistributed. ATP data cite Jeff Sackmann, but the upstream repository was unavailable when checked; redistribution terms still need verification. The NFL and orthodontics examples transcribe published tables; citation alone does not establish redistribution permission. The provenance/licensing of inst/extdata/resGN_demo.rds also needs confirmation.</li>
-<li>A complete no-Suggests run has not yet been performed.</li>
+<li>R-hub no-Suggests check launched; outcome pending.</li>
 </ul><p>CRAN submission, publication of the draft blog post, a GitHub release and the post-release development version remain pending successful checks and resolution of licensing questions.</p>
 </div>
+<div class="section level2">
+<h2 id="run-records-18-november-2026">Run records (18 November 2026)<a class="anchor" aria-label="anchor" href="#run-records-18-november-2026"></a></h2>
+<ul><li>Prepared source commit: c3a56cb.</li>
+<li>Full local <code>devtools::check(remote = TRUE, manual = TRUE)</code> with <code>--run-donttest</code>: <strong>0 errors, 1 warning, 2 notes</strong>. Examples, tests, vignettes, PDF and HTML manuals passed.</li>
+<li>Installation warning: the local R header requests <code>-Wfixed-enum-extension</code>, which Apple clang does not recognise. This is a local R/compiler compatibility warning.</li>
+<li>Notes: new submission; unable to verify current time.</li>
+<li>Windows development check: source successfully uploaded to win-builder; results sent by that service to the maintainer email.</li>
+<li>R-hub Linux, Windows and macOS: <a href="https://github.com/lapo-santi/RBBayes/actions/runs/44263199866" class="external-link uri">https://github.com/lapo-santi/RBBayes/actions/runs/44263199866</a>
+</li>
+<li>R-hub without suggested packages: <a href="https://github.com/lapo-santi/RBBayes/actions/runs/44263312073" class="external-link uri">https://github.com/lapo-santi/RBBayes/actions/runs/44263312073</a>
+</li>
+<li>R-hub runs were still in progress when these records were written; they are not recorded as passing.</li>
+</ul></div>
 </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
