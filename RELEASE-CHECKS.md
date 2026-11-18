@@ -38,3 +38,5 @@ CRAN submission, publication of the draft blog post, a GitHub release and the po
 - The original no-Suggests run failed because the plotting example used optional coda and vignette rebuilding could not load rmarkdown.
 - Corrected the example with an explicit coda prerequisite, added a clear runtime dependency error, declared rmarkdown as a vignette builder, and removed the redundant deprecated `.Dim` assignment.
 - After correction: 305 local tests passed and all examples ran; two existing salso test warnings remain.
+
+- Corrected no-Suggests rerun **passed**: https://github.com/lapo-santi/RBBayes/actions/runs/44265903706 (source commit 8e206f9). This supersedes the earlier failed run and pending status.
