@@ -16,6 +16,17 @@
 - Full local check, Windows development check and R-hub results: see final run records below.
 - URL checker: the DOI 10.1080/10618600.2012.638220 returned HTTP 403; retain the correct scholarly identifier rather than inventing a replacement.
 - Licensing: GPL (>= 3) is declared. No original Sushi Preference Dataset rows are redistributed. ATP data cite Jeff Sackmann, but the upstream repository was unavailable when checked; redistribution terms still need verification. The NFL and orthodontics examples transcribe published tables; citation alone does not establish redistribution permission. The provenance/licensing of inst/extdata/resGN_demo.rds also needs confirmation.
-- A complete no-Suggests run has not yet been performed.
+- R-hub no-Suggests check launched; outcome pending.
 
 CRAN submission, publication of the draft blog post, a GitHub release and the post-release development version remain pending successful checks and resolution of licensing questions.
+
+## Run records (18 November 2026)
+
+- Prepared source commit: c3a56cb.
+- Full local `devtools::check(remote = TRUE, manual = TRUE)` with `--run-donttest`: **0 errors, 1 warning, 2 notes**. Examples, tests, vignettes, PDF and HTML manuals passed.
+- Installation warning: the local R header requests `-Wfixed-enum-extension`, which Apple clang does not recognise. This is a local R/compiler compatibility warning.
+- Notes: new submission; unable to verify current time.
+- Windows development check: source successfully uploaded to win-builder; results sent by that service to the maintainer email.
+- R-hub Linux, Windows and macOS: https://github.com/lapo-santi/RBBayes/actions/runs/44263199866
+- R-hub without suggested packages: https://github.com/lapo-santi/RBBayes/actions/runs/44263312073
+- R-hub runs were still in progress when these records were written; they are not recorded as passing.
