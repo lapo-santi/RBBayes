@@ -43,3 +43,13 @@ See RELEASE-CHECKS.md for run links.
 DOI 10.1080/10618600.2012.638220 returned HTTP 403 during automated checking.
 The Kaggle ATP source page returned HTTP 404 to the URL checker, although
 its public dataset metadata API was accessible during provenance review.
+
+## Source-link adjustments
+
+The Caron and Doucet reference retains its published DOI as text and links to
+the author preprint at https://arxiv.org/abs/1011.1761, avoiding the publisher's
+HTTP 403 response. The ATP source is cited by title, uploader and exact Kaggle
+identifier sijovm/atpdata. Kaggle returns HTTP 404 to the URL checker even for
+its metadata endpoint, which responds to a direct GET request. The hyperlink
+has therefore been replaced by a bibliographic source identification; this is
+not a claim that redistribution permission has been established.

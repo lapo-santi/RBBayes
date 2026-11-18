@@ -48,8 +48,9 @@
 #'
 #' @source
 #' Aggregated by the package author from the \emph{ATP matches} dataset
-#' uploaded by Sijo Manikandan (sijovm) to Kaggle:
-#' \url{https://www.kaggle.com/datasets/sijovm/atpdata}.
+#' uploaded by Sijo Manikandan (sijovm) to Kaggle, dataset identifier
+#' \code{sijovm/atpdata}. Search this identifier on Kaggle to locate the
+#' dataset; its endpoints do not reliably support automated URL checking.
 #' The source credits Tennis Abstract and Jeff Sackmann.
 #'
 #' @return A named list indexed by year, containing win and match-count
