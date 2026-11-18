@@ -1,3 +1,16 @@
+## Resubmission
+
+This resubmission addresses the incoming checks dated 18 November 2026:
+
+* Rebuilt the software-paper PDF vignette from its current source, replacing
+  the stale URL https://github.com/laposanti/BTSBM with
+  https://github.com/lapo-santi/RBBayes.
+* Replaced the README relative link to IMPLEMENTATION_STATUS.md (a development
+  document excluded from the source package) with its absolute GitHub URL.
+* Friel, Santi and Plackett are surnames. Psychometrics is the intended
+  technical term. These spelling flags require no correction.
+* RBBayes is a new submission.
+
 ## Submission status
 
 Release candidate only: do not submit until outstanding data-licensing questions
@@ -28,3 +41,5 @@ See RELEASE-CHECKS.md for run links.
 ## URL check
 
 DOI 10.1080/10618600.2012.638220 returned HTTP 403 during automated checking.
+The Kaggle ATP source page returned HTTP 404 to the URL checker, although
+its public dataset metadata API was accessible during provenance review.

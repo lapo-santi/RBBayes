@@ -97,7 +97,7 @@ See `vignette("pl-ranking-models", package = "RBBayes")` for the ranking-data
 format, model scope, references, and the original Sushi benchmark's licence.
 See `vignette("toy-data-gallery", package = "RBBayes")` for reproducible tennis,
 Eurovision-inspired, Sushi-inspired, and joint-clustering examples.
-See [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) for the current model
+See [IMPLEMENTATION_STATUS.md](https://github.com/lapo-santi/RBBayes/blob/main/IMPLEMENTATION_STATUS.md) for the current model
 matrix and the remaining PLuce-porting work.
 
 ## Documentation
