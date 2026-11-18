@@ -155,3 +155,10 @@ dirichlet_process_K_var(n = 20, concentration = 1)
 The fitter takes the validated object returned by `as_bt_data()`. Matrix input
 remains supported. For an aggregated edge list, supply the count-column name
 explicitly; repeated directed edges are added. Self-comparisons are rejected.
+
+## Acknowledgements
+
+We acknowledge the `speedyBBT` package by Rowland Seymour, Christine Stawitz
+and Heather Turner as an inspiration for RBBayes. This acknowledgement concerns
+inspiration rather than code adapted from `speedyBBT`.
+See [speedyBBT](https://github.com/rowlandseymour/speedyBBT).

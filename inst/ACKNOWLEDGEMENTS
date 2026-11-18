@@ -1,0 +1,11 @@
+RBBayes acknowledges speedyBBT (Efficient Bayesian Inference for the
+Bradley--Terry Model), by Rowland Seymour, Christine Stawitz and Heather
+Turner, as an inspiration. No adaptation of speedyBBT code is claimed by
+this acknowledgement.
+
+https://github.com/rowlandseymour/speedyBBT
+
+ATP data source: ATP matches, uploaded by Sijo Manikandan (sijovm),
+https://www.kaggle.com/datasets/sijovm/atpdata.
+The source credits Tennis Abstract and Jeff Sackmann. This source
+acknowledgement does not assert a redistribution licence.

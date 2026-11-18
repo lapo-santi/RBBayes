@@ -47,9 +47,10 @@
 #' guards against divisions by zero when \code{N_ij[i, j] = 0}.
 #'
 #' @source
-#' Aggregated by the package author from public ATP results (e.g., the
-#' \emph{tennis_atp} datasets by Jeff Sackmann) and internal preprocessing.
-#' See the package vignette for provenance and cleaning steps.
+#' Aggregated by the package author from the \emph{ATP matches} dataset
+#' uploaded by Sijo Manikandan (sijovm) to Kaggle:
+#' \url{https://www.kaggle.com/datasets/sijovm/atpdata}.
+#' The source credits Tennis Abstract and Jeff Sackmann.
 #'
 #' @return A named list indexed by year, containing win and match-count
 #'   matrices and player metadata as described in the format section.
