@@ -15,6 +15,10 @@
 #'
 #' @export
 #'
+#' @examples
+#' lambda <- rbind(c(1, 2), c(1.2, 1.8), c(0.9, 2.1))
+#' w <- matrix(c(0, 3, 2, 0), 2, 2)
+#' make_bt_simple_loo(w, lambda)
 make_bt_simple_loo <- function(w_ij, lambda_samples) {
   n_ij = w_ij + t(w_ij)
   stopifnot(is.matrix(w_ij), is.matrix(n_ij), is.matrix(lambda_samples))
@@ -58,10 +62,11 @@ make_bt_simple_loo <- function(w_ij, lambda_samples) {
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' # After running your clustered sampler and relabeling:
-#' # ll_obj <- make_bt_cluster_loo(w, n, out$lambda_samples_relabel, out$x_samples_relabel)
-#' }
+#' w <- matrix(c(0, 2, 3, 0), 2, 2)
+#' lambda <- rbind(c(1, 2), c(1.2, 1.8))
+#' z <- rbind(c(1L, 2L), c(1L, 2L))
+#' ll_obj <- make_bt_cluster_loo(w, lambda, z)
+#' ll_obj$ll
 #' @export
 # Drop-in replacement: accepts lambda_samples as either
 #  - matrix S x Kmax (with NA padding), or
@@ -131,6 +136,15 @@ make_bt_cluster_loo <- function(w_ij, lambda_samples, x_samples) {
 #' }
 #' @export
 #'
+#' @examplesIf requireNamespace("loo", quietly = TRUE)
+#' set.seed(1)
+#' w <- matrix(c(0, 3, 2, 2, 0, 4, 3, 1, 0), 3, 3)
+#' lambda <- cbind(rgamma(200, 20, 20), rgamma(200, 30, 20),
+#'                 rgamma(200, 25, 20))
+#' simple <- make_bt_simple_loo(w, lambda)
+#' clustered <- make_bt_cluster_loo(w, lambda,
+#'   matrix(rep(1:3, each = 200), 200, 3))
+#' compare_bt_models_loo(simple, clustered)
 compare_bt_models_loo <- function(simple_llo, cluster_llo) {
   if (!requireNamespace("loo", quietly = TRUE))
     stop("Package 'loo' not installed.")

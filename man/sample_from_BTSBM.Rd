@@ -83,3 +83,6 @@ By default, block labels are assigned deterministically as
 \code{rep(seq_len(K), length.out = n_players)} to mirror your example, but you can
 pass a custom label vector via \code{x}.
 }
+\examples{
+sample_from_BTSBM(n_players = 6, K = 2, seed = 1)
+}

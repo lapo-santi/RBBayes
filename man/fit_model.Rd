@@ -24,6 +24,13 @@ PL--LBM. The latter two start with readable R Gibbs kernels derived from the
 PLuce exponential-race architecture; their high-performance C++ kernels are
 a later parity-tested optimisation.
 }
+\examples{
+data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+# A short run illustrates the interface; use longer runs for inference.
+fit <- fit_model(data, bt_sbm_model(),
+                 mcmc_control(iter = 60, warmup = 30, seed = 1))
+fit
+}
 \references{
 Caron, F. and Doucet, A. (2012). Efficient Bayesian inference
 for generalized Bradley--Terry models. \emph{Journal of Computational and

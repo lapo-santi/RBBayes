@@ -51,7 +51,9 @@
 #' \emph{tennis_atp} datasets by Jeff Sackmann) and internal preprocessing.
 #' See the package vignette for provenance and cleaning steps.
 #'
-#' @examples  \dontrun{
+#' @return A named list indexed by year, containing win and match-count
+#'   matrices and player metadata as described in the format section.
+#' @examples
 #' data(ATP_2000_2025)
 #' names(ATP_2000_2025)
 #' year <- "2000"
@@ -67,5 +69,4 @@
 #'
 #' # Join player metadata to indices used in the matrices:
 #' head(ATP_2000_2025[[year]]$players_df)
-#'}
 "ATP_2000_2025"

@@ -28,3 +28,6 @@ An object of class \code{btsbm_partition_moves}.
 \description{
 Set partition-move controls
 }
+\examples{
+partition_moves()
+}

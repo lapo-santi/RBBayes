@@ -17,6 +17,12 @@
 #'   Graphical Statistics*, 21(1), 174--196.
 #'   \doi{10.1080/10618600.2012.638220}
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' fit
 fit_model <- function(data, model, control = mcmc_control()) {
   if (!inherits(model, "btsbm_model")) {
     stop("`model` must be created by a model constructor such as `pl_model()`.", call. = FALSE)
@@ -170,6 +176,12 @@ fit_model <- function(data, model, control = mcmc_control()) {
 #' @param ... Unused.
 #' @return The input object, invisibly.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' print(fit)
 print.btsbm_fit <- function(x, ...) {
   cat("<btsbm_fit>", .model_long_name(x$model), "\n")
   cat("  ", x$data$n_items, " items; ", .fit_n_draws(x),
@@ -192,6 +204,12 @@ print.btsbm_fit <- function(x, ...) {
 #' @param ... Unused.
 #' @return An object of class `summary.btsbm_fit`, a named list.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' summary(fit)
 summary.btsbm_fit <- function(object, credible_mass = 0.9, ...) {
   fit <- object
   model <- fit$model
@@ -315,6 +333,12 @@ print.summary.btsbm_fit <- function(x, ...) {
 #' @return An `S × R` matrix with one column for each pair-count cell (BT) or
 #'   whole ranking row (PL).  It has a `unit_index` attribute.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' log_lik(fit)
 log_lik <- function(object, ...) {
   UseMethod("log_lik")
 }
@@ -355,6 +379,12 @@ log_lik.btsbm_fit <- function(object, ...) {
 #'
 #' @return A posterior similarity matrix.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' posterior_similarity(fit)
 posterior_similarity <- function(fit, target = c("item", "ranking")) {
   if (!inherits(fit, "btsbm_fit")) stop("`fit` must be a `btsbm_fit` object.", call. = FALSE)
   target <- match.arg(target)
@@ -375,6 +405,12 @@ posterior_similarity <- function(fit, target = c("item", "ranking")) {
 #'
 #' @return A draws matrix or named posterior mean vector.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' posterior_strength(fit)
 posterior_strength <- function(fit, summary = c("draws", "mean")) {
   if (!inherits(fit, "btsbm_fit")) stop("`fit` must be a `btsbm_fit` object.", call. = FALSE)
   summary <- match.arg(summary)
@@ -402,6 +438,12 @@ posterior_strength <- function(fit, summary = c("draws", "mean")) {
 #' @return A data frame with one row per item, ordered from larger to smaller
 #'   posterior mean strength.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' strength_summary(fit)
 strength_summary <- function(fit, credible_mass = 0.9, scale = c("relative", "raw")) {
   if (!inherits(fit, "btsbm_fit")) {
     stop("'fit' must be a btsbm_fit object.", call. = FALSE)
@@ -435,6 +477,12 @@ strength_summary <- function(fit, credible_mass = 0.9, scale = c("relative", "ra
 #' @inheritParams posterior_strength
 #' @return A draws matrix or named posterior mean vector.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' implied_ability(fit)
 implied_ability <- function(fit, summary = c("draws", "mean")) {
   posterior_strength(fit, summary = summary)
 }
@@ -445,6 +493,12 @@ implied_ability <- function(fit, summary = c("draws", "mean")) {
 #' @param ... Passed to [loo::loo()].
 #' @return A `loo` object.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' if (requireNamespace("loo", quietly = TRUE)) loo_btsbm(fit)
 loo_btsbm <- function(fit, ...) {
   if (!requireNamespace("loo", quietly = TRUE)) {
     stop("Package `loo` is required for `loo_btsbm()`.", call. = FALSE)
@@ -498,6 +552,12 @@ loo_btsbm <- function(fit, ...) {
 #'
 #' @return A data frame with one row per available scalar trace.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' mcmc_diagnostics(fit)
 mcmc_diagnostics <- function(fit) {
   if (!inherits(fit, "btsbm_fit")) {
     stop("`fit` must be a `btsbm_fit` object.", call. = FALSE)
@@ -533,6 +593,12 @@ mcmc_diagnostics <- function(fit) {
 #' @inheritParams fit_model
 #' @return An object of class `btsbm_fit`.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_btsbm(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' fit
 fit_btsbm <- function(data, model, control = mcmc_control()) {
   fit <- fit_model(data, model, control)
   fit$call <- match.call()

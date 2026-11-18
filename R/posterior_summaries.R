@@ -154,6 +154,12 @@ btsbm_block_palette <- function(K, palette = NULL) .block_palette(K, palette)
 #'   point estimation and credible balls. *Bayesian Analysis*, 13(2), 559--626.
 #'   \doi{10.1214/17-BA1073}
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' partition_point_estimate(fit)
 partition_point_estimate <- function(fit, loss = c("VI", "binder")) {
   .require_item_partition(fit)
   loss <- match.arg(loss)
@@ -199,6 +205,12 @@ partition_point_estimate <- function(fit, loss = c("VI", "binder")) {
 #'   \doi{10.1214/17-BA1073}
 #' @seealso [plot_credible_ball()]
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' credible_ball(fit)
 credible_ball <- function(fit, z_hat = NULL, credible_mass = 0.95,
                           method = c("native", "mcclust.ext")) {
   .require_item_partition(fit)
@@ -284,6 +296,12 @@ print.btsbm_credible_ball <- function(x, ...) {
 #' @param ... Passed to [credible_ball()] when `x` is a fit.
 #' @return A ggplot object.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' plot_credible_ball(credible_ball(fit))
 plot_credible_ball <- function(x, palette = NULL, ...) {
   .require_ggplot2()
   if (inherits(x, "btsbm_fit")) x <- credible_ball(x, ...)
@@ -380,6 +398,12 @@ prob_stronger <- function(fit) {
 #' @param max_items Optional: show only the strongest `max_items` items.
 #' @return A ggplot object.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' plot_prob_stronger(fit)
 plot_prob_stronger <- function(fit, show_values = NULL, max_items = NULL) {
   .require_ggplot2()
   prob <- prob_stronger(fit)
@@ -439,6 +463,12 @@ plot_prob_stronger <- function(fit, show_values = NULL, max_items = NULL) {
 #'   dropped.
 #' @return A data frame (columns `K`, `draws`, `probability`) or a kable.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' posterior_K_table(fit)
 posterior_K_table <- function(fit, format = c("data.frame", "html", "latex", "markdown"),
                               digits = 3, p_min = 0) {
   .require_item_partition(fit)
@@ -475,6 +505,12 @@ posterior_K_table <- function(fit, format = c("data.frame", "html", "latex", "ma
 #' @param ... Further arguments passed to [plot_block_adjacency()].
 #' @return A ggplot object.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' plot_ordered_adjacency(fit)
 plot_ordered_adjacency <- function(fit, z_hat = NULL, ...) {
   .require_item_partition(fit)
   if (is.null(z_hat)) z_hat <- partition_point_estimate(fit)
@@ -504,6 +540,12 @@ plot_ordered_adjacency <- function(fit, z_hat = NULL, ...) {
 #' @param z_hat Optional point estimate; defaults to [partition_point_estimate()].
 #' @return A data frame with one row per estimated block.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' block_stability(fit)
 block_stability <- function(fit, z_hat = NULL) {
   .require_item_partition(fit)
   if (is.null(z_hat)) z_hat <- partition_point_estimate(fit)

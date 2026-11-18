@@ -35,3 +35,8 @@ Builds an \eqn{S \times D} matrix of log-likelihood values, where \eqn{S}
 is the number of posterior draws and \eqn{D} is the number of observed
 unordered pairs (i<j) with \eqn{n_{ij} > 0}.
 }
+\examples{
+lambda <- rbind(c(1, 2), c(1.2, 1.8), c(0.9, 2.1))
+w <- matrix(c(0, 3, 2, 0), 2, 2)
+make_bt_simple_loo(w, lambda)
+}

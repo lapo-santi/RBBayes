@@ -18,3 +18,6 @@ saved strength vector is divided by its sum (\code{"sum"}), so reported strength
 are shares that add to one, exactly like the normalised Bradley--Terry
 strengths. \code{"logmean0"} (geometric mean one) is kept for compatibility.
 }
+\examples{
+pl_identifiability()
+}

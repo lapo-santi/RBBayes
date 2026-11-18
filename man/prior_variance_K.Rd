@@ -19,3 +19,6 @@ Dirichlet--multinomial priors.
 Compute the variance for Gnedin and Dirichlet-process priors. Variances for
 Pitman--Yor and Dirichlet--multinomial priors are not implemented here.
 }
+\examples{
+prior_variance_K(n = 10, prior = gnedin_prior(0.5))
+}

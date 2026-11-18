@@ -4,7 +4,7 @@ output:
   rmarkdown::html_document:
     toc: true
     toc_depth: 3
-    toc_float: true 
+    toc_float: true
 vignette: >
   %\VignetteIndexEntry{RBBayes: Bayesian Inference for the Bradley–Terry Stochastic Block Model}
   %\VignetteEngine{knitr::rmarkdown}
@@ -34,8 +34,8 @@ Applications include, among the others, **sports analytics**, **psychometrics**,
 
 ### Quick Links
 
-For a complete overview of all functions, see the 👉 [Function Reference](https://laposanti.github.io/BTSBM/reference/index.html)  
-For a step-by-step example using tennis data, visit the 👉 [Getting Started Vignette](https://laposanti.github.io/BTSBM/articles/getting-started.html)
+For a complete overview of all functions, see the 👉 [Function Reference](https://lapo-santi.github.io/RBBayes/reference/index.html)
+For a step-by-step example using tennis data, visit the 👉 [Getting Started Vignette](https://lapo-santi.github.io/RBBayes/articles/getting-started.html)
 
 ---
 
@@ -67,7 +67,7 @@ To fit the model, first create one validated pairwise-data object:
 
 - Square matrix (`n × n`), where `wins[i, j]` = number of times player *i* beats *j*
 - Diagonal must be 0 (`wins[i, i] = 0`)
-- For each unordered pair `{i,j}`:  
+- For each unordered pair `{i,j}`:
 \( n_{ij} = w_{ij} + w_{ji} \)
 
 
@@ -169,11 +169,11 @@ and assignment uncertainty conditional on a chosen number of blocks.
 
 1. **Prepare data** with `as_bt_data(wins)`
 
-2. **Inspect prior** using [`gnedin_K_mean()`](https://laposanti.github.io/BTSBM/reference/gnedin_K_mean.html) and [`gnedin_K_var()`](https://laposanti.github.io/BTSBM/reference/gnedin_K_var.html)
+2. **Inspect prior** using [`gnedin_K_mean()`](https://lapo-santi.github.io/RBBayes/reference/gnedin_K_mean.html) and [`gnedin_K_var()`](https://lapo-santi.github.io/RBBayes/reference/gnedin_K_var.html)
 
 3. **Specify a model** with `bt_model()` or `bt_sbm_model()`
 
-4. **Fit the model** with [`fit_model()`](https://laposanti.github.io/BTSBM/reference/fit_btsbm.html)
+4. **Fit the model** with [`fit_model()`](https://lapo-santi.github.io/RBBayes/reference/fit_btsbm.html)
 
 5. **Report block uncertainty** with `pretty_table_K_distribution()`,
    `plot_block_adjacency()`, and `plot_assignment_probabilities()`
@@ -182,9 +182,9 @@ and assignment uncertainty conditional on a chosen number of blocks.
 
 ## Learn More
 
-👉 [Function Reference](https://laposanti.github.io/BTSBM/reference/index.html)
+👉 [Function Reference](https://lapo-santi.github.io/RBBayes/reference/index.html)
 
-👉 [Getting Started Vignette](https://laposanti.github.io/BTSBM/articles/getting-started.html)
+👉 [Getting Started Vignette](https://lapo-santi.github.io/RBBayes/articles/getting-started.html)
 
 ---
 

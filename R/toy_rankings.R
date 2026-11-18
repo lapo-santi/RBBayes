@@ -3,6 +3,7 @@
 #' @param rank_length Number of retained ranking positions.
 #' @return Integer ranking matrix.
 #' @keywords internal
+#' @noRd
 .simulate_pl_rankings <- function(strength, rank_length = ncol(strength)) {
   strength <- as.matrix(strength)
   if (any(!is.finite(strength)) || any(strength <= 0)) {
@@ -39,6 +40,8 @@
 #'   The original Sushi Preference Dataset must be obtained from its authors;
 #'   its licence does not allow redistribution.
 #' @export
+#' @examples
+#' head(sushi_toy())
 sushi_toy <- function(n_rankings = 40L, rank_length = 5L, seed = 2026L) {
   if (length(n_rankings) != 1L || n_rankings < 2L || n_rankings != floor(n_rankings)) {
     stop("`n_rankings` must be an integer of at least two.", call. = FALSE)
@@ -83,6 +86,8 @@ sushi_toy <- function(n_rankings = 40L, rank_length = 5L, seed = 2026L) {
 #' @return A btsbm_ranking_data object. Its truth attribute contains the
 #'   synthetic voter-group labels and generating latent strengths.
 #' @export
+#' @examples
+#' head(eurovision_toy())
 eurovision_toy <- function(n_rankings = 40L, rank_length = 5L, seed = 2030L) {
   if (length(n_rankings) != 1L || n_rankings < 2L || n_rankings != floor(n_rankings)) {
     stop("'n_rankings' must be an integer of at least two.", call. = FALSE)
@@ -120,6 +125,8 @@ eurovision_toy <- function(n_rankings = 40L, rank_length = 5L, seed = 2030L) {
 #' @return A btsbm_pairwise_data object. Its truth attribute contains the
 #'   generating player strengths and latent tiers.
 #' @export
+#' @examples
+#' head(tennis_toy())
 tennis_toy <- function(matches_per_pair = 8L, seed = 2031L) {
   if (length(matches_per_pair) != 1L || matches_per_pair < 1L ||
       matches_per_pair != floor(matches_per_pair)) {
@@ -162,6 +169,8 @@ tennis_toy <- function(matches_per_pair = 8L, seed = 2031L) {
 #' @return A `btsbm_ranking_data` object with a `"truth"` attribute containing
 #'   the generating ranking and item partitions.
 #' @export
+#' @examples
+#' head(pl_lbm_toy())
 pl_lbm_toy <- function(n_rankings = 30L, rank_length = 4L, seed = 2027L) {
   if (length(n_rankings) != 1L || n_rankings < 2L || n_rankings != floor(n_rankings)) {
     stop("`n_rankings` must be an integer of at least two.", call. = FALSE)

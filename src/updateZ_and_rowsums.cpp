@@ -10,6 +10,7 @@ using namespace Rcpp;
 //' @param x Integer vector of current cluster assignments.
 //' @param lambda Numeric vector of current item strengths.
 //' @keywords internal
+//' @noRd
  // [[Rcpp::export]]
  Rcpp::List updateZ_and_rowsums(const Rcpp::IntegerMatrix& n_ij,
                                 const Rcpp::IntegerVector& x,

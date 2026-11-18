@@ -71,7 +71,6 @@ Row names of \code{w_ij} (if present) are propagated to item-level outputs;
 otherwise items are named \code{Item_1, ..., Item_n}.
 }
 \examples{
-\dontrun{
 set.seed(1)
 n <- 6L
 w <- matrix(0L, n, n)
@@ -82,5 +81,4 @@ fit <- gibbs_bt_sbm(
   w_ij = w, prior = "GN", gamma_GN = 0.5,
   T_iter = 200, T_burn = 100, verbose = FALSE
 )
-}
 }

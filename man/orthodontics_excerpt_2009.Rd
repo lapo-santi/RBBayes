@@ -18,6 +18,9 @@ with 11 PAR-index covariates for every case. The full 108-case clinical
 dataset is not provided by the article, so this deliberately exposes only
 the reproducible table excerpt.
 }
+\examples{
+head(orthodontics_excerpt_2009())
+}
 \references{
 Li, X., Yi, D. and Liu, J. S. (2022). Bayesian analysis of rank
 data with covariates and heterogeneous rankers. \emph{Statistical Science},

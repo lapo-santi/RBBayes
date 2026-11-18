@@ -42,6 +42,10 @@ See the package vignette for provenance and cleaning steps.
 \usage{
 ATP_2000_2025
 }
+\value{
+A named list indexed by year, containing win and match-count
+matrices and player metadata as described in the format section.
+}
 \description{
 A yearly panel of head-to-head counts for the top 105 ATP players, suitable
 for Bradley–Terry/Stochastic Block Model analyses. For each season, the data
@@ -61,7 +65,6 @@ The matrices may be sparse for many player pairs. Ensure any model code
 guards against divisions by zero when \code{N_ij[i, j] = 0}.
 }
 \examples{
- \dontrun{
 data(ATP_2000_2025)
 names(ATP_2000_2025)
 year <- "2000"
@@ -77,6 +80,5 @@ ATP_2000_2025[[year]]$N_ij[i, j]
 
 # Join player metadata to indices used in the matrices:
 head(ATP_2000_2025[[year]]$players_df)
-}
 }
 \keyword{datasets}

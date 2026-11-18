@@ -26,6 +26,13 @@ fresh installation.
 \details{
 Blocks are labelled so that block 1 has the largest posterior mean strength.
 }
+\examples{
+data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+# A short run illustrates the interface; use longer runs for inference.
+fit <- fit_model(data, bt_sbm_model(),
+                 mcmc_control(iter = 60, warmup = 30, seed = 1))
+partition_point_estimate(fit)
+}
 \references{
 Wade, S. and Ghahramani, Z. (2018). Bayesian cluster analysis:
 point estimation and credible balls. \emph{Bayesian Analysis}, 13(2), 559--626.

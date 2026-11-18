@@ -40,3 +40,6 @@ prior and is the default. A Dirichlet process and Pitman--Yor process allow
 a potentially unbounded number of groups. A finite Dirichlet prior fixes an
 upper bound through \code{max_clusters}.
 }
+\examples{
+clustering_prior()
+}

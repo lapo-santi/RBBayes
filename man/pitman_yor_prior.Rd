@@ -17,3 +17,6 @@ An object of class \code{btsbm_partition_prior}.
 \description{
 Pitman--Yor prior for a latent partition
 }
+\examples{
+pitman_yor_prior()
+}

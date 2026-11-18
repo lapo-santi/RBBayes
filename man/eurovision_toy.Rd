@@ -23,3 +23,6 @@ latent voting profiles produce different rankings of eight fictional acts.
 It is designed to demonstrate \code{\link[=pl_mixture_model]{pl_mixture_model()}} without redistributing
 data from a real contest.
 }
+\examples{
+head(eurovision_toy())
+}

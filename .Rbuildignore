@@ -17,3 +17,18 @@
 ^.*\.Rproj$
 ^cran-comments\.md$
 ^LICENSE\.md$
+
+# Website output and release-planning documents are not package sources.
+^_pkgdown\.yml$
+^ARCHITECTURE\.md$
+^COVARIATE_ROADMAP\.md$
+^IMPLEMENTATION_STATUS\.md$
+^doc$
+^docs$
+^index\.html$
+^index\.md$
+^pkgdown$
+^LICENSE$
+^Rplots\.pdf$
+^RELEASE-CHECKS\.md$
+^release-blog-draft\.md$

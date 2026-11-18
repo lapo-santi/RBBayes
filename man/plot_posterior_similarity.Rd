@@ -39,3 +39,10 @@ block do not mean the items move to another block: in a given draw the
 block may simply be split into finer sub-blocks. Use \code{\link[=block_stability]{block_stability()}} to
 see whether the missing mass goes to splitting or to merging.
 }
+\examples{
+data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+# A short run illustrates the interface; use longer runs for inference.
+fit <- fit_model(data, bt_sbm_model(),
+                 mcmc_control(iter = 60, warmup = 30, seed = 1))
+plot_posterior_similarity(fit)
+}

@@ -24,3 +24,10 @@ the row item is probably stronger, red cells mean it is probably weaker,
 and white cells mean the data cannot tell them apart. In a block model,
 pairs in the same block are tied, so both directions can be well below 0.5.
 }
+\examples{
+data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+# A short run illustrates the interface; use longer runs for inference.
+fit <- fit_model(data, bt_sbm_model(),
+                 mcmc_control(iter = 60, warmup = 30, seed = 1))
+plot_prob_stronger(fit)
+}

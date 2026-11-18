@@ -35,3 +35,6 @@ A \code{btsbm_model}.
 \description{
 Define a Plackett--Luce stochastic block model
 }
+\examples{
+pl_sbm_model()
+}

@@ -37,3 +37,7 @@ expected win probabilities. The helper can summarise posterior draws via the
 posterior mean or median, and can optionally weight pairwise probabilities by
 an observed match-count matrix.
 }
+\examples{
+lambda <- rbind(c(1, 2), c(1.2, 1.8), c(0.9, 2.1))
+block_winprob_table_from_lambdas(lambda, z = c(1, 2))
+}

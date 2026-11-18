@@ -23,6 +23,9 @@ ten sushi types. It is designed to demonstrate \code{as_rankings()}, \code{pl_mo
 PL mixtures, and PL--LBM data shapes without redistributing respondent-level
 data from the Sushi Preference Dataset.
 }
+\examples{
+head(sushi_toy())
+}
 \references{
 Kamishima, T. (2003). Nantonac collaborative filtering:
 Recommendation based on order responses. \emph{Proceedings of the Ninth ACM

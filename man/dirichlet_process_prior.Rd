@@ -15,3 +15,6 @@ An object of class \code{btsbm_partition_prior}.
 \description{
 Dirichlet-process prior for a latent partition
 }
+\examples{
+dirichlet_process_prior()
+}

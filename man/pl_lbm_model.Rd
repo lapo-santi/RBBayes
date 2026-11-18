@@ -42,3 +42,6 @@ A \code{btsbm_model}.
 The PL--LBM jointly partitions ranking rows and items. Each pair of latent
 groups has its own positive strength.
 }
+\examples{
+pl_lbm_model()
+}

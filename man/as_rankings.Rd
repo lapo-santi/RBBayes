@@ -42,6 +42,9 @@ or a top-\code{m} prefix from one common universe of items. Internally this is
 represented in the compact integer format used by the PLuce reference code,
 but users never need to work with that internal name.
 }
+\examples{
+as_rankings(rbind(c(1, 2, 3), c(2, 3, 1)))
+}
 \references{
 Caron, F. and Doucet, A. (2012). Efficient Bayesian inference
 for generalized Bradley--Terry models. \emph{Journal of Computational and

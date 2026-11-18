@@ -42,3 +42,7 @@ Convert posterior draws of player-level strength parameters into posterior
 summaries for player ranks. Ranks are computed draw by draw with rank 1 as the
 strongest player.
 }
+\examples{
+lambda <- rbind(c(1, 2), c(1.2, 1.8), c(0.9, 2.1))
+compute_expected_wins_rank_posterior(lambda)
+}

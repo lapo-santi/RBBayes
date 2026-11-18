@@ -88,3 +88,7 @@ Exploratory adjacency heatmap showing wins for each ordered pair of players.
 Optionally restrict to a subset of players and/or order rows/cols by an
 external metric such as year-end ranking.
 }
+\examples{
+w <- matrix(c(0, 3, 2, 0), 2, 2)
+exploratory_adjacency(w)
+}

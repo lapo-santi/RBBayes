@@ -39,8 +39,9 @@ or that cluster ids in \code{x_samples[s, ]} are in \code{1..K} where
 \code{K = ncol(lambda_samples)}.
 }
 \examples{
-\dontrun{
-# After running your clustered sampler and relabeling:
-# ll_obj <- make_bt_cluster_loo(w, n, out$lambda_samples_relabel, out$x_samples_relabel)
-}
+w <- matrix(c(0, 2, 3, 0), 2, 2)
+lambda <- rbind(c(1, 2), c(1.2, 1.8))
+z <- rbind(c(1L, 2L), c(1L, 2L))
+ll_obj <- make_bt_cluster_loo(w, lambda, z)
+ll_obj$ll
 }

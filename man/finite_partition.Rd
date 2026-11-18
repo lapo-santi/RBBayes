@@ -17,3 +17,6 @@ An object of class \code{btsbm_partition_prior}.
 \description{
 Define a finite-Dirichlet prior for a latent partition
 }
+\examples{
+finite_partition(max_clusters = 4)
+}

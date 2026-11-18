@@ -40,3 +40,6 @@ stored in its truth attribute. All observations are synthetic.
 Simulate a complete league with user-specified block strengths and sizes.
 A common random permutation shuffles both axes.
 }
+\examples{
+head(tennis_tiered_toy())
+}

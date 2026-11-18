@@ -20,3 +20,10 @@ An object of class \code{btsbm_fit}.
 \description{
 Compatibility entry point for Bayesian preference models
 }
+\examples{
+data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+# A short run illustrates the interface; use longer runs for inference.
+fit <- fit_btsbm(data, bt_sbm_model(),
+                 mcmc_control(iter = 60, warmup = 30, seed = 1))
+fit
+}

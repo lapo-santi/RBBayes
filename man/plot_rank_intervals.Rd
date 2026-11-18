@@ -45,3 +45,7 @@ A \code{ggplot} object.
 Draw a rank-interval plot from posterior rank summaries, posterior lambda draws,
 or the relabelled output returned by \code{\link[=relabel_by_lambda]{relabel_by_lambda()}}.
 }
+\examples{
+lambda <- rbind(c(1, 2), c(1.2, 1.8), c(0.9, 2.1))
+plot_rank_intervals(lambda)
+}

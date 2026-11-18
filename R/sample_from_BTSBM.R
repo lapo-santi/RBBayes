@@ -54,6 +54,8 @@
 #' }
 #'
 #' @export
+#' @examples
+#' sample_from_BTSBM(n_players = 6, K = 2, seed = 1)
 sample_from_BTSBM <- function(n_players,
                               K,
                               x = NULL,

@@ -46,6 +46,13 @@ The native implementation needs no extra packages. If the GitHub package
 \pkg{mcclust.ext} is installed, \code{method = "mcclust.ext"} calls
 \code{mcclust.ext::credibleball()} instead, which is useful as a cross-check.
 }
+\examples{
+data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+# A short run illustrates the interface; use longer runs for inference.
+fit <- fit_model(data, bt_sbm_model(),
+                 mcmc_control(iter = 60, warmup = 30, seed = 1))
+credible_ball(fit)
+}
 \references{
 Wade, S. and Ghahramani, Z. (2018). Bayesian cluster analysis:
 point estimation and credible balls. \emph{Bayesian Analysis}, 13(2), 559--626.

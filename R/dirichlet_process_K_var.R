@@ -7,6 +7,8 @@
 #' @param concentration Positive finite Dirichlet-process concentration.
 #' @return A numeric scalar, the prior variance of the occupied-group count.
 #' @export
+#' @examples
+#' dirichlet_process_K_var(n = 10, concentration = 1)
 dirichlet_process_K_var <- function(n, concentration = 1) {
   if (!is.numeric(concentration) || length(concentration) != 1L ||
       !is.finite(concentration) || concentration <= 0) {

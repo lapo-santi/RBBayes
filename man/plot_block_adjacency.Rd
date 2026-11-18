@@ -88,7 +88,11 @@ Optionally relabels blocks so that Block 1 has the largest mean player
 strength \eqn{\lambda} (mean computed across players in the block).
 }
 \examples{
-\dontrun{
+set.seed(1)
+w_ij <- matrix(c(0, 3, 2, 0), 2, 2,
+               dimnames = list(c("A", "B"), c("A", "B")))
+draws <- gibbs_bt_sbm(w_ij, prior = "GN", gamma_GN = 0.5,
+                      T_iter = 50, T_burn = 25, verbose = FALSE)
+fit <- relabel_by_lambda(draws$x_samples, draws$lambda_samples)
 p <- plot_block_adjacency(fit, w_ij)
-}
 }

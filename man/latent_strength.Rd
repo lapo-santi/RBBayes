@@ -22,3 +22,6 @@ Model constructors such as \code{\link[=bt_model]{bt_model()}} now take \code{sh
 directly, so most users never need this function. It is kept for
 compatibility with code written for earlier development versions.
 }
+\examples{
+latent_strength()
+}

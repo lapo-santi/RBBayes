@@ -21,3 +21,10 @@ An object of class \code{btsbm_fit}.
 Use \code{\link[=fit_model]{fit_model()}} for new analyses. This entry point remains available
 for compatibility with earlier development versions.
 }
+\examples{
+data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+# A short run illustrates the interface; use longer runs for inference.
+fit <- fit_preference(data, bt_sbm_model(),
+                 mcmc_control(iter = 60, warmup = 30, seed = 1))
+fit
+}

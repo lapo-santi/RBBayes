@@ -15,6 +15,8 @@
 #' @return A btsbm_pairwise_data object, or an edge-list data frame, with generating groups and strengths
 #'   stored in its truth attribute. All observations are synthetic.
 #' @export
+#' @examples
+#' head(tennis_tiered_toy())
 tennis_tiered_toy <- function(matches_per_pair = 20L, seed = 101L,
                                n_blocks = length(latent_strength),
                                latent_strength = c(12, 6, 2, 1),

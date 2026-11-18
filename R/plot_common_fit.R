@@ -21,6 +21,12 @@
 #'
 #' @return A ggplot object.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' plot_strength_summary(fit)
 plot_strength_summary <- function(fit, credible_mass = 0.9) {
   .require_ggplot2()
   summary_data <- strength_summary(fit, credible_mass = credible_mass)
@@ -67,6 +73,12 @@ plot_strength_summary <- function(fit, credible_mass = 0.9) {
 #'
 #' @return A ggplot object.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' plot_posterior_similarity(fit)
 plot_posterior_similarity <- function(fit, target = c("item", "ranking"),
                                       order_rows = TRUE, show_blocks = TRUE,
                                       show_values = NULL) {
@@ -157,6 +169,12 @@ plot_posterior_similarity <- function(fit, target = c("item", "ranking"),
 #'
 #' @return A ggplot object.
 #' @export
+#' @examples
+#' data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+#' # A short run illustrates the interface; use longer runs for inference.
+#' fit <- fit_model(data, bt_sbm_model(),
+#'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' plot_mcmc_traces(fit)
 plot_mcmc_traces <- function(fit, quantities = NULL) {
   .require_ggplot2()
   if (!inherits(fit, "btsbm_fit")) {
@@ -206,6 +224,8 @@ plot_mcmc_traces <- function(fit, quantities = NULL) {
 #'
 #' @return A ggplot object.
 #' @export
+#' @examples
+#' plot_ranking_positions(sushi_toy(n_rankings = 10))
 plot_ranking_positions <- function(rankings) {
   .require_ggplot2()
   if (!inherits(rankings, "btsbm_ranking_data")) {
@@ -256,6 +276,8 @@ plot_ranking_positions <- function(rankings) {
 #'
 #' @return A ggplot object.
 #' @export
+#' @examples
+#' plot_pairwise_outcomes(tennis_toy())
 plot_pairwise_outcomes <- function(pairwise) {
   .require_ggplot2()
   if (!inherits(pairwise, "btsbm_pairwise_data")) {

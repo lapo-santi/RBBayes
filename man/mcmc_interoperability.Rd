@@ -64,3 +64,15 @@ For coda::gelman.diag(), use multivariate = FALSE: sum-to-one strengths
 have a singular joint covariance. A constant group-count trace can also
 have undefined convergence diagnostics. coda and bayesplot are optional.
 }
+\examples{
+data <- tennis_toy()
+fit1 <- fit_model(data, bt_model(), mcmc_control(iter = 60, warmup = 30, seed = 1))
+fit2 <- fit_model(data, bt_model(), mcmc_control(iter = 60, warmup = 30, seed = 2))
+as.matrix(fit1)
+as.array(fit1)
+as_draws_array(list(fit1, fit2))
+if (requireNamespace("coda", quietly = TRUE)) {
+  coda::as.mcmc(fit1)
+  as_mcmc_chains(list(fit1, fit2))
+}
+}

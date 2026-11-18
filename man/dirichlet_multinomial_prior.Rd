@@ -19,3 +19,6 @@ An object of class \code{btsbm_partition_prior}.
 Defines a symmetric Dirichlet distribution over a fixed number of available
 groups, integrated out to obtain a prior on item allocations.
 }
+\examples{
+dirichlet_multinomial_prior(max_clusters = 4)
+}

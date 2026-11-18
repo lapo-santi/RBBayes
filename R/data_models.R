@@ -15,6 +15,8 @@
 #'
 #' @return An object of class `btsbm_pairwise_data`.
 #' @export
+#' @examples
+#' as_bt_data(matrix(c(0, 2, 3, 0), 2, 2))
 as_bt_data <- function(wins, item_labels = NULL, winner = "winner",
                        loser = "loser", count = NULL) {
   if (is.data.frame(wins)) {
@@ -67,6 +69,8 @@ as_bt_data <- function(wins, item_labels = NULL, winner = "winner",
 #'   Graphical Statistics*, 21(1), 174--196.
 #'   \doi{10.1080/10618600.2012.638220}
 #' @export
+#' @examples
+#' as_rankings(rbind(c(1, 2, 3), c(2, 3, 1)))
 as_rankings <- function(rankings, item_count = NULL, ranking_labels = NULL,
                         item_labels = NULL) {
   if (!is.matrix(rankings) || nrow(rankings) < 1L || ncol(rankings) < 1L) {
@@ -181,6 +185,8 @@ print.btsbm_partition_prior <- function(x, ...) {
 #'
 #' @return An object of class `btsbm_strength_prior`.
 #' @export
+#' @examples
+#' latent_strength()
 latent_strength <- function(shape = 1, rate = 1) {
   if (length(shape) != 1L || !is.finite(shape) || shape <= 0 ||
       length(rate) != 1L || !is.finite(rate) || rate <= 0) {
@@ -217,6 +223,8 @@ gamma_ability <- function(shape = 1, rate = 1) {
 #'
 #' @return An object of class `btsbm_partition_prior`.
 #' @export
+#' @examples
+#' clustering_prior()
 clustering_prior <- function(
     family = c("gnedin", "dirichlet_process", "pitman_yor", "finite_dirichlet"),
     gnedin_hyper = 0.5, concentration = 1, discount = 0.2,
@@ -289,6 +297,8 @@ gnedin_prior <- function(gnedin_hyper = 0.5, gnedin_hyperparameter = NULL) {
 #' @param concentration Positive concentration parameter.
 #' @return An object of class `btsbm_partition_prior`.
 #' @export
+#' @examples
+#' dirichlet_process_prior()
 dirichlet_process_prior <- function(concentration = 1) {
   clustering_prior("dirichlet_process", concentration = concentration)
 }
@@ -299,6 +309,8 @@ dirichlet_process_prior <- function(concentration = 1) {
 #' @param discount Discount parameter in `[0, 1)`.
 #' @return An object of class `btsbm_partition_prior`.
 #' @export
+#' @examples
+#' pitman_yor_prior()
 pitman_yor_prior <- function(concentration = 1, discount = 0.2) {
   clustering_prior("pitman_yor", concentration = concentration, discount = discount)
 }
@@ -309,6 +321,8 @@ pitman_yor_prior <- function(concentration = 1, discount = 0.2) {
 #' @param concentration Positive symmetric Dirichlet concentration.
 #' @return An object of class `btsbm_partition_prior`.
 #' @export
+#' @examples
+#' finite_partition(max_clusters = 4)
 finite_partition <- function(max_clusters, concentration = 1) {
   clustering_prior("finite_dirichlet", concentration = concentration,
                    max_clusters = max_clusters)
@@ -324,6 +338,8 @@ finite_partition <- function(max_clusters, concentration = 1) {
 #' @param K Maximum finite-Dirichlet groups.
 #' @return An object of class `btsbm_partition_prior`.
 #' @export
+#' @examples
+#' partition_prior()
 partition_prior <- function(type = c("gnedin", "dp", "py", "dm"),
                             gamma = 0.5, alpha = 1, sigma = 0.2,
                             beta = 1, K = NULL) {
@@ -348,6 +364,8 @@ partition_prior <- function(type = c("gnedin", "dp", "py", "dm"),
 #'
 #' @return An object of class `btsbm_pl_identifiability`.
 #' @export
+#' @examples
+#' pl_identifiability()
 pl_identifiability <- function(method = c("sum", "none", "logmean0")) {
   structure(list(method = match.arg(method)), class = "btsbm_pl_identifiability")
 }
@@ -367,6 +385,8 @@ pl_identifiability <- function(method = c("sum", "none", "logmean0")) {
 #'
 #' @return An object of class `btsbm_mcmc_control`.
 #' @export
+#' @examples
+#' mcmc_control(iter = 100, warmup = 50, seed = 1)
 mcmc_control <- function(iter = 2000, warmup = floor(iter / 2), seed = NULL,
                          store = c("minimal", "augmented"),
                          init_item_cluster = NULL, init_ranking_cluster = NULL,
@@ -406,6 +426,8 @@ mcmc_control <- function(iter = 2000, warmup = floor(iter / 2), seed = NULL,
 #'
 #' @return An object of class `btsbm_partition_moves`.
 #' @export
+#' @examples
+#' partition_moves()
 partition_moves <- function(split_merge = 0L, ranking_split_merge = 0L,
                             item_split_merge = 0L,
                             pair_proposal = c("uniform", "balanced", "informed"),
@@ -537,6 +559,8 @@ bt_sbm_model <- function(shape_lambda = 4, rate_lambda = exp(digamma(shape_lambd
 #' @param identifiability PL reporting constraint, see [pl_identifiability()].
 #' @return A `btsbm_model`.
 #' @export
+#' @examples
+#' pl_model()
 pl_model <- function(shape_lambda = 1, rate_lambda = 1,
                      identifiability = pl_identifiability(),
                      latent_strength = NULL, ability_prior = NULL) {
@@ -549,6 +573,8 @@ pl_model <- function(shape_lambda = 1, rate_lambda = 1,
 #' @inheritParams pl_model
 #' @return A `btsbm_model`.
 #' @export
+#' @examples
+#' pl_sbm_model()
 pl_sbm_model <- function(shape_lambda = 1, rate_lambda = 1,
                          item_clustering = gnedin_prior(gnedin_hyper = 0.5),
                          identifiability = pl_identifiability(),
@@ -570,6 +596,8 @@ pl_sbm_model <- function(shape_lambda = 1, rate_lambda = 1,
 #' @param ranking_prior Deprecated alias for `ranking_clustering`.
 #' @return A `btsbm_model`.
 #' @export
+#' @examples
+#' pl_mixture_model()
 pl_mixture_model <- function(shape_lambda = 1, rate_lambda = 1,
                              ranking_clustering = gnedin_prior(gnedin_hyper = 0.5),
                              identifiability = pl_identifiability(),
@@ -592,6 +620,8 @@ pl_mixture_model <- function(shape_lambda = 1, rate_lambda = 1,
 #' @inheritParams bt_sbm_model
 #' @return A `btsbm_model`.
 #' @export
+#' @examples
+#' pl_lbm_model()
 pl_lbm_model <- function(shape_lambda = 1, rate_lambda = 1,
                          ranking_clustering = gnedin_prior(gnedin_hyper = 0.5),
                          item_clustering = gnedin_prior(gnedin_hyper = 0.5),

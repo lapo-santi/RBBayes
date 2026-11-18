@@ -13,10 +13,10 @@ the PLuce C++ kernels remain a planned performance upgrade.
 
 ## Installation
 
-```r
-# After CRAN release
-# install.packages("RBBayes")
+RBBayes is being prepared for its first CRAN release. Install the development
+version from GitHub using the `remotes` package:
 
+```r
 # Development version
 remotes::install_github("lapo-santi/RBBayes")
 ```
@@ -105,9 +105,9 @@ matrix and the remaining PLuce-porting work.
 - Hands-on tutorial (R Markdown, knit it locally):
   `file.copy(system.file("tutorial", "RBBayes-tutorial.Rmd", package = "RBBayes"), ".")`
 
-- Package website: https://laposanti.github.io/BTSBM
-- Function reference: https://laposanti.github.io/BTSBM/reference/index.html
-- Getting started vignette: https://laposanti.github.io/BTSBM/articles/getting-started.html
+- Package website: https://lapo-santi.github.io/RBBayes
+- Function reference: https://lapo-santi.github.io/RBBayes/reference/index.html
+- Getting started vignette: https://lapo-santi.github.io/RBBayes/articles/getting-started.html
 
 ## coda and bayesplot integration
 

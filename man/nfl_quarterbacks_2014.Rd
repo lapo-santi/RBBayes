@@ -24,6 +24,9 @@ The source websites in the article are dynamic historical sports websites.
 Keeping this small, cited transcription makes the published example
 reproducible without presenting it as a live data download.
 }
+\examples{
+head(nfl_quarterbacks_2014())
+}
 \references{
 Li, X., Yi, D. and Liu, J. S. (2022). Bayesian analysis of rank
 data with covariates and heterogeneous rankers. \emph{Statistical Science},

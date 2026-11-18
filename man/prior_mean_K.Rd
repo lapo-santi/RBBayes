@@ -20,6 +20,9 @@ Gnedin, Dirichlet-process, Pitman--Yor or Dirichlet--multinomial prior.
 For the Dirichlet--multinomial, the constructor's concentration is per group;
 the moment calculation uses total concentration internally.
 }
+\examples{
+prior_mean_K(n = 10, prior = gnedin_prior(0.5))
+}
 \references{
 Legramanti, S., Rigon, T., Durante, D. and Dunson, D. B. (2022).
 Extended stochastic block models with application to criminal networks.

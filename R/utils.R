@@ -1,9 +1,11 @@
 # R/utils-internal.R
 
 #' @keywords internal
+#' @noRd
 .safe_log <- function(x) ifelse(x > 0, log(x), -Inf)
 
 #' @keywords internal
+#' @noRd
 .logsumexp <- function(x) {
   m <- max(x)
   if (!is.finite(m)) return(m)
@@ -21,6 +23,7 @@
 #' @param lower,upper Hard bounds on `loga`.
 #' @return A new `loga` draw.
 #' @keywords internal
+#' @noRd
 .slice_on_log <- function(
     logpost, loga0, w = 1.0, m = 20L, lower = -Inf, upper = Inf
 ) {
@@ -44,6 +47,7 @@
 
 #' Gamma-Poisson integrated log-likelihood (new block)
 #' @keywords internal
+#' @noRd
 .new_cluster_integral_log <- function(wi, Zi, a_now, b_now) {
   (a_now * log(b_now)) + lgamma(a_now + wi) - lgamma(a_now) -
     (a_now + wi) * log(b_now + Zi)
@@ -51,12 +55,14 @@
 
 #' Anchored version of the integrated log-score (drop a-only constant)
 #' @keywords internal
+#' @noRd
 .new_cluster_integral_log_anchored <- function(wi, Zi, a_now, b_now) {
   lgamma(a_now + wi) - (a_now + wi) * log(b_now + Zi)
 }
 
 #' Sample index from log-weights
 #' @keywords internal
+#' @noRd
 .sample_from_logweights <- function(logw) {
   if (all(!is.finite(logw))) return(sample.int(length(logw), 1L))
   lse <- .logsumexp(logw)
@@ -97,6 +103,9 @@ clean_players_names <- function(name) {
 #' @keywords internal
 #' @references
 #' Legramanti, S., Rigon, T., Durante, D., Dunson, D.B., 2022. Extended stochastic block models with application to criminal networks. The Annals of Applied Statistics 16. https://doi.org/10.1214/21-aoas1595
+#' @examples
+#' HGnedin(n = 10, k = 1:10)
+#' @noRd
 
 HGnedin <- function(n, k, gamma = 0.5) {
   exp(lchoose(n, k) + lgamma(k - gamma) - lgamma(1 - gamma) +
@@ -108,10 +117,13 @@ HGnedin <- function(n, k, gamma = 0.5) {
 #' @param beta_DM numeric concentration (>0).
 #' @param K_DM integer maximum number of clusters (>=1).
 #' @return Numeric vector length \eqn{K+1}: existing weights and new-cluster mass.
-#' #' @references
+#' @references
 #' Legramanti, S., Rigon, T., Durante, D., Dunson, D.B., 2022. Extended stochastic block models with application to criminal networks. The Annals of Applied Statistics 16. https://doi.org/10.1214/21-aoas1595
 
 #' @keywords internal
+#' @examples
+#' urn_DM(c(2, 3), beta_DM = 1, K_DM = 4)
+#' @noRd
 urn_DM <- function(v_minus, beta_DM, K_DM) {
   K <- length(v_minus)
   c(v_minus + beta_DM, beta_DM * (K_DM - K) * (K_DM > K))
@@ -121,10 +133,13 @@ urn_DM <- function(v_minus, beta_DM, K_DM) {
 #' @param v_minus integer sizes of occupied clusters (excluding focal item).
 #' @param alpha_PY numeric concentration (>0).
 #' @return Numeric vector length \eqn{K+1}: existing weights and new-cluster mass.
-#' #' @references
+#' @references
 #' Legramanti, S., Rigon, T., Durante, D., Dunson, D.B., 2022. Extended stochastic block models with application to criminal networks. The Annals of Applied Statistics 16. https://doi.org/10.1214/21-aoas1595
 
 #' @keywords internal
+#' @examples
+#' urn_DP(c(2, 3), alpha_PY = 1)
+#' @noRd
 urn_DP <- function(v_minus, alpha_PY) {
   c(v_minus, alpha_PY)
 }
@@ -133,10 +148,13 @@ urn_DP <- function(v_minus, alpha_PY) {
 #' @param v_minus integer sizes of occupied clusters (excluding focal item).
 #' @param gamma numeric parameter (>0).
 #' @return Numeric vector length \eqn{K+1}.
-#' #' @references
+#' @references
 #' Legramanti, S., Rigon, T., Durante, D., Dunson, D.B., 2022. Extended stochastic block models with application to criminal networks. The Annals of Applied Statistics 16. https://doi.org/10.1214/21-aoas1595
 
 #' @keywords internal
+#' @examples
+#' urn_GN(c(2, 3), gamma = 0.5)
+#' @noRd
 urn_GN <- function(v_minus, gamma) {
   K  <- length(v_minus)
   n_ <- sum(v_minus) + 1L               # +1 for the focal item
@@ -149,10 +167,13 @@ urn_GN <- function(v_minus, gamma) {
 #' @param alpha_PY numeric concentration (> -sigma_PY).
 #' @param sigma_PY numeric discount in [0,1).
 #' @return Numeric vector length \eqn{K+1}.
-#' #' @references
+#' @references
 #' Legramanti, S., Rigon, T., Durante, D., Dunson, D.B., 2022. Extended stochastic block models with application to criminal networks. The Annals of Applied Statistics 16. https://doi.org/10.1214/21-aoas1595
 
 #' @keywords internal
+#' @examples
+#' urn_PY(c(2, 3), alpha_PY = 1, sigma_PY = 0.2)
+#' @noRd
 urn_PY <- function(v_minus, alpha_PY, sigma_PY) {
   K <- length(v_minus)
   c(v_minus - sigma_PY, alpha_PY + K * sigma_PY)
@@ -165,10 +186,13 @@ urn_PY <- function(v_minus, alpha_PY, sigma_PY) {
 #' @param theta numeric(1) concentration parameter.
 #' @param K_DM integer(1) maximum number of clusters, or \code{Inf}.
 #' @return Numeric(1) expected number of clusters.
-#' #' @references
+#' @references
 #' Legramanti, S., Rigon, T., Durante, D., Dunson, D.B., 2022. Extended stochastic block models with application to criminal networks. The Annals of Applied Statistics 16. https://doi.org/10.1214/21-aoas1595
 
 #' @keywords internal
+#' @examples
+#' expected_cl_py(n = 10, sigma = 0.2, theta = 1, K_DM = 5)
+#' @noRd
 expected_cl_py <- function(n, sigma, theta, K_DM) {
   n <- as.integer(n)
   stopifnot(sigma >= 0, sigma < 1, theta > - sigma, n > 0, K_DM > 1)
@@ -201,14 +225,12 @@ expected_cl_py <- function(n, sigma, theta, K_DM) {
 #'
 #' @return A list with \code{lambda_samples} (matrix of size \eqn{S \times n}, \eqn{S=T_{\text{iter}}-T_{\text{burn}}}).
 #' @examples
-#' \dontrun{
 #' set.seed(1)
 #' n <- 6L
 #' w <- matrix(0L, n, n)
 #' w[upper.tri(w)] <- rpois(sum(upper.tri(w)), 2)
 #' w <- w + t(w) - diag(diag(w))
 #' fit <- gibbs_bt_simple(w, a = 1, b = 1, T_iter = 500, T_burn = 100, verbose = FALSE)
-#' }
 #' @importFrom stats rgamma
 #' @export
 gibbs_bt_simple <- function(
@@ -423,6 +445,12 @@ compare_bt_models_loo <- function(simple_llo, cluster_llo) {
 #' @return Numeric matrix \eqn{S \times D} of log-likelihoods.
 #' @importFrom stats dbinom
 #' @keywords internal
+#' @examples
+#' lambda <- rbind(c(1, 2), c(1.2, 1.8), c(0.9, 2.1))
+#' z <- matrix(rep(c(1L, 2L), each = 3), 3, 2)
+#' w <- matrix(c(0, 3, 2, 0), 2, 2)
+#' make_bt_loo_cluster(z, lambda, w)
+#' @noRd
 make_bt_loo_cluster <- function(x_draws, lambda_draws, w_ij) {
   stopifnot(is.matrix(x_draws), is.matrix(lambda_draws), is.matrix(w_ij))
   n <- nrow(w_ij); stopifnot(n == ncol(w_ij))
@@ -468,6 +496,9 @@ make_bt_loo_cluster <- function(x_draws, lambda_draws, w_ij) {
 #' @param p numeric vector of nonnegative masses.
 #' @return numeric(1) entropy in nats.
 #' @keywords internal
+#' @examples
+#' shannon_entropy(c(0.25, 0.75))
+#' @noRd
 shannon_entropy <- function(p) {
   probs <- p / sum(p)
   probs <- probs[probs > 0]  # remove zeros to avoid log(0)
@@ -595,7 +626,6 @@ shannon_entropy <- function(p) {
 #' }
 #'
 #' @examples
-#' \dontrun{
 #' set.seed(42)
 #' S <- 50; N <- 15
 #' x_samps <- matrix(sample(1:4, S*N, TRUE), S, N)
@@ -604,7 +634,6 @@ shannon_entropy <- function(p) {
 #' out <- relabel_by_lambda(x_samps, lam_list)
 #' out$minVI_partition[1:10]
 #' out$K_VI_lower; out$K_VI_upper
-#' }
 #'
 #' @references
 #' Wade, S., 2023. Bayesian cluster analysis. Philosophical Transactions of the Royal Society A: Mathematical, Physical and Engineering Sciences 381, 20220149. https://doi.org/10.1098/rsta.2022.0149
@@ -738,6 +767,10 @@ lambda_to_theta <- function(lambda) {
 #' @importFrom tidyselect all_of
 #' @importFrom knitr kable
 #' @export
+#' @examples
+#' post <- list(block_count_distribution = data.frame(
+#'   num_blocks = c(1, 2), count = c(2, 3), prob = c(0.4, 0.6)))
+#' pretty_table_K_distribution(post)
 pretty_table_K_distribution <- function(
     post,
     format = 'html',

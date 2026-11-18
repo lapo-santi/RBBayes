@@ -33,3 +33,6 @@ An object of class \code{btsbm_pairwise_data}.
 Converts a square win-count matrix or a directed edge-list data frame into
 the same validated pairwise-data representation used by fit_model().
 }
+\examples{
+as_bt_data(matrix(c(0, 2, 3, 0), 2, 2))
+}

@@ -19,3 +19,6 @@ For n items and concentration alpha, new-group indicators are independent
 Bernoulli variables with probabilities alpha/(alpha+i-1), i=1,...,n.
 Their summed variances give the prior variance of K_n.
 }
+\examples{
+dirichlet_process_K_var(n = 10, concentration = 1)
+}

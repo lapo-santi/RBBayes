@@ -17,3 +17,6 @@ This descriptive heatmap is useful before fitting a Bradley--Terry model.
 Rows are winners and columns are losers; it displays the number of observed
 wins, not a fitted probability.
 }
+\examples{
+plot_pairwise_outcomes(tennis_toy())
+}

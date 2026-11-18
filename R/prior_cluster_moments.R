@@ -13,6 +13,8 @@
 #'   the accompanying ESBM expected_cl_py helper.
 #'   <https://github.com/danieledurante/ESBM/blob/master/Source/esbm.R>
 #' @export
+#' @examples
+#' prior_mean_K(n = 10, prior = gnedin_prior(0.5))
 prior_mean_K <- function(n, prior) {
   .check_prior_moment_inputs(n, prior)
   switch(prior$type,
@@ -32,6 +34,8 @@ prior_mean_K <- function(n, prior) {
 #' @return A numeric scalar, or `NA_real_` for Pitman--Yor and
 #'   Dirichlet--multinomial priors.
 #' @export
+#' @examples
+#' prior_variance_K(n = 10, prior = gnedin_prior(0.5))
 prior_variance_K <- function(n, prior) {
   .check_prior_moment_inputs(n, prior)
   if (prior$type == "gnedin") return(gnedin_K_var(n, prior$gamma))

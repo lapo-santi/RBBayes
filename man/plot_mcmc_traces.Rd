@@ -18,3 +18,10 @@ A ggplot object.
 Trace plots make it possible to see whether saved MCMC draws move around a
 stable region. They are a first diagnostic, not a proof of convergence.
 }
+\examples{
+data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+# A short run illustrates the interface; use longer runs for inference.
+fit <- fit_model(data, bt_sbm_model(),
+                 mcmc_control(iter = 60, warmup = 30, seed = 1))
+plot_mcmc_traces(fit)
+}

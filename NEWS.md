@@ -1,4 +1,11 @@
-# Tutorial-driven interface revision
+# RBBayes 1.0.0
+
+## Release preparation
+
+* Corrected package website links and made previously disabled examples runnable.
+* Expanded the package description and identified the copyright holder.
+
+## Tutorial-driven interface revision
 
 * Model constructors take the Gamma prior directly: `bt_model(shape_lambda = 2, rate_lambda = 1)`,
   `bt_sbm_model(shape_lambda, rate_lambda, item_clustering)`, and likewise for PL models. The
@@ -35,13 +42,13 @@
 * A hands-on tutorial is installed at
   `system.file("tutorial", "RBBayes-tutorial.Rmd", package = "RBBayes")`.
 
-# Package rename
+## Package rename
 
 * The installable package is now `RBBayes`. Use `library(RBBayes)` after
   installing from `lapo-santi/RBBayes`; the repository address is unchanged.
 * Existing function names and fitted-object classes remain compatible.
 
-# Pairwise-data workflow updates
+## Pairwise-data workflow updates
 
 * `as_bt_data()` also accepts directed edge-list data frames, with explicit
   winner, loser and optional count columns. Repeated edges are aggregated.
@@ -50,7 +57,7 @@
 * `dirichlet_process_K_var()` provides a dedicated prior-variance function;
   `prior_variance_K()` delegates to it for Dirichlet-process priors.
 
-# Development interface updates
+## Development interface updates
 
 * Use `fit_model()` as the common BT/PL fitting entry point. Earlier fitter names
   remain available for compatibility.
@@ -60,7 +67,7 @@
 * Combine independent runs using `as_draws_array()` and `as_mcmc_chains()`,
   preserving chain identity and checking compatible data and model definitions.
 
-# BTSBM 0.1.0
+## BTSBM 0.1.0
 
 ## Initial CRAN submission
 

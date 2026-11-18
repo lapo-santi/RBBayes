@@ -7,6 +7,8 @@
 #'   concentration is `max_clusters * concentration`.
 #' @return An object of class `btsbm_partition_prior`.
 #' @export
+#' @examples
+#' dirichlet_multinomial_prior(max_clusters = 4)
 dirichlet_multinomial_prior <- function(max_clusters, concentration = 1) {
   clustering_prior("finite_dirichlet", concentration = concentration,
                    max_clusters = max_clusters)

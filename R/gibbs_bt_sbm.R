@@ -37,7 +37,6 @@
 #' }
 #'
 #' @examples
-#' \dontrun{
 #' set.seed(1)
 #' n <- 6L
 #' w <- matrix(0L, n, n)
@@ -48,7 +47,6 @@
 #'   w_ij = w, prior = "GN", gamma_GN = 0.5,
 #'   T_iter = 200, T_burn = 100, verbose = FALSE
 #' )
-#' }
 #' @export
 gibbs_bt_sbm <- function(
     w_ij,

@@ -17,3 +17,10 @@ A posterior similarity matrix.
 \description{
 Compute posterior similarity for an inferred partition
 }
+\examples{
+data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+# A short run illustrates the interface; use longer runs for inference.
+fit <- fit_model(data, bt_sbm_model(),
+                 mcmc_control(iter = 60, warmup = 30, seed = 1))
+posterior_similarity(fit)
+}

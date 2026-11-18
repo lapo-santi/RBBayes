@@ -19,3 +19,6 @@ generating player strengths and latent tiers.
 A synthetic, tiered round-robin tournament for demonstrating the
 Bradley--Terry and BT--SBM interfaces. It contains no real player results.
 }
+\examples{
+head(tennis_toy())
+}

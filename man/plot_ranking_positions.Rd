@@ -17,3 +17,6 @@ This descriptive heatmap is useful before fitting a PL model. It shows which
 items commonly appear near the top of observed rankings. It is not adjusted
 for uncertainty or latent grouping.
 }
+\examples{
+plot_ranking_positions(sushi_toy(n_rankings = 10))
+}

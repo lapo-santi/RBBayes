@@ -32,3 +32,6 @@ An object of class \code{btsbm_partition_prior}.
 \description{
 Legacy partition-prior interface
 }
+\examples{
+partition_prior()
+}

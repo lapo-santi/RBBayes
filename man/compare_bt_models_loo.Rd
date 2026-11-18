@@ -32,3 +32,15 @@ A list with:
 Convenience wrapper around \pkg{loo} for comparing two log-likelihood
 matrices (simple vs clustered BT).
 }
+\examples{
+\dontshow{if (requireNamespace("loo", quietly = TRUE)) withAutoprint(\{ # examplesIf}
+set.seed(1)
+w <- matrix(c(0, 3, 2, 2, 0, 4, 3, 1, 0), 3, 3)
+lambda <- cbind(rgamma(200, 20, 20), rgamma(200, 30, 20),
+                rgamma(200, 25, 20))
+simple <- make_bt_simple_loo(w, lambda)
+clustered <- make_bt_cluster_loo(w, lambda,
+  matrix(rep(1:3, each = 200), 200, 3))
+compare_bt_models_loo(simple, clustered)
+\dontshow{\}) # examplesIf}
+}

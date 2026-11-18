@@ -18,6 +18,8 @@
 #'   data with covariates and heterogeneous rankers. *Statistical Science*,
 #'   37(1), 1--23. \doi{10.1214/20-STS818}
 #' @export
+#' @examples
+#' head(nfl_quarterbacks_2014())
 nfl_quarterbacks_2014 <- function() {
   players <- c(
     "Andrew Luck", "Aaron Rodgers", "Peyton Manning", "Tom Brady",
@@ -119,6 +121,8 @@ nfl_quarterbacks_2014 <- function() {
 #'   data with covariates and heterogeneous rankers. *Statistical Science*,
 #'   37(1), 1--23. \doi{10.1214/20-STS818}
 #' @export
+#' @examples
+#' head(orthodontics_excerpt_2009())
 orthodontics_excerpt_2009 <- function() {
   case_labels <- list(A = paste0("A", 1:12), H = paste0("H", 1:12))
   ranking_positions <- list(

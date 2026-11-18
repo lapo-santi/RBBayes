@@ -14,6 +14,7 @@ pl_grouped_augmentation_cpp <- function(rankings, ranking_cluster, latent_streng
 #' @param x Integer vector of current cluster assignments.
 #' @param lambda Numeric vector of current item strengths.
 #' @keywords internal
+#' @noRd
 updateZ_and_rowsums <- function(n_ij, x, lambda) {
     .Call(`_RBBayes_updateZ_and_rowsums`, n_ij, x, lambda)
 }

@@ -29,3 +29,6 @@ Item strengths are i.i.d. \eqn{\mathrm{Gamma}(\mathrm{shape\_lambda},
 \mathrm{rate\_lambda})}. By default reported strengths are divided by their sum in
 every draw, so they are shares that add to one.
 }
+\examples{
+pl_model()
+}

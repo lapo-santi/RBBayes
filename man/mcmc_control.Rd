@@ -42,3 +42,6 @@ An object of class \code{btsbm_mcmc_control}.
 \description{
 Set MCMC controls for an RBBayes fit
 }
+\examples{
+mcmc_control(iter = 100, warmup = 50, seed = 1)
+}

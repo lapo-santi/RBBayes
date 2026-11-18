@@ -75,7 +75,6 @@ the generalized variation of information and Binder losses.
 }
 
 \examples{
-\dontrun{
 set.seed(42)
 S <- 50; N <- 15
 x_samps <- matrix(sample(1:4, S*N, TRUE), S, N)
@@ -84,7 +83,6 @@ lam_list <- replicate(S, { v <- rep(NA_real_, 6); v[1:4] <- rexp(4, 1); v }, sim
 out <- relabel_by_lambda(x_samps, lam_list)
 out$minVI_partition[1:10]
 out$K_VI_lower; out$K_VI_upper
-}
 
 }
 \references{

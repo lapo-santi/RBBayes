@@ -16,6 +16,9 @@
 #' @return A list with block win probabilities, contributing pair counts,
 #'   point-estimated player strengths, and block labels/sizes.
 #' @export
+#' @examples
+#' lambda <- rbind(c(1, 2), c(1.2, 1.8), c(0.9, 2.1))
+#' block_winprob_table_from_lambdas(lambda, z = c(1, 2))
 block_winprob_table_from_lambdas = function(
     lambda_item,
     z,
@@ -145,6 +148,9 @@ block_winprob_table_from_lambdas = function(
 #' @export
 #'
 # Figure 1 plotting function ---------
+#' @examples
+#' w <- matrix(c(0, 3, 2, 0), 2, 2)
+#' exploratory_adjacency(w)
 exploratory_adjacency <- function(
     Y_ij,
     N_ij = NULL,
@@ -505,9 +511,13 @@ exploratory_adjacency <- function(
 #' @param unplayed_mark_size Numeric marker size for unplayed pairs.
 #' @return A \code{ggplot} object.
 #' @examples
-#' \dontrun{
+#' set.seed(1)
+#' w_ij <- matrix(c(0, 3, 2, 0), 2, 2,
+#'                dimnames = list(c("A", "B"), c("A", "B")))
+#' draws <- gibbs_bt_sbm(w_ij, prior = "GN", gamma_GN = 0.5,
+#'                       T_iter = 50, T_burn = 25, verbose = FALSE)
+#' fit <- relabel_by_lambda(draws$x_samples, draws$lambda_samples)
 #' p <- plot_block_adjacency(fit, w_ij)
-#' }
 #' @export
 #'
 plot_block_adjacency <- function(
@@ -877,9 +887,13 @@ plot_block_adjacency <- function(
 #' @param z_hat Preferred name for `x_hat`: a hard partition used for ordering.
 #' @return A \code{ggplot} object.
 #' @examples
-#' \dontrun{
+#' set.seed(1)
+#' w_ij <- matrix(c(0, 3, 2, 0), 2, 2,
+#'                dimnames = list(c("A", "B"), c("A", "B")))
+#' draws <- gibbs_bt_sbm(w_ij, prior = "GN", gamma_GN = 0.5,
+#'                       T_iter = 50, T_burn = 25, verbose = FALSE)
+#' fit <- relabel_by_lambda(draws$x_samples, draws$lambda_samples)
 #' p <- plot_assignment_probabilities(fit, w_ij)
-#' }
 #' @export
 #'
 plot_assignment_probabilities <- function(
@@ -1236,10 +1250,13 @@ plot_assignment_probabilities <- function(
 #' @param ... Reserved for future extensions.
 #' @return A \code{ggplot} object.
 #' @examples
-#' \dontrun{
-#' # fit with keep_lambda=TRUE
+#' set.seed(1)
+#' w_ij <- matrix(c(0, 3, 2, 0), 2, 2,
+#'                dimnames = list(c("A", "B"), c("A", "B")))
+#' draws <- gibbs_bt_sbm(w_ij, prior = "GN", gamma_GN = 0.5,
+#'                       T_iter = 50, T_burn = 25, verbose = FALSE)
+#' fit <- relabel_by_lambda(draws$x_samples, draws$lambda_samples)
 #' p <- plot_lambda_uncertainty(fit, prob = 0.90)
-#' }
 #' @export
 #'
 plot_lambda_uncertainty <- function(fit,
@@ -1578,6 +1595,9 @@ plot_lambda_uncertainty <- function(fit,
 #' @return A list containing rank draws, a posterior rank-probability matrix, and
 #'   summary statistics for each player.
 #' @export
+#' @examples
+#' lambda <- rbind(c(1, 2), c(1.2, 1.8), c(0.9, 2.1))
+#' compute_expected_wins_rank_posterior(lambda)
 compute_expected_wins_rank_posterior <- function(lambda_item,
                                                  w_ij = NULL,
                                                  player_names = NULL,
@@ -1676,6 +1696,9 @@ compute_expected_wins_rank_posterior <- function(lambda_item,
 #' @param rank_grid_by Spacing for the posterior rank probability grid.
 #' @return A `ggplot` object.
 #' @export
+#' @examples
+#' lambda <- rbind(c(1, 2), c(1.2, 1.8), c(0.9, 2.1))
+#' plot_rank_intervals(lambda)
 plot_rank_intervals <- function(x,
                                 max_players = NULL,
                                 w_ij = NULL,

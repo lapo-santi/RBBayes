@@ -30,3 +30,10 @@ A data frame (columns \code{K}, \code{draws}, \code{probability}) or a kable.
 Tabulates \eqn{\Pr(K = k \mid y)}, where \eqn{K} is the number of occupied
 item blocks, from the saved draws of a block model.
 }
+\examples{
+data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+# A short run illustrates the interface; use longer runs for inference.
+fit <- fit_model(data, bt_sbm_model(),
+                 mcmc_control(iter = 60, warmup = 30, seed = 1))
+posterior_K_table(fit)
+}

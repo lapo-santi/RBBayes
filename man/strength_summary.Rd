@@ -25,3 +25,10 @@ default strengths are reported as relative strengths: in every draw each
 add to one and do not depend on the arbitrary overall scale. A larger value
 means a higher chance of beating (BT) or being preferred to (PL) others.
 }
+\examples{
+data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
+# A short run illustrates the interface; use longer runs for inference.
+fit <- fit_model(data, bt_sbm_model(),
+                 mcmc_control(iter = 60, warmup = 30, seed = 1))
+strength_summary(fit)
+}

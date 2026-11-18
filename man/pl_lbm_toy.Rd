@@ -22,3 +22,6 @@ Generates rankings from a two-way latent block model with known ranking-row
 clusters, item blocks, and a \verb{C × K} latent-strength matrix. It is a compact test
 and vignette fixture for the future PL--LBM sampler.
 }
+\examples{
+head(pl_lbm_toy())
+}

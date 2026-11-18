@@ -19,6 +19,17 @@
 #' @param normalise Logical; report sum-to-one item strengths by default.
 #' @param pars Optional character vector selecting and ordering columns.
 #' @return A numeric matrix with saved draws in rows and quantities in columns.
+#' @examples
+#' data <- tennis_toy()
+#' fit1 <- fit_model(data, bt_model(), mcmc_control(iter = 60, warmup = 30, seed = 1))
+#' fit2 <- fit_model(data, bt_model(), mcmc_control(iter = 60, warmup = 30, seed = 2))
+#' as.matrix(fit1)
+#' as.array(fit1)
+#' as_draws_array(list(fit1, fit2))
+#' if (requireNamespace("coda", quietly = TRUE)) {
+#'   coda::as.mcmc(fit1)
+#'   as_mcmc_chains(list(fit1, fit2))
+#' }
 #' @rdname mcmc_interoperability
 #' @export
 as.matrix.btsbm_fit <- function(x, ..., normalise = TRUE, pars = NULL) {

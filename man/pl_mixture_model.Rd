@@ -34,3 +34,6 @@ A \code{btsbm_model}.
 Ranking rows are assigned to latent preference groups. Each group has a
 separate vector of item strengths.
 }
+\examples{
+pl_mixture_model()
+}

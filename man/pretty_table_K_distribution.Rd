@@ -44,3 +44,8 @@ It formats the result with \code{knitr::kable} and \code{kableExtra::kable_styli
 
 Values whose posterior probability is no larger than \code{p_min} are omitted.
 }
+\examples{
+post <- list(block_count_distribution = data.frame(
+  num_blocks = c(1, 2), count = c(2, 3), prob = c(0.4, 0.6)))
+pretty_table_K_distribution(post)
+}
