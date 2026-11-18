@@ -81,11 +81,12 @@
 </ul></div>
 <div class="section level2">
 <h2 id="remote-results-and-no-suggests-correction">Remote results and no-Suggests correction<a class="anchor" aria-label="anchor" href="#remote-results-and-no-suggests-correction"></a></h2>
-<ul><li>Standard R-hub Linux, Windows and macOS jobs all passed.</li>
-<li>Win-builder completed with 0 errors, 0 warnings and 2 notes: new submission (including spelling flags for author names and psychometrics), and deprecated <code>.Dim</code> usage.</li>
-<li>The original no-Suggests run failed because the plotting example used optional coda and vignette rebuilding could not load rmarkdown.</li>
-<li>Corrected the example with an explicit coda prerequisite, added a clear runtime dependency error, declared rmarkdown as a vignette builder, and removed the redundant deprecated <code>.Dim</code> assignment.</li>
-<li>After correction: 305 local tests passed and all examples ran; two existing salso test warnings remain.</li>
+<ul><li><p>Standard R-hub Linux, Windows and macOS jobs all passed.</p></li>
+<li><p>Win-builder completed with 0 errors, 0 warnings and 2 notes: new submission (including spelling flags for author names and psychometrics), and deprecated <code>.Dim</code> usage.</p></li>
+<li><p>The original no-Suggests run failed because the plotting example used optional coda and vignette rebuilding could not load rmarkdown.</p></li>
+<li><p>Corrected the example with an explicit coda prerequisite, added a clear runtime dependency error, declared rmarkdown as a vignette builder, and removed the redundant deprecated <code>.Dim</code> assignment.</p></li>
+<li><p>After correction: 305 local tests passed and all examples ran; two existing salso test warnings remain.</p></li>
+<li><p>Corrected no-Suggests rerun <strong>passed</strong>: <a href="https://github.com/lapo-santi/RBBayes/actions/runs/44265903706" class="external-link uri">https://github.com/lapo-santi/RBBayes/actions/runs/44265903706</a> (source commit 8e206f9). This supersedes the earlier failed run and pending status.</p></li>
 </ul></div>
 </div>
 
