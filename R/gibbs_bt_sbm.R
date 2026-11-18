@@ -135,7 +135,7 @@ gibbs_bt_sbm <- function(
   for (iter in seq_len(T_iter)) {
     ## 1) Update Z and row sums (C++ helper expects length(lambda) >= max(x))
     outZ <- updateZ_and_rowsums(
-      n_ij  = structure(n_ij, .Dim = dim(n_ij)),
+      n_ij  = n_ij,
       x     = as.integer(x_curr),
       lambda= lambda_curr
     )

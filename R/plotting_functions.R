@@ -1249,7 +1249,7 @@ plot_assignment_probabilities <- function(
 #' @param conditional Logical; if `TRUE`, intervals are computed conditional on each item's hard cluster.
 #' @param ... Reserved for future extensions.
 #' @return A \code{ggplot} object.
-#' @examples
+#' @examplesIf requireNamespace("coda", quietly = TRUE)
 #' set.seed(1)
 #' w_ij <- matrix(c(0, 3, 2, 0), 2, 2,
 #'                dimnames = list(c("A", "B"), c("A", "B")))
@@ -1277,6 +1277,9 @@ plot_lambda_uncertainty <- function(fit,
                                     filter_lambdas = TRUE,
                                     conditional = TRUE,
                                     ...) {
+  if (!requireNamespace("coda", quietly = TRUE)) {
+    stop("Package 'coda' is required for plot_lambda_uncertainty().", call. = FALSE)
+  }
   if (is.null(fit$lambda_samples_relabel)) {
     stop("Expected fit$lambda_samples_relabel (player-level lambda draws). Did you run relabel_by_lambda()?")
   }

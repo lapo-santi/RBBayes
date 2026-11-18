@@ -17,8 +17,11 @@ R 4.5.2, macOS arm64; remote checks, manual and donttest examples enabled.
 
 ## Remote checks
 
-Windows development source uploaded successfully; email result pending.
-R-hub Linux, Windows, macOS and no-Suggests checks launched; results pending.
+Windows development check: 0 errors, 0 warnings, 2 notes (new submission
+and deprecated .Dim usage, now corrected).
+R-hub Linux, Windows and macOS checks passed. The initial no-Suggests check
+failed on optional coda and vignette-builder rmarkdown prerequisites; these
+have been corrected and a fresh run is being launched.
 See RELEASE-CHECKS.md for run links.
 
 ## URL check
