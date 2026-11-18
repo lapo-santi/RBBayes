@@ -54,3 +54,17 @@ checks and resolution of licensing questions.
   <https://github.com/lapo-santi/RBBayes/actions/runs/44263312073>
 - R-hub runs were still in progress when these records were written;
   they are not recorded as passing.
+
+## Remote results and no-Suggests correction
+
+- Standard R-hub Linux, Windows and macOS jobs all passed.
+- Win-builder completed with 0 errors, 0 warnings and 2 notes: new
+  submission (including spelling flags for author names and
+  psychometrics), and deprecated `.Dim` usage.
+- The original no-Suggests run failed because the plotting example used
+  optional coda and vignette rebuilding could not load rmarkdown.
+- Corrected the example with an explicit coda prerequisite, added a
+  clear runtime dependency error, declared rmarkdown as a vignette
+  builder, and removed the redundant deprecated `.Dim` assignment.
+- After correction: 305 local tests passed and all examples ran; two
+  existing salso test warnings remain.

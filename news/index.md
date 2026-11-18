@@ -4,8 +4,15 @@
 
 ### Release preparation
 
+- Declared optional plotting and vignette prerequisites for no-Suggests
+  checks.
+
+- Removed a deprecated matrix-attribute assignment from the Gibbs
+  sampler.
+
 - Corrected package website links and made previously disabled examples
   runnable.
+
 - Expanded the package description and identified the copyright holder.
 
 ### Tutorial-driven interface revision
