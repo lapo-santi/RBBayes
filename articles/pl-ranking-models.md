@@ -220,7 +220,8 @@ perform ranking-level PSIS-LOO.
 - Caron, F. and Doucet, A. (2012). Efficient Bayesian inference for
   generalized Bradley–Terry models. *Journal of Computational and
   Graphical Statistics*, 21(1), 174–196.
-  <https://doi.org/10.1080/10618600.2012.638220>
+  <doi:10.1080/10618600.2012.638220>. [Author
+  preprint](https://arxiv.org/abs/1011.1761).
 - Kamishima, T. (2003). Nantonac collaborative filtering: Recommendation
   based on order responses. *Proceedings of the Ninth ACM SIGKDD
   International Conference on Knowledge Discovery and Data Mining*.
