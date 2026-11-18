@@ -3,7 +3,8 @@
 ## Authors
 
 - **[Lapo Santi](https://github.com/laposanti)**. Author, maintainer,
-  copyright holder. [](https://orcid.org/0009-0005-9363-3353)
+  copyright holder. [](https://orcid.org/0009-0005-9363-3353)  
+  University of Oslo
 
 - **[Nial Friel](https://maths.ucd.ie/~nial/)**. Author.
   [](https://orcid.org/0000-0003-4778-0254)  
