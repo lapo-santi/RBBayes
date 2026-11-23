@@ -545,10 +545,10 @@ bt_model <- function(shape_lambda = 4, rate_lambda = exp(digamma(shape_lambda)),
 
 #' Define a Bradley--Terry stochastic block model
 #'
-#' Item \eqn{i} belongs to block \eqn{z_i \in \{1, \ldots, K\}} and all items
+#' Item \eqn{i} belongs to block \eqn{x_i \in \{1, \ldots, K\}} and all items
 #' in block \eqn{k} share the strength \eqn{\lambda_k}:
 #' \deqn{\Pr(i \text{ beats } j \mid z, \lambda) =
-#'   \frac{\lambda_{z_i}}{\lambda_{z_i} + \lambda_{z_j}}.}
+#'   \frac{\lambda_{x_i}}{\lambda_{x_i} + \lambda_{x_j}}.}
 #' Block strengths are i.i.d. \eqn{\mathrm{Gamma}(\mathrm{shape\_lambda}, \mathrm{rate\_lambda})}
 #' and the partition \eqn{z} receives the prior `item_clustering`.
 #'
@@ -666,7 +666,7 @@ print.btsbm_model <- function(x, ...) {
       signif(x$latent_strength$shape, 4), ", rate_lambda = ",
       signif(x$latent_strength$rate, 4), ")\n", sep = "")
   if (!is.null(x$item_clustering)) {
-    cat("  item partition:    z ~ ", .prior_description(x$item_clustering), "\n", sep = "")
+    cat("  item partition:    x ~ ", .prior_description(x$item_clustering), "\n", sep = "")
   }
   if (!is.null(x$ranking_clustering)) {
     cat("  ranking partition: ", .prior_description(x$ranking_clustering), "\n", sep = "")

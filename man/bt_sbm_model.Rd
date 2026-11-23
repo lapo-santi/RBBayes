@@ -30,10 +30,10 @@ every strength \eqn{\lambda}.}
 A \code{btsbm_model}.
 }
 \description{
-Item \eqn{i} belongs to block \eqn{z_i \in \{1, \ldots, K\}} and all items
+Item \eqn{i} belongs to block \eqn{x_i \in \{1, \ldots, K\}} and all items
 in block \eqn{k} share the strength \eqn{\lambda_k}:
 \deqn{\Pr(i \text{ beats } j \mid z, \lambda) =
-  \frac{\lambda_{z_i}}{\lambda_{z_i} + \lambda_{z_j}}.}
+  \frac{\lambda_{x_i}}{\lambda_{x_i} + \lambda_{x_j}}.}
 Block strengths are i.i.d. \eqn{\mathrm{Gamma}(\mathrm{shape\_lambda}, \mathrm{rate\_lambda})}
 and the partition \eqn{z} receives the prior \code{item_clustering}.
 }
