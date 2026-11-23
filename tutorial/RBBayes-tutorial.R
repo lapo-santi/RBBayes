@@ -58,17 +58,6 @@ summary(bt_fit)
 bt_strength <- strength_summary(bt_fit)
 plot_strength_summary(bt_fit)
 
-# ---- exercise-bt-information ----
-local({
-  less_data <- simulate_data("bt", latent_strength = lambda,
-    item_labels = paste("Player", seq_along(lambda)), matches_per_pair = 5, seed = 101)
-  less_fit <- fit_model(less_data, bt_fit$model, bt_fit$control) # Same prior and MCMC.
-  list(original = bt_fit, fewer_matches = less_fit) |>
-    lapply(function(f) summarise(strength_summary(f),
-      mean_width = mean(upper - lower))) |> # Average interval width over players.
-    bind_rows(.id = "data") |> knitr::kable(digits = 3)
-})
-
 # ---- bt-ranks ----
 plot_rank_intervals(bt_fit)
 
@@ -118,14 +107,20 @@ tibble(
 ) |> knitr::kable(digits = 2) # NA: variance not implemented for PY/DM.
 
 # ---- exercise-prior ----
-local({
-  tibble(gamma = c(0.2, 0.5, 0.8), alpha = c(0.5, 1, 3)) |>
-    rowwise() |>                            # Evaluate each parameter setting.
-    mutate(
-      Gnedin_mean_K = prior_mean_K(20, gnedin_prior(gnedin_hyper = gamma)),
-      DP_mean_K = prior_mean_K(20, dirichlet_process_prior(concentration = alpha))) |>
-    ungroup() |> knitr::kable(digits = 2)     # Two independent sensitivity checks.
-})
+prior_grid <- tibble(
+  prior = rep(c("Gnedin gamma", "DP concentration"), each = 3),
+  parameter = c(0.2, 0.5, 0.8, 0.5, 1, 3)
+) |>
+  rowwise() |>                              # Compute each prior mean separately.
+  mutate(mean_K = prior_mean_K(20,
+    if (prior == "Gnedin gamma") gnedin_prior(gnedin_hyper = parameter)
+    else dirichlet_process_prior(concentration = parameter))) |>
+  ungroup()
+ggplot(prior_grid, aes(parameter, mean_K)) +
+  geom_line(colour = "#0072B2") + geom_point(size = 3) +
+  facet_wrap(~ prior, scales = "free_x", nrow = 1) + # Side-by-side sensitivity curves.
+  labs(x = "Hyperparameter value", y = "Prior expected occupied blocks") +
+  theme_minimal()
 
 # ---- fit-sbm ----
 sbm_model <- bt_sbm_model(
@@ -143,32 +138,24 @@ posterior_K_table(sbm_fit)
 # ---- K-trace ----
 plot_mcmc_traces(sbm_fit)
 
-# ---- exercise-sbm-information ----
-local({
-  less_data <- simulate_data("bt-sbm", latent_strength = c(12, 6, 2, 1),
-    players_per_block = 5, matches_per_pair = 5, seed = 101) # Fewer comparisons.
-  refit <- fit_model(less_data, sbm_model, sbm_fit$control)   # Same fitting prior.
-  posterior_K_table(refit) |> knitr::kable(digits = 3)
-})
-
-# ---- z-hat ----
+# ---- x-hat ----
 set.seed(100)                               # Reproduce the partition search.
-z_hat <- partition_point_estimate(sbm_fit)
-tibble(item = names(z_hat), estimated_block = unname(z_hat)) |>
+x_hat <- partition_point_estimate(sbm_fit)
+tibble(item = names(x_hat), estimated_block = unname(x_hat)) |>
   left_join(truth, by = "item") |>            # Match players by name.
   count(estimated_block, true_block) |>       # Count the overlap of blocks.
   pivot_wider(names_from = true_block, values_from = n, values_fill = 0) |>
   knitr::kable()                             # Display a cross-tabulation.
 
 # ---- ordered-adjacency ----
-plot_ordered_adjacency(sbm_fit, z_hat = z_hat, clean_fun = NULL)
+plot_ordered_adjacency(sbm_fit, x_hat, clean_fun = NULL)
 
 # ---- assign-K4 ----
 plot_assignment_probabilities(sbm_fit, k_show = 4, clean_fun = NULL)
 true_tier <- truth$true_block[match(tennis_sbm$item_labels, truth$item)] # Align items.
 true_pairs <- outer(true_tier, true_tier, `==`) # Label-invariant truth.
-recovers_truth <- apply(sbm_fit$draws$item_cluster, 1, function(z) {
-  all(outer(z, z, `==`) == true_pairs)          # Compare co-memberships.
+recovers_truth <- apply(sbm_fit$draws$item_cluster, 1, function(x) {
+  all(outer(x, x, `==`) == true_pairs)          # Compare co-memberships.
 })
 recovery_given_K4 <- mean(recovers_truth[sbm_fit$draws$n_item_clusters == 4])
 
@@ -179,33 +166,41 @@ plot_assignment_probabilities(sbm_fit, k_show = 5, clean_fun = NULL)
 set.seed(100)                               # Reproduce the plotted outlines.
 plot_posterior_similarity(sbm_fit)
 similarity <- posterior_similarity(sbm_fit)
-within_estimate <- outer(z_hat, z_hat, `==`) # Pairs in the same estimated block.
+within_estimate <- outer(x_hat, x_hat, `==`) # Pairs in the same estimated block.
 within_similarity <- range(similarity[within_estimate & row(similarity) != col(similarity)])
 outside_similarity <- range(similarity[!within_estimate]) # Between-block pairs.
 
 # ---- block-stability ----
-sbm_stability <- block_stability(sbm_fit, z_hat)
+sbm_stability <- block_stability(sbm_fit, x_hat)
 sbm_stability |>
   select(block, size, together, split, merged) |> # Retain interpretable summaries.
   knitr::kable(digits = 3)
 
 # ---- credible-ball ----
-cb <- credible_ball(sbm_fit, z_hat = z_hat, credible_mass = 0.95)
+cb <- credible_ball(sbm_fit, x_hat, credible_mass = 0.95)
 cb
 plot_credible_ball(cb)
 
 # ---- exercise-sbm-signal ----
-local({
-  closer <- simulate_data("bt-sbm", latent_strength = c(12, 9, 2, 1),
-    players_per_block = 5, matches_per_pair = 20, seed = 101)
-  refit <- fit_model(closer, sbm_model, sbm_fit$control) # Preserve the fitting prior.
-  set.seed(100)                              # Reproduce the partition search.
-  ball <- credible_ball(refit)
-  tibble(data = c("original", "closer"),
-    Pr_K4 = c(mean(sbm_fit$draws$n_item_clusters == 4),
-              mean(refit$draws$n_item_clusters == 4)),
-    VI_radius = c(cb$radius, ball$radius)) |> knitr::kable(digits = 3)
-})
+closer_data <- simulate_data("bt-sbm", latent_strength = c(12, 9, 2, 1),
+  players_per_block = 5, matches_per_pair = 20, seed = 101)
+closer_fit <- fit_model(closer_data, sbm_model, sbm_fit$control) # Same prior and MCMC.
+set.seed(100)                               # Reproduce the partition search.
+closer_x_hat <- partition_point_estimate(closer_fit)
+closer_ball <- credible_ball(closer_fit, closer_x_hat)
+
+# ---- exercise-sbm-signal-plot ----
+signal_comparison <- tibble(
+  data = c("Original", "Closer"),
+  Pr_K4 = c(mean(sbm_fit$draws$n_item_clusters == 4),
+            mean(closer_fit$draws$n_item_clusters == 4)),
+  VI_radius = c(cb$radius, closer_ball$radius)
+) |> pivot_longer(-data, names_to = "summary", values_to = "value") # Plot both summaries.
+ggplot(signal_comparison, aes(data, value, fill = data)) +
+  geom_col() + geom_text(aes(label = round(value, 3)), vjust = -0.3) +
+  facet_wrap(~ summary, scales = "free_y", nrow = 1,
+    labeller = as_labeller(c(Pr_K4 = "Pr(K = 4 | data)", VI_radius = "95% VI radius"))) +
+  labs(x = NULL, y = NULL) + theme_minimal() + theme(legend.position = "none")
 
 # ---- sbm-prob-stronger ----
 plot_prob_stronger(sbm_fit) +
@@ -266,33 +261,41 @@ atp_fit <- fit_model(
 posterior_K_table(atp_fit)
 
 # ---- exercise-atp-prior ----
-local({
-  alternatives <- list(Gnedin_08 = gnedin_prior(gnedin_hyper = 0.8),
-                       DP_1 = dirichlet_process_prior(concentration = 1))
-  refits <- lapply(alternatives, function(prior) {
-    fit_model(atp_data, bt_sbm_model(shape_lambda = 2, item_clustering = prior),
-              atp_fit$control)               # Change only the partition prior.
-  })
-  c(list(Gnedin_05 = atp_fit), refits) |>
-    lapply(function(f) tibble(
-      prior_mean_K = prior_mean_K(atp_data$n_items, f$model$item_clustering),
-      posterior_mean_K = mean(f$draws$n_item_clusters))) |>
-    bind_rows(.id = "prior") |> knitr::kable(digits = 2)
+atp_alternative_priors <- list(
+  Gnedin_08 = gnedin_prior(gnedin_hyper = 0.8),
+  DP_1 = dirichlet_process_prior(concentration = 1))
+atp_alternative_fits <- lapply(atp_alternative_priors, function(prior) {
+  fit_model(atp_data, bt_sbm_model(shape_lambda = 2, item_clustering = prior),
+            atp_fit$control)                 # Change only the partition prior.
 })
+atp_prior_comparison <- c(list(Gnedin_05 = atp_fit), atp_alternative_fits) |>
+  lapply(function(f) tibble(
+    Prior = prior_mean_K(atp_data$n_items, f$model$item_clustering),
+    Posterior = mean(f$draws$n_item_clusters))) |>
+  bind_rows(.id = "prior")                   # Distinct names preserve the main fit.
 
-# ---- atp-zhat ----
+# ---- exercise-atp-prior-plot ----
+atp_prior_comparison |>
+  pivot_longer(c(Prior, Posterior), names_to = "distribution", values_to = "mean_K") |>
+  ggplot(aes(prior, mean_K, fill = prior)) +
+  geom_col() + geom_text(aes(label = round(mean_K, 2)), vjust = -0.3) +
+  facet_wrap(~ distribution, nrow = 1) +      # Same K scale in both panels.
+  labs(x = "Partition prior", y = "Expected occupied blocks") +
+  theme_minimal() + theme(legend.position = "none")
+
+# ---- atp-xhat ----
 set.seed(200)  # Reproduce the partition search.
-atp_z <- partition_point_estimate(atp_fit)
-table(atp_z)
-names(atp_z)[atp_z == 1]          # the top tier
+atp_x <- partition_point_estimate(atp_fit)
+table(atp_x)
+names(atp_x)[atp_x == 1]          # the top tier
 
 # ---- atp-adjacency ----
-plot_ordered_adjacency(atp_fit, z_hat = atp_z, clean_fun = NULL)
+plot_ordered_adjacency(atp_fit, atp_x, clean_fun = NULL)
 
 # ---- atp-vs-ranking ----
 set.seed(201)                               # Reproduce the horizontal jitter.
 atp_players <- atp_players |>
-  mutate(block = factor(atp_z[item]))        # Match block labels by item name.
+  mutate(block = factor(atp_x[item]))        # Match block labels by item name.
 ggplot(atp_players, aes(block, last_rank)) +
   geom_boxplot(outlier.shape = NA, fill = "grey90") +
   geom_jitter(width = 0.15, alpha = 0.6, colour = "#0072B2") +
@@ -301,9 +304,9 @@ ggplot(atp_players, aes(block, last_rank)) +
   theme_minimal()
 
 # ---- atp-cb ----
-atp_cb <- credible_ball(atp_fit, z_hat = atp_z)
+atp_cb <- credible_ball(atp_fit, atp_x)
 atp_cb
-atp_stability <- block_stability(atp_fit, atp_z)
+atp_stability <- block_stability(atp_fit, atp_x)
 atp_stability |>
   select(block, size, together, split, merged) |> # Compare splitting and merging.
   knitr::kable(digits = 3)
@@ -320,18 +323,18 @@ plot_prob_stronger(atp_fit, max_items = 15) +
   labs(title = expression(Pr(theta[i] > theta[j] ~ "|" ~ y)))
 
 # ---- exercise-atp-season ----
-local({
-  season <- ATP_2000_2025[["2023"]]           # Change the year here.
-  data <- as_bt_data(season$Y_ij, format = "matrix",
-    item_labels = make.unique(season$players_df$player_label))
-  refit <- fit_model(data, atp_fit$model, atp_fit$control) # Same prior and MCMC.
-  bind_rows(`2017` = posterior_K_table(atp_fit),
-            `2023` = posterior_K_table(refit), .id = "season") |>
-    ggplot(aes(K, probability, fill = season)) + # Compare complete distributions.
-    geom_col(position = "dodge") +
-    scale_x_continuous(breaks = 3:17) +
-    labs(y = "Posterior probability", fill = "Season") + theme_minimal()
-})
+atp_2023 <- ATP_2000_2025[["2023"]]          # Change the year here.
+atp_2023_data <- as_bt_data(atp_2023$Y_ij, format = "matrix",
+  item_labels = make.unique(atp_2023$players_df$player_label))
+atp_2023_fit <- fit_model(atp_2023_data, atp_fit$model, atp_fit$control)
+atp_season_comparison <- bind_rows(
+  `2017` = posterior_K_table(atp_fit),
+  `2023` = posterior_K_table(atp_2023_fit), .id = "season") # Preserve the 2017 fit.
+ggplot(atp_season_comparison, aes(K, probability)) +
+  geom_col(fill = "#0072B2") +
+  facet_wrap(~ season, nrow = 1) +            # Same axes for the two seasons.
+  scale_x_continuous(breaks = seq(3, 17, by = 2)) +
+  labs(y = "Posterior probability") + theme_minimal()
 
 # ---- pl-data ----
 sushi <- sushi_toy(n_rankings = 40, rank_length = 5, seed = 3)

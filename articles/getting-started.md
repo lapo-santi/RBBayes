@@ -69,7 +69,7 @@ model <- bt_sbm_model(
 model
 #> <btsbm_model> Bradley-Terry stochastic block model (BT-SBM), items share block strengths 
 #>   strength prior:   lambda_k ~ iid Gamma(shape_lambda = 4, rate_lambda = 3.512)
-#>   item partition:    z ~ Gnedin(gnedin_hyper = 0.5)
+#>   item partition:    x ~ Gnedin(gnedin_hyper = 0.5)
 ```
 
 `shape_lambda` and `rate_lambda` define the Gamma prior on each block

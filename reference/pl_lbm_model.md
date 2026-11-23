@@ -67,6 +67,6 @@ A `btsbm_model`.
 pl_lbm_model()
 #> <btsbm_model> Plackett-Luce latent block model (PL-LBM) 
 #>   strength prior:   lambda_k ~ iid Gamma(shape_lambda = 1, rate_lambda = 1)
-#>   item partition:    z ~ Gnedin(gnedin_hyper = 0.5)
+#>   item partition:    x ~ Gnedin(gnedin_hyper = 0.5)
 #>   ranking partition: Gnedin(gnedin_hyper = 0.5)
 ```
