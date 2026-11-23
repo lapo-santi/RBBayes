@@ -1,0 +1,830 @@
+---
+title: "Bayesian models for paired comparisons and rankings with RBBayes"
+subtitle: "A hands-on tutorial"
+author: "Lapo Santi and Nial Friel"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    df_print: kable
+    code_folding: show
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE, message = FALSE, warning = FALSE, error = FALSE,
+  fig.width = 7.5, fig.height = 5.5, fig.align = "center", dpi = 96
+)
+```
+
+# Before you start
+
+This tutorial follows the presentation's BT, BT--SBM and PL practicals. Each
+practical comes after the corresponding model's theory session. The tutorial
+and presentation contain separate copies of the same analysis code, with
+matching chunk labels and seeds. Neither file reads code from the other.
+
+For downloads and a complete setup guide, including the working directory,
+start at the [website Tutorial page](https://lapo-santi.github.io/RBBayes/tutorial.html).
+
+Run the chunks in order in RStudio, or use *Knit* to generate the complete
+HTML document. Matching R/package versions and optional packages are needed
+for matching Monte Carlo results. Plot dimensions differ between the two
+formats. Runtime depends on the computer.
+
+**Installation (run once).** The code below installs the GitHub development
+version while the package is being prepared for CRAN. Building its C++ code
+from source requires standard R build tools. If these are not already installed:
+
+> **Windows:** install the [Rtools version matching your R version](https://cran.r-project.org/bin/windows/Rtools/), then restart RStudio.
+>
+> **macOS:** run `xcode-select --install` in **Terminal**, then complete the installation dialogue. The [Xcode Command Line Tools](https://developer.apple.com/documentation/xcode/installing-the-command-line-tools/) are sufficient; the full Xcode application is not required.
+>
+> These tools are needed for the source installation below. An available CRAN binary normally does not require compiling the package yourself.
+
+```{r install, eval = FALSE}
+install.packages(c("remotes", "ggplot2", "knitr", "rmarkdown"))
+remotes::install_github("lapo-santi/RBBayes")
+
+# Optional: coda and bayesplot enable their sections; salso enables its
+# partition search (a built-in search is used when salso is absent).
+install.packages(c("coda", "bayesplot", "salso"))
+```
+
+## Where to find this tutorial after installation
+
+Package installation stores the tutorial in the `tutorial` folder **inside
+the installed RBBayes package**, alongside its other resources. It does not
+create a Desktop file or automatically open an RStudio tab. The exact package
+library location depends on the computer; use `system.file()` to find it.
+This hands-on tutorial is a bundled file, so it is not listed by `vignette()`.
+
+**Read the finished tutorial in a browser:**
+
+```{r tutorial-read, eval = FALSE}
+browseURL(system.file("tutorial", "RBBayes-tutorial.html",
+                      package = "RBBayes", mustWork = TRUE))
+```
+
+**Copy the editable source into your current project and open it:**
+
+```{r tutorial-path, eval = FALSE}
+tutorial_source <- system.file("tutorial", "RBBayes-tutorial.Rmd",
+                               package = "RBBayes", mustWork = TRUE)
+if (!file.exists("RBBayes-tutorial.Rmd")) {
+  stopifnot(file.copy(tutorial_source, "RBBayes-tutorial.Rmd"))
+}
+file.edit("RBBayes-tutorial.Rmd")
+```
+
+The copy appears in the folder returned by `getwd()` and should open in
+RStudio's Source pane. The code preserves an existing file of that name;
+choose a new project folder if you need a fresh copy without replacing your
+work. Running these commands is a separate step after installing the package.
+
+```{r packages}
+library(RBBayes)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+has_coda <- requireNamespace("coda", quietly = TRUE)
+has_bayesplot <- requireNamespace("bayesplot", quietly = TRUE)
+packageVersion("RBBayes")
+```
+
+**What you will do.**
+
+1. **BT:** simulate comparisons with one distinct generating strength per
+   player; prepare the edge list, fit the model, interpret normalised
+   strengths and assess the MCMC.
+2. **BT--SBM:** generate a new example with shared block strengths only after
+   introducing the block model, then estimate its partition and uncertainty.
+   Apply the same block-model workflow to the real 2017 ATP season.
+3. **PL:** prepare rankings and fit a Plackett--Luce model.
+
+The BT and BT--SBM simulations are different datasets. Their summaries
+illustrate each model's features rather than compare models on identical
+observations.
+
+## Notation
+
+| Symbol | Meaning |
+|---|---|
+| $n$; $i, j \in \{1, \ldots, n\}$ | number of items (players); item indices |
+| $y_{ij}$ | number of wins of $i$ over $j$ |
+| $n_{ij} = y_{ij} + y_{ji}$ | number of comparisons between $i$ and $j$ |
+| $\lambda_i > 0$ | strength of item $i$ in the standard BT model |
+
+The BT model says
+$$
+y_{ij} \mid \lambda \sim \operatorname{Binomial}\!\left(n_{ij}, \frac{\lambda_i}{\lambda_i + \lambda_j}\right),
+\qquad i < j.
+$$
+Counts for distinct unordered pairs are conditionally independent given the
+strengths. We use one direction per pair because $y_{ji}=n_{ij}-y_{ij}$.
+
+# BT practical: individual player strengths
+
+This practical follows the BT theory session. We start with twenty fictional
+players with distinct generating strengths, without introducing blocks.
+The model receives an independent Gamma prior for each strength; specify
+`shape_lambda` and leave the rate at its package default.
+
+## Simulate and prepare the comparisons
+
+```{r simulate}
+lambda <- exp(seq(log(12), 0, length.out = 20)) # One strength per player.
+edges <- simulate_data(
+  model = "bt", latent_strength = lambda,
+  item_labels = paste("Player", seq_along(lambda)),
+  matches_per_pair = 20, seed = 101, format = "edgelist"
+)
+edges |> slice_head(n = 6) |> knitr::kable()
+```
+
+`simulate_data(model = "bt")` takes one positive generating strength
+$\lambda_i$ per player. For each unordered pair $i<j$, it draws
+$y_{ij}\sim\operatorname{Binomial}(n_{ij},\lambda_i/(\lambda_i+\lambda_j))$
+and sets $y_{ji}=n_{ij}-y_{ij}$. Here every pair plays twenty matches.
+The strengths are supplied by us, rather than drawn from the fitting prior.
+The output order is shuffled reproducibly using `seed`.
+
+`format = "edgelist"` returns aggregated `winner`, `loser`, `count` rows,
+including both directions and zero counts. The default `format = "data"`
+returns validated pairwise data directly; `"matrix"` returns a win-count
+matrix. Real observations use the same preparation interface:
+
+```{r as-bt-data}
+tennis <- as_bt_data(edges, format = "edgelist")
+tennis
+```
+
+For `as_bt_data()`, `format = "edgelist"` reads the standard `count` column.
+Use `format = "matches"` when each row is one match outcome, or
+`format = "matrix"` for a square win-count matrix. Repeated directed edges
+are added and self-comparisons are rejected. The earlier explicit
+`count = "count"` interface remains supported, but is not needed here.
+
+## Explore the data first
+
+Before fitting anything, look at the raw outcomes.
+
+```{r eda-table}
+# Each edge contributes wins to its winner and losses to its loser.
+player_table <- bind_rows(
+  edges |> transmute(player = winner, matches = count, wins = count),
+  edges |> transmute(player = loser, matches = count, wins = 0)
+) |>
+  group_by(player) |>
+  summarise(across(c(matches, wins), sum), .groups = "drop") |>
+  mutate(win_rate = wins / matches) |>
+  arrange(desc(win_rate))
+
+player_table |> slice_head(n = 6) |> knitr::kable(digits = 3)
+```
+
+```{r eda-winrate, fig.height = 5}
+ggplot(player_table, aes(x = win_rate, y = reorder(player, win_rate))) +
+  geom_point(colour = "#0072B2", size = 2) +
+  geom_vline(xintercept = 0.5, linetype = "dashed", colour = "grey50") +
+  labs(x = "Overall win rate", y = NULL,
+       title = "Overall win rate of each player") +
+  theme_minimal()
+```
+
+Win rates provide a descriptive ordering before any model is fitted. Here
+the generating strengths are individual values, so we do not interpret gaps
+as evidence of generating blocks.
+
+```{r eda-matrix, fig.height = 6.5}
+plot_pairwise_outcomes(tennis, reorder = FALSE)
+```
+
+With `reorder = FALSE`, both axes retain the input item order.
+
+This illustrates R's S3 object-oriented interface. `tennis` has class
+`btsbm_pairwise_data`. The generic `plot_pairwise_outcomes()` selects its
+method for that class. A class identifies a kind of object; its methods
+implement operations on that kind of object. The corresponding BT-fit method
+extracts the observed data from a fitted model. Both methods plot observed
+counts, not fitted probabilities.
+
+```{r eda-matrix-ordered, fig.height = 6.5}
+plot_pairwise_outcomes(tennis, reorder = TRUE)
+```
+
+With `reorder = TRUE`, both axes are sorted by decreasing observed overall
+win rate. This uses the observations alone; it does not estimate model
+strengths or a partition.
+
+## The standard Bradley--Terry model
+
+Each player gets their own strength $\lambda_i$ with an independent Gamma
+prior. We specify only `shape_lambda`; the constructor supplies the common
+rate automatically; omitting its
+argument does not remove the rate from the Gamma distribution.
+
+```{r fit-bt}
+bt_fit <- fit_model(
+  tennis,
+  bt_model(shape_lambda = 2),
+  mcmc_control(iter = 4000, warmup = 2000, seed = 12)
+)
+bt_fit
+summary(bt_fit)
+```
+
+`iter` counts all iterations; `warmup` specifies the **burn-in** to discard.
+Thus this run retains 2,000 of its 4,000 iterations. The R argument is still
+called `warmup`, and the package's printed summary calls it warm-up.
+
+### Relative strengths
+
+The likelihood identifies strength ratios: multiplying every $\lambda_i$ by
+the same positive constant changes no win probability. A proper Gamma prior
+supplies the posterior raw scale, which the likelihood itself does not identify.
+
+For retained draw $s$, the package reports the normalised share
+$$
+q_i^{(s)}=\frac{\lambda_i^{(s)}}{\sum_{j=1}^{n}\lambda_j^{(s)}}.
+$$
+If $S$ is the number of retained draws, the plotted dot is
+$\bar q_i=S^{-1}\sum_{s=1}^{S}q_i^{(s)}$, an estimate of $E(q_i\mid y)$.
+Normalise **each draw before averaging**; this is generally different from
+normalising the vector of raw posterior means.
+
+Shares sum to one in every draw, so posterior mean shares also sum to one.
+Their average **across players** is always $1/n$ (0.05 for twenty players),
+although individual posterior means differ. The dashed line marks that
+reference, not each player's posterior mean.
+
+```{r bt-strength, fig.height = 6}
+bt_strength <- strength_summary(bt_fit)
+plot_strength_summary(bt_fit)
+```
+
+```{r bt-ranks, fig.height = 6}
+plot_rank_intervals(bt_fit)
+```
+
+Rank 1 is strongest. The rank plot uses 95% central intervals by default;
+`plot_strength_summary()` above uses 90%. In a block model tied strengths
+receive average ranks (midranks).
+
+### Who is stronger than whom? $\Pr(\lambda_i > \lambda_j \mid y)$
+
+Rankings hide how sure we are about each comparison. `prob_stronger()` returns,
+for every pair, the posterior probability that the row player is stronger than
+the column player.
+
+```{r bt-prob-stronger, fig.height = 7, fig.width = 8.5}
+plot_prob_stronger(bt_fit)
+```
+
+The colour scale is centred at 0.5. White indicates little posterior preference
+for either strength ordering. Under the standard BT model, exact strength ties
+have posterior probability zero. Sampling variation still makes the ordering
+uncertain.
+
+This is a probability of **strength ordering**, not a posterior predictive
+win probability. The latter averages $\lambda_i/(\lambda_i+\lambda_j)$ over
+the posterior draws.
+
+### Checking the MCMC
+
+Convergence checks use the normalised strength shares. Exported columns are
+named after the players, such as `rel_strength[Player 1]`.
+
+```{r bt-coda, eval = has_coda}
+top_players <- strength_summary(bt_fit) |>
+  slice_head(n = 4) |>
+  transmute(parameter = paste0("rel_strength[", item, "]")) |>
+  pull(parameter)
+chain <- coda::as.mcmc(bt_fit)
+round(coda::effectiveSize(chain)[top_players])
+```
+
+ESS is interpreted relative to the `r bt_fit$control$iter - bt_fit$control$warmup`
+retained draws. Autocorrelation reduces information; inspect traces too.
+The [bayesplot appendix](#appendix-bayesplot) gives trace and interval examples.
+
+A single chain cannot reveal every problem. Run a second, independent chain
+with a different seed and compare:
+
+```{r bt-two-chains, eval = has_coda}
+bt_fit2 <- fit_model(tennis, bt_fit$model,
+                     mcmc_control(iter = 4000, warmup = 2000, seed = 112))
+chains <- as_mcmc_chains(list(bt_fit, bt_fit2))
+coda::gelman.diag(chains[, top_players], autoburnin = FALSE, multivariate = FALSE)
+```
+
+Values of the potential scale reduction factor close to 1 are reassuring,
+but are not proof of convergence. `autoburnin = FALSE` prevents coda from
+discarding a second burn-in. We use `multivariate = FALSE` because the full
+vector of normalised strengths sums to one and has singular covariance.
+These short teaching runs need longer, independently checked chains for a
+substantive analysis.
+
+# BT--SBM practical: shared block strengths
+
+The BT--SBM introduces the following quantities:
+
+| Symbol | Meaning |
+|---|---|
+| $K$ | number of occupied item blocks |
+| $z_i \in \{1,\ldots,K\}$ | block membership of player $i$ |
+| $\lambda_k > 0$ | strength shared by players in block $k$ |
+| $\theta_i=\lambda_{z_i}$ | implied strength of player $i$ |
+
+Given the partition, occupied-block strengths have independent
+Gamma priors with shape `shape_lambda` and the package-default rate. The partition $z$ receives a
+prior under which $K$ is random. The win probability is
+$\theta_i/(\theta_i+\theta_j)$, so same-block players beat each other with
+probability 1/2. Block membership does not depend on the numerical labels
+used to encode the partition.
+
+## Generate a block-model example
+
+We now create a **new** dataset whose players share strengths within generating
+blocks. This comes after the BT--SBM theory session and its notation above.
+
+```{r simulate-sbm}
+edges_sbm <- simulate_data(
+  model = "bt-sbm",
+  n_blocks = 4, latent_strength = c(12, 6, 2, 1), # One strength per block.
+  players_per_block = 5, # Unequal sizes are also allowed: c(3, 4, 5, 8).
+  matches_per_pair = 20, seed = 101, format = "edgelist"
+)
+tennis_sbm <- as_bt_data(edges_sbm, format = "edgelist")
+truth <- attr(edges_sbm, "truth")
+edges_sbm |> slice_head(n = 6) |> knitr::kable()
+```
+
+`model = "bt-sbm"` interprets `latent_strength` as one positive value per block.
+A scalar `players_per_block = 5` gives five players in every block. Unequal
+sizes are allowed: `players_per_block = c(3, 4, 5, 8)` gives those four sizes,
+with twenty players in total. If omitted, `n_blocks` is inferred from the
+number of generating strengths. The function randomly assigns memberships to
+player names subject to these sizes, then simulates all pair counts using
+the implied player strengths $\theta_i=\lambda_{z_i}$.
+
+The `truth` attribute records the generating blocks and strengths. We use it
+to assess recovery; it is not supplied to `fit_model()`.
+
+### Prior on the number of blocks
+
+Before seeing data, how many blocks does each partition prior expect among
+$n = 20$ players?
+
+```{r prior-K}
+priors <- list(
+  Gnedin = gnedin_prior(gnedin_hyper = 0.5),
+  DP = dirichlet_process_prior(concentration = 1),
+  PitmanYor = pitman_yor_prior(concentration = 1, discount = 0.2),
+  DirMult_max4 = dirichlet_multinomial_prior(max_clusters = 4, concentration = 1)
+)
+tibble(
+  prior = names(priors),
+  mean_K = vapply(priors, function(p) prior_mean_K(20, p), numeric(1)),
+  sd_K = sqrt(vapply(priors, function(p) prior_variance_K(20, p), numeric(1)))
+) |> knitr::kable(digits = 2) # NA: variance not implemented for PY/DM.
+```
+
+For fixed $n$, $K$ is always at most $n$. The Gnedin prior also allows a
+random, almost surely finite limiting number of blocks as the number of
+items grows; it has no fixed upper bound. With the chosen hyperparameter,
+its prior mean and standard deviation for $n=20$ are about 3.99 and 5.10.
+A wide prior is still informative: examine sensitivity to its hyperparameter.
+For the Dirichlet--multinomial, `max_clusters = 4` fixes an upper bound, and
+`concentration = 1` is the symmetric concentration **per** possible block.
+The DP and Pitman--Yor priors have no fixed finite bound as $n$ grows.
+
+### Fit
+
+```{r fit-sbm}
+sbm_model <- bt_sbm_model(
+  shape_lambda = 2,
+  item_clustering = gnedin_prior(gnedin_hyper = 0.5)
+)
+sbm_model
+sbm_fit <- fit_model(tennis_sbm, sbm_model,
+                     mcmc_control(iter = 10000, warmup = 5000, seed = 2))
+summary(sbm_fit)
+```
+
+`summary()` reports the number of blocks and an estimated partition for a
+block model. Player-level implied strengths remain well defined, so
+`strength_summary(sbm_fit)` and `as.matrix(sbm_fit)` are also available;
+they do not require matching arbitrary block labels between draws.
+
+### How many blocks?
+
+```{r K-table}
+posterior_K_table(sbm_fit)
+```
+
+The generating value is $K=4$. It receives
+`r round(100 * mean(sbm_fit$draws$n_item_clusters == 4), 1)`% of the retained
+draws, while `r round(100 * mean(sbm_fit$draws$n_item_clusters > 4), 1)`% have
+more than four blocks. These are Monte Carlo estimates under the specified
+likelihood and priors.
+
+```{r K-trace, fig.height = 3}
+plot_mcmc_traces(sbm_fit)
+```
+
+### The estimated partition and the reordered data
+
+`partition_point_estimate()` searches for a partition with low posterior
+expected variation of information (VI) loss. It uses `salso` when installed,
+otherwise a built-in candidate search; neither guarantees a global minimum.
+The built-in VI search evaluates a shortlist against at most 1,000 evenly
+spaced retained draws. The centre may therefore depend on the search method.
+Blocks are labelled in decreasing order of the average posterior mean
+normalised player strength within the estimated block. Compare with the truth:
+
+```{r z-hat}
+set.seed(100)
+z_hat <- partition_point_estimate(sbm_fit)
+tibble(item = names(z_hat), estimated_block = unname(z_hat)) |>
+  left_join(truth, by = "item") |>
+  count(estimated_block, true_block) |>
+  pivot_wider(names_from = true_block, values_from = n, values_fill = 0) |>
+  knitr::kable()
+```
+
+Now redraw the outcome matrix with players ordered by their estimated block:
+
+```{r ordered-adjacency, fig.height = 6.5}
+plot_ordered_adjacency(sbm_fit, z_hat = z_hat, clean_fun = NULL)
+```
+
+This plot uses the new BT--SBM dataset and orders its observations by the
+estimated partition. That ordering uses a fitted model, unlike the observed
+win-rate ordering used in the BT practical.
+
+### Membership probabilities
+
+`plot_assignment_probabilities()` shows, for each player, the posterior
+probability of belonging to each block, **conditional on a given number of
+blocks** $K$. In each retained draw the function relabels blocks in decreasing
+strength order, so column 1 means the strongest block in that draw, not an
+unchanging group of players. This ordering is needed even when $K$ is fixed.
+The colour scale is centred at 0.5: blue means "more likely than not".
+
+```{r assign-K4, fig.height = 6}
+plot_assignment_probabilities(sbm_fit, k_show = 4, clean_fun = NULL)
+# Check recovery without depending on the arbitrary numerical block labels.
+true_tier <- truth$true_block[match(tennis_sbm$item_labels, truth$item)]
+true_pairs <- outer(true_tier, true_tier, `==`)
+recovers_truth <- apply(sbm_fit$draws$item_cluster, 1, function(z) {
+  all(outer(z, z, `==`) == true_pairs)
+})
+recovery_given_K4 <- mean(recovers_truth[sbm_fit$draws$n_item_clusters == 4])
+```
+
+Among the `r sum(sbm_fit$draws$n_item_clusters == 4)` retained draws with
+$K=4$, `r round(100 * recovery_given_K4, 1)`% reproduce the generating partition.
+This does **not** imply posterior certainty: the
+`r round(100 * mean(sbm_fit$draws$n_item_clusters != 4), 1)`% of draws with a
+different $K$ are excluded. Nor does a sampled frequency of zero establish
+zero posterior probability. Now inspect draws with five blocks:
+
+```{r assign-K5, fig.height = 6}
+plot_assignment_probabilities(sbm_fit, k_show = 5, clean_fun = NULL)
+```
+
+In this run the five-block draws split one generating tier into two
+sub-blocks. Since columns refer to strength order, splitting a strong tier
+can shift the column labels of weaker, otherwise unchanged tiers. Intermediate
+cells can therefore reflect both splitting and changes in block order; the
+label-invariant summaries below separate these effects.
+
+### Which players belong together?
+
+The posterior similarity matrix does not condition on $K$: cell $(i, j)$ is
+$\Pr(z_i = z_j \mid y)$, the proportion of all draws in which the two players
+share a block. Outlines show the estimated partition.
+
+```{r psm, fig.height = 7.5, fig.width = 8.5}
+set.seed(100)  # Use the same partition search as in z-hat for the outlines.
+plot_posterior_similarity(sbm_fit)
+similarity <- posterior_similarity(sbm_fit)
+within_estimate <- outer(z_hat, z_hat, `==`)
+within_similarity <- range(similarity[within_estimate & row(similarity) != col(similarity)])
+outside_similarity <- range(similarity[!within_estimate])
+```
+
+Off-diagonal co-clustering frequencies within estimated blocks range from
+`r round(within_similarity[1], 3)` to `r round(within_similarity[2], 3)`;
+between estimated blocks they range from `r round(outside_similarity[1], 3)`
+to `r round(outside_similarity[2], 3)`. `block_stability()` checks whether
+separation comes from splitting a block, merging with outside players, or both:
+
+```{r block-stability}
+sbm_stability <- block_stability(sbm_fit, z_hat)
+sbm_stability[, c("block", "size", "together", "split", "merged")]
+```
+
+The largest sampled `merged` frequency is `r max(sbm_stability$merged)`.
+In this run no retained draw joins players from different estimated blocks;
+the observed uncertainty concerns splits. This is a property of these draws,
+not a proof that posterior merging probability is zero.
+
+`together` means the whole estimated block is reproduced exactly: all its
+players are together and no outside player joins. `split` and `merged` can
+both occur in one draw, so the three columns need not sum to one.
+
+### Credible ball for the partition
+
+Following [Wade and Ghahramani (2018)](https://doi.org/10.1214/17-BA1073),
+we choose the smallest VI radius around the estimated partition $\hat z$
+that contains **at least** 95% of retained draws. Distances use base-2
+logarithms. The native method selects representative bounds **among sampled
+partitions inside the ball**, rather than searching all possible partitions:
+the upper/lower vertical bounds have the fewest/most blocks, breaking ties
+by greatest VI distance from $\hat z$; the horizontal bound is furthest away.
+These are not a central credible interval for $K$.
+
+```{r credible-ball, fig.height = 6}
+cb <- credible_ball(sbm_fit, z_hat = z_hat, credible_mass = 0.95)
+cb
+plot_credible_ball(cb)
+```
+
+If the GitHub package `mcclust.ext` is installed,
+`credible_ball(sbm_fit, z_hat = z_hat, method = "mcclust.ext")` provides a
+cross-check using the reference implementation. Search and tie handling can
+give different representative bounds; exact equality is not guaranteed.
+
+### $\Pr(\theta_i > \theta_j \mid y)$ in the block model
+
+```{r sbm-prob-stronger, fig.height = 7, fig.width = 8.5}
+plot_prob_stronger(sbm_fit) +
+  labs(title = expression(Pr(theta[i] > theta[j] ~ "|" ~ y)))
+```
+
+Shared block strengths create exact ties. In this tiered dataset, players
+within a generating tier are usually *tied*
+($\theta_i = \theta_j$), so both $\Pr(\theta_i > \theta_j \mid y)$ and
+$\Pr(\theta_j > \theta_i \mid y)$ can be small. A small value alone does not
+show that the row player is weaker: it can mean a tie. For distinct players,
+these two probabilities and $\Pr(\theta_i=\theta_j\mid y)$ sum to one.
+The tie probability is stored in the `prob_equal` attribute and equals the
+posterior similarity (apart from the deliberately blank diagonal):
+
+```{r sbm-ties}
+p_sbm <- prob_stronger(sbm_fit)
+round(attr(p_sbm, "prob_equal")[1:5, 1:5], 2)
+```
+
+### A second chain
+
+```{r sbm-chain2}
+sbm_fit2 <- fit_model(tennis_sbm, sbm_model,
+  mcmc_control(iter = 10000, warmup = 5000, seed = 202))
+full_join(
+  posterior_K_table(sbm_fit) |> select(K, chain1 = probability),
+  posterior_K_table(sbm_fit2) |> select(K, chain2 = probability), by = "K"
+) |> knitr::kable(digits = 3)
+```
+
+Similar block-count distributions in independent chains are one useful (but
+not sufficient) check of convergence.
+
+# Dataset 2: the 2017 ATP season
+
+The package includes head-to-head counts for the 105 top ATP players in each
+season from 2000 to 2025.
+
+## Explore the data
+
+```{r atp-load}
+atp <- ATP_2000_2025[["2017"]]
+players <- atp$players_df
+atp_data <- as_bt_data(atp$Y_ij, format = "matrix",
+                       item_labels = make.unique(players$player_label))
+atp_edges <- as_tibble(atp_data$wins, rownames = "winner") |>
+  pivot_longer(-winner, names_to = "loser", values_to = "count") |>
+  filter(winner != loser)
+atp_data
+```
+
+```{r atp-eda}
+atp_pairs <- atp_edges |>
+  group_by(first = pmin(winner, loser), second = pmax(winner, loser)) |>
+  summarise(matches = sum(count), .groups = "drop")
+atp_overview <- tibble(
+  players = atp_data$n_items, matches = sum(atp_edges$count),
+  pairs_that_met = sum(atp_pairs$matches > 0),
+  possible_pairs = nrow(atp_pairs)
+)
+atp_overview |> knitr::kable()
+```
+
+Unlike the synthetic league, most pairs never met: the data contain
+`r atp_overview$matches` matches among `r atp_overview$players` players, covering
+`r round(100 * atp_overview$pairs_that_met / atp_overview$possible_pairs, 1)`%
+of possible pairs. The model links comparisons through common opponents.
+
+```{r atp-eda-plots, fig.height = 4}
+atp_players <- bind_rows(
+  atp_edges |> transmute(player = winner, matches = count, wins = count),
+  atp_edges |> transmute(player = loser, matches = count, wins = 0)
+) |>
+  group_by(player) |>
+  summarise(across(c(matches, wins), sum), .groups = "drop") |>
+  mutate(win_rate = wins / matches) |>
+  left_join(tibble(player = atp_data$item_labels, last_rank = players$last_rank), by = "player")
+ggplot(atp_players, aes(matches)) +
+  geom_histogram(binwidth = 2, fill = "#0072B2", colour = "white") +
+  labs(x = "Matches against other top-105 players", y = "Players") + theme_minimal()
+ggplot(atp_players, aes(last_rank, win_rate)) +
+  geom_point(aes(size = matches), alpha = 0.6, colour = "#0072B2") +
+  scale_x_log10() +
+  labs(x = "Last observed ATP ranking in 2017 (log scale)", y = "Win rate", size = "Matches") +
+  theme_minimal()
+```
+
+Win rate falls with ranking, but noisily, especially for players with few
+matches.
+
+## Fit the BT--SBM
+
+```{r atp-fit}
+atp_fit <- fit_model(
+  atp_data,
+  bt_sbm_model(shape_lambda = 2,
+               item_clustering = gnedin_prior(gnedin_hyper = 0.5)),
+  mcmc_control(iter = 6000, warmup = 3000, seed = 1)
+)
+posterior_K_table(atp_fit)
+```
+
+The number of tiers is much less certain than in the synthetic league.
+
+```{r atp-zhat}
+set.seed(200)  # Reproduce the partition search.
+atp_z <- partition_point_estimate(atp_fit)
+table(atp_z)
+names(atp_z)[atp_z == 1]          # the top tier
+```
+
+```{r atp-adjacency, fig.height = 8, fig.width = 9}
+plot_ordered_adjacency(atp_fit, z_hat = atp_z, clean_fun = NULL)
+```
+
+Do the estimated tiers agree with the official rankings?
+
+```{r atp-vs-ranking, fig.height = 4}
+set.seed(201) # Reproduce the horizontal jitter.
+atp_players <- atp_players |>
+  left_join(tibble(player = names(atp_z), block = unname(atp_z)), by = "player") |>
+  mutate(block = factor(block))
+ggplot(atp_players, aes(block, last_rank)) +
+  geom_boxplot(outlier.shape = NA, fill = "grey90") +
+  geom_jitter(width = 0.15, alpha = 0.6, colour = "#0072B2") +
+  scale_y_log10() +
+  labs(x = "Estimated block (1 = strongest)", y = "Last observed ATP ranking in 2017 (log)") +
+  theme_minimal()
+```
+
+## Uncertainty about the tiers
+
+```{r atp-cb}
+atp_cb <- credible_ball(atp_fit, z_hat = atp_z)
+atp_cb
+atp_stability <- block_stability(atp_fit, atp_z)
+atp_stability[, c("block", "size", "together", "split", "merged")]
+```
+
+The sampled bounds of this 95% VI ball have
+`r atp_cb$n_blocks[["upper_vertical"]]` to
+`r atp_cb$n_blocks[["lower_vertical"]]` blocks; this is not a 95% interval
+for $K$. The table reports how often each estimated block is reproduced,
+split or merged. The strongest estimated block is reproduced exactly in
+`r round(100 * atp_stability$together[1], 1)`% of retained draws; it is split
+in `r round(100 * atp_stability$split[1], 1)`% and merged with outside players
+in `r round(100 * atp_stability$merged[1], 1)`%. Exact recovery of a block is a
+stricter event than two specified players remaining together.
+
+Membership probabilities for the most probable number of blocks:
+
+```{r atp-assign, fig.height = 14, fig.width = 7}
+plot_assignment_probabilities(atp_fit, clean_fun = NULL)
+```
+
+## Who is stronger than whom among the top players?
+
+```{r atp-prob-stronger, fig.height = 7.5, fig.width = 8.5}
+p_atp <- prob_stronger(atp_fit)
+atp_equal <- attr(p_atp, "prob_equal")
+federer <- grep("Federer", rownames(p_atp), value = TRUE)
+nadal <- grep("Nadal", rownames(p_atp), value = TRUE)
+plot_prob_stronger(atp_fit, max_items = 15) +
+  labs(title = expression(Pr(theta[i] > theta[j] ~ "|" ~ y)))
+```
+
+Federer and Nadal share a block in
+`r round(100 * atp_equal[federer, nadal], 1)`% of retained draws. This pairwise
+tie frequency can be high even if the estimated top block is rarely reproduced
+exactly, because other players can join them. Low strict-ordering probabilities
+can reflect ties, so use `prob_equal` alongside `prob_stronger()`. The displayed
+15 players are selected by posterior mean normalised strength, not by their
+ATP ranking. The metadata field `last_rank` is the last ranking snapshot
+available for each player in 2017, not necessarily a common year-end date.
+
+# PL practical: ranked observations
+
+This practical follows the PL theory session.
+
+Rankings record items in order of preference rather than pairwise outcomes.
+The Plackett--Luce (PL) model chooses the first item with probability
+proportional to its strength, then the second among those remaining, and so on.
+We use strict top-five rankings of ten sushi types. `sushi_toy()` is synthetic
+and generates two preference profiles; it contains no original Sushi Preference
+Dataset responses. For a first analysis we deliberately fit a single common
+PL strength vector. This is a pooled model and does not represent the two
+profiles; mixtures are available for that extension.
+
+```{r pl-data, fig.height = 5}
+sushi <- sushi_toy(n_rankings = 40, rank_length = 5, seed = 3)
+sushi
+head(sushi$rankings, 3)
+plot_ranking_positions(sushi)
+```
+
+```{r pl-fit}
+pl_fit <- fit_model(sushi, pl_model(shape_lambda = 1),
+                    mcmc_control(iter = 2000, warmup = 1000, seed = 4))
+summary(pl_fit)
+```
+
+As for BT, reported strengths are shares of total strength in each draw.
+
+```{r pl-strength, fig.height = 5}
+plot_strength_summary(pl_fit)
+```
+
+```{r pl-prob-stronger, fig.height = 6.5, fig.width = 8}
+plot_prob_stronger(pl_fit)
+```
+
+The same `fit_model()` call also fits PL models with item blocks
+(`pl_sbm_model()`), groups of ranking rows (`pl_mixture_model()`) or both
+(`pl_lbm_model()`); see `vignette("pl-ranking-models", package = "RBBayes")`.
+
+# MCMC run settings
+
+The examples use different run lengths. This table separates total iterations,
+discarded burn-in and retained draws; no thinning is applied. These settings
+illustrate the workflow rather than establish that every posterior summary
+has adequate effective sample size.
+
+```{r run-settings}
+fits <- list(BT = bt_fit, BT_SBM_1 = sbm_fit, BT_SBM_2 = sbm_fit2,
+             ATP_BT_SBM = atp_fit, PL = pl_fit)
+if (has_coda) fits <- append(fits, list(BT_2 = bt_fit2), after = 1)
+run_settings <- bind_rows(lapply(names(fits), function(name) {
+  fit <- fits[[name]]
+  tibble(model = name, iterations = fit$control$iter, burn_in = fit$control$warmup,
+         retained = nrow(as.matrix(fit)), seed = fit$control$seed)
+}))
+knitr::kable(run_settings)
+```
+
+# Exercises
+
+1. Repeat `simulate_data(model = "bt-sbm")` with
+   `latent_strength = c(12, 9, 2, 1)`. How do
+   the posterior of $K$ and the credible ball change? What does
+   `block_stability()` now report?
+2. Repeat that block-model example with `matches_per_pair = 5`. Which summaries change most?
+3. Refit the ATP season with `gnedin_prior(gnedin_hyper = 0.8)` and with
+   `dirichlet_process_prior(concentration = 1)`. Compare `prior_mean_K()` and
+   `posterior_K_table()` for the two priors.
+4. Choose another ATP season (e.g. `"2008"` or `"2023"`). Is the top tier
+   larger or smaller than in 2017?
+
+# Appendix: bayesplot diagnostics {#appendix-bayesplot}
+
+These examples use the same normalised BT-strength draws as the coda section.
+The trace plot shows two player parameters; the interval plot shows posterior
+intervals for the four selected players. The appendix is skipped when
+`bayesplot` is not installed and does not depend on `coda` being available.
+
+```{r bt-bayesplot, eval = has_bayesplot, fig.height = 4}
+top_players <- strength_summary(bt_fit) |>
+  slice_head(n = 4) |>
+  transmute(parameter = paste0("rel_strength[", item, "]")) |>
+  pull(parameter)
+bayesplot::mcmc_trace(bt_fit, pars = top_players[1:2])
+bayesplot::mcmc_intervals(bt_fit, pars = top_players, prob = 0.5, prob_outer = 0.95)
+```
+
+# Session information
+
+```{r session}
+sessionInfo()
+```
