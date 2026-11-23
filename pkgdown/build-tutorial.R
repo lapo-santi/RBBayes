@@ -105,11 +105,13 @@ main <- function() {
   )
   page <- paste(readLines("pkgdown/tutorial-page.md", warn = FALSE), collapse = "\n")
   for (marker in names(replacements)) {
+    # Keep example sections optional so the page can be shortened independently.
+    if (!grepl(marker, page, fixed = TRUE)) next
     parts <- strsplit(page, marker, fixed = TRUE)[[1L]]
     stopifnot(length(parts) == 2L)
     page <- paste0(parts[1L], replacements[[marker]], parts[2L])
   }
-  writeLines(page, "tutorial.md")
+  writeLines(sub("[[:space:]]+$", "", page), "tutorial.md")
   cat("Prepared tutorial.html source, student downloads and RStudio starter ZIP.\n")
 }
 
