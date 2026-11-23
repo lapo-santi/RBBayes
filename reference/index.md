@@ -223,6 +223,9 @@
 - [`sample_from_BTSBM()`](https://lapo-santi.github.io/RBBayes/reference/sample_from_BTSBM.md)
   : Sample a Bradley–Terry Stochastic Block Model (BT-SBM) tournament
 
+- [`simulate_data()`](https://lapo-santi.github.io/RBBayes/reference/simulate_data.md)
+  : Simulate Bradley–Terry paired comparisons
+
 - [`strength_summary()`](https://lapo-santi.github.io/RBBayes/reference/strength_summary.md)
   : Summarise posterior item strengths with credible intervals
 

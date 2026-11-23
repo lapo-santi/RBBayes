@@ -4,6 +4,21 @@
 
 ### Release preparation
 
+- Added `simulate_data(model = "bt")` and
+  `simulate_data(model = "bt-sbm")` for paired comparisons with
+  individual or shared block strengths. The older teaching-data
+  generators remain available.
+
+- [`as_bt_data()`](https://lapo-santi.github.io/RBBayes/reference/as_bt_data.md)
+  accepts explicit `format = "matrix"`, `"edgelist"` and `"matches"`
+  inputs. Aggregated edge lists use the standard `count` column without
+  requiring `count = "count"`; the default preserves the earlier API.
+
+- [`plot_pairwise_outcomes()`](https://lapo-santi.github.io/RBBayes/reference/plot_pairwise_outcomes.md)
+  now dispatches on pairwise-data and BT-fit classes. `reorder = TRUE`
+  sorts both axes by observed win rate; `FALSE` retains input order. The
+  heatmap always shows observed counts.
+
 - Declared optional plotting and vignette prerequisites for no-Suggests
   checks.
 

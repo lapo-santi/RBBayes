@@ -12,7 +12,8 @@ as_bt_data(
   item_labels = NULL,
   winner = "winner",
   loser = "loser",
-  count = NULL
+  count = NULL,
+  format = c("auto", "matrix", "edgelist", "matches")
 )
 ```
 
@@ -36,8 +37,18 @@ as_bt_data(
 
 - count:
 
-  Optional edge-list count-column name. NULL means one win per row.
-  Counts must be non-negative integers. Self-comparisons are rejected.
+  Optional edge-list count-column name. NULL means one win per row in
+  the legacy `format = "auto"` interface. With `format = "edgelist"`,
+  NULL selects the standard `"count"` column. Counts must be
+  non-negative integers. Self-comparisons are rejected.
+
+- format:
+
+  Input representation: `"matrix"` for a square win-count matrix,
+  `"edgelist"` for aggregated winner/loser/count rows, or `"matches"`
+  for one winner/loser outcome per row. The default `"auto"` preserves
+  the earlier interface: the object type determines the representation
+  and `count` must be specified explicitly for aggregated rows.
 
 ## Value
 
@@ -47,5 +58,8 @@ An object of class `btsbm_pairwise_data`.
 
 ``` r
 as_bt_data(matrix(c(0, 2, 3, 0), 2, 2))
+#> <btsbm_pairwise_data> 2 items and 5 wins
+edges <- data.frame(winner = c("A", "B"), loser = c("B", "A"), count = c(3, 2))
+as_bt_data(edges, format = "edgelist")
 #> <btsbm_pairwise_data> 2 items and 5 wins
 ```
