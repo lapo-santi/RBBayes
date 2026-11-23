@@ -2,12 +2,30 @@
 % Please edit documentation in R/plot_common_fit.R
 \name{plot_pairwise_outcomes}
 \alias{plot_pairwise_outcomes}
+\alias{plot_pairwise_outcomes.default}
+\alias{plot_pairwise_outcomes.btsbm_fit}
+\alias{plot_pairwise_outcomes.btsbm_pairwise_data}
 \title{Plot observed pairwise win counts}
 \usage{
-plot_pairwise_outcomes(pairwise)
+plot_pairwise_outcomes(pairwise, reorder = FALSE, ...)
+
+\method{plot_pairwise_outcomes}{default}(pairwise, reorder = FALSE, ...)
+
+\method{plot_pairwise_outcomes}{btsbm_fit}(pairwise, reorder = FALSE, ...)
+
+\method{plot_pairwise_outcomes}{btsbm_pairwise_data}(pairwise, reorder = FALSE, ...)
 }
 \arguments{
-\item{pairwise}{A btsbm_pairwise_data object created by as_bt_data().}
+\item{pairwise}{A \code{btsbm_pairwise_data} object created by \code{\link[=as_bt_data]{as_bt_data()}},
+or a BT \code{btsbm_fit}.}
+
+\item{reorder}{Logical. If TRUE, order both axes by decreasing observed
+overall win rate (total wins divided by total comparisons). Ties retain
+input order; items with no comparisons are placed last. FALSE (default)
+preserves the input item order. This is descriptive ordering, not an
+estimate of model strengths or latent blocks.}
+
+\item{...}{Reserved for method extensions.}
 }
 \value{
 A ggplot object.
@@ -17,6 +35,12 @@ This descriptive heatmap is useful before fitting a Bradley--Terry model.
 Rows are winners and columns are losers; it displays the number of observed
 wins, not a fitted probability.
 }
+\details{
+This S3 generic dispatches on the class of \code{pairwise}. The data method
+plots validated pairwise observations; the fitted-model method extracts
+the observed data from a BT fit. Neither displays fitted probabilities.
+}
 \examples{
 plot_pairwise_outcomes(tennis_toy())
+plot_pairwise_outcomes(tennis_toy(), reorder = TRUE)
 }

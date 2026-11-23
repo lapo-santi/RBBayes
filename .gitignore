@@ -20,3 +20,4 @@ src/*.lib
 src/*.a
 *.tar.gz
 *.Rcheck/
+/tutorial-rendered

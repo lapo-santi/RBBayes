@@ -137,24 +137,31 @@ are excluded. Arrays retain separate iteration, chain and parameter dimensions.
 ## Edge-list input and configurable teaching data
 
 ```r
-edges <- tennis_tiered_toy(
+edges <- simulate_data(
+  model = "bt-sbm",
   n_blocks = 3, latent_strength = c(25, 5, 1),
   players_per_block = c(3, 4, 5), format = "edgelist", seed = 101
 )
-pairwise <- as_bt_data(edges, count = "count")
+pairwise <- as_bt_data(edges, format = "edgelist")
 pairwise$wins[1:4, 1:4]
 
-# For one outcome per row, omit count; each row contributes one win.
+# Standard BT: supply one strength per item, without defining blocks.
+individual <- simulate_data("bt", latent_strength = c(A = 8, B = 3, C = 1), seed = 1)
+plot_pairwise_outcomes(individual, reorder = TRUE)
+
+# For one outcome per row, use format = "matches".
 # Custom column names and a full, ordered item universe can be supplied:
-# as_bt_data(matches, winner = "winner_id", loser = "loser_id",
+# as_bt_data(matches, format = "matches", winner = "winner_id", loser = "loser_id",
 #            item_labels = all_player_ids)
 
 dirichlet_process_K_var(n = 20, concentration = 1)
 ```
 
 The fitter takes the validated object returned by `as_bt_data()`. Matrix input
-remains supported. For an aggregated edge list, supply the count-column name
-explicitly; repeated directed edges are added. Self-comparisons are rejected.
+remains supported. `format = "edgelist"` reads the standard `count` column;
+use `count` only to select a different column name. Repeated directed edges
+are added, and self-comparisons are rejected. `format = "matches"` records one
+win per row. Existing calls using `count = "count"` remain valid.
 
 ## Acknowledgements
 

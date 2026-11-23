@@ -272,23 +272,61 @@ plot_ranking_positions <- function(rankings) {
 #' Rows are winners and columns are losers; it displays the number of observed
 #' wins, not a fitted probability.
 #'
-#' @param pairwise A btsbm_pairwise_data object created by as_bt_data().
+#' This S3 generic dispatches on the class of `pairwise`. The data method
+#' plots validated pairwise observations; the fitted-model method extracts
+#' the observed data from a BT fit. Neither displays fitted probabilities.
+#'
+#' @param pairwise A `btsbm_pairwise_data` object created by [as_bt_data()],
+#'   or a BT `btsbm_fit`.
+#' @param reorder Logical. If TRUE, order both axes by decreasing observed
+#'   overall win rate (total wins divided by total comparisons). Ties retain
+#'   input order; items with no comparisons are placed last. FALSE (default)
+#'   preserves the input item order. This is descriptive ordering, not an
+#'   estimate of model strengths or latent blocks.
+#' @param ... Reserved for method extensions.
 #'
 #' @return A ggplot object.
 #' @export
 #' @examples
 #' plot_pairwise_outcomes(tennis_toy())
-plot_pairwise_outcomes <- function(pairwise) {
+#' plot_pairwise_outcomes(tennis_toy(), reorder = TRUE)
+plot_pairwise_outcomes <- function(pairwise, reorder = FALSE, ...) {
+  UseMethod("plot_pairwise_outcomes")
+}
+
+#' @rdname plot_pairwise_outcomes
+#' @export
+plot_pairwise_outcomes.default <- function(pairwise, reorder = FALSE, ...) {
+  stop("'pairwise' must be created by as_bt_data(), or be a fitted BT model.", call. = FALSE)
+}
+
+#' @rdname plot_pairwise_outcomes
+#' @export
+plot_pairwise_outcomes.btsbm_fit <- function(pairwise, reorder = FALSE, ...) {
+  if (pairwise$model$likelihood != "bt") {
+    stop("A fitted model must use the BT likelihood to plot pairwise outcomes.", call. = FALSE)
+  }
+  plot_pairwise_outcomes(pairwise$data, reorder = reorder, ...)
+}
+
+#' @rdname plot_pairwise_outcomes
+#' @export
+plot_pairwise_outcomes.btsbm_pairwise_data <- function(pairwise, reorder = FALSE, ...) {
   .require_ggplot2()
-  if (!inherits(pairwise, "btsbm_pairwise_data")) {
-    stop("'pairwise' must be created by as_bt_data().", call. = FALSE)
+  if (!is.logical(reorder) || length(reorder) != 1L || is.na(reorder)) {
+    stop("`reorder` must be TRUE or FALSE.", call. = FALSE)
   }
   labels <- pairwise$item_labels
+  if (reorder) {
+    comparisons <- rowSums(pairwise$wins + t(pairwise$wins))
+    win_rate <- rowSums(pairwise$wins) / comparisons
+    labels <- labels[order(-win_rate, na.last = TRUE)]
+  }
   plot_data <- expand.grid(
     winner = labels, loser = labels,
     KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE
   )
-  plot_data$wins <- as.vector(pairwise$wins)
+  plot_data$wins <- as.vector(pairwise$wins[labels, labels, drop = FALSE])
   plot_data$winner <- factor(plot_data$winner, levels = rev(labels))
   plot_data$loser <- factor(plot_data$loser, levels = labels)
 
@@ -301,7 +339,8 @@ plot_pairwise_outcomes <- function(pairwise) {
       y = "Winner",
       fill = "Wins",
       title = "Observed pairwise outcomes",
-      subtitle = "Rows record wins over the column item"
+      subtitle = if (reorder) "Both axes ordered by decreasing observed win rate" else
+        "Original item order; rows record wins over the column item"
     ) +
     ggplot2::theme_minimal(base_size = 11) +
     ggplot2::theme(

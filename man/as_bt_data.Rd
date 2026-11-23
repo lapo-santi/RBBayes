@@ -9,7 +9,8 @@ as_bt_data(
   item_labels = NULL,
   winner = "winner",
   loser = "loser",
-  count = NULL
+  count = NULL,
+  format = c("auto", "matrix", "edgelist", "matches")
 )
 }
 \arguments{
@@ -24,7 +25,15 @@ complete item universe and ordering, including any unobserved items.}
 losing item. Values are converted to character item identifiers.}
 
 \item{count}{Optional edge-list count-column name. NULL means one win per
-row. Counts must be non-negative integers. Self-comparisons are rejected.}
+row in the legacy \code{format = "auto"} interface. With \code{format = "edgelist"},
+NULL selects the standard \code{"count"} column. Counts must be non-negative
+integers. Self-comparisons are rejected.}
+
+\item{format}{Input representation: \code{"matrix"} for a square win-count matrix,
+\code{"edgelist"} for aggregated winner/loser/count rows, or \code{"matches"} for
+one winner/loser outcome per row. The default \code{"auto"} preserves the
+earlier interface: the object type determines the representation and
+\code{count} must be specified explicitly for aggregated rows.}
 }
 \value{
 An object of class \code{btsbm_pairwise_data}.
@@ -35,4 +44,6 @@ the same validated pairwise-data representation used by fit_model().
 }
 \examples{
 as_bt_data(matrix(c(0, 2, 3, 0), 2, 2))
+edges <- data.frame(winner = c("A", "B"), loser = c("B", "A"), count = c(3, 2))
+as_bt_data(edges, format = "edgelist")
 }

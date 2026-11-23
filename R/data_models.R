@@ -11,14 +11,35 @@
 #' @param winner,loser Names of edge-list columns identifying the winning and
 #'   losing item. Values are converted to character item identifiers.
 #' @param count Optional edge-list count-column name. NULL means one win per
-#'   row. Counts must be non-negative integers. Self-comparisons are rejected.
+#'   row in the legacy `format = "auto"` interface. With `format = "edgelist"`,
+#'   NULL selects the standard `"count"` column. Counts must be non-negative
+#'   integers. Self-comparisons are rejected.
+#' @param format Input representation: `"matrix"` for a square win-count matrix,
+#'   `"edgelist"` for aggregated winner/loser/count rows, or `"matches"` for
+#'   one winner/loser outcome per row. The default `"auto"` preserves the
+#'   earlier interface: the object type determines the representation and
+#'   `count` must be specified explicitly for aggregated rows.
 #'
 #' @return An object of class `btsbm_pairwise_data`.
 #' @export
 #' @examples
 #' as_bt_data(matrix(c(0, 2, 3, 0), 2, 2))
+#' edges <- data.frame(winner = c("A", "B"), loser = c("B", "A"), count = c(3, 2))
+#' as_bt_data(edges, format = "edgelist")
 as_bt_data <- function(wins, item_labels = NULL, winner = "winner",
-                       loser = "loser", count = NULL) {
+                       loser = "loser", count = NULL,
+                       format = c("auto", "matrix", "edgelist", "matches")) {
+  format <- match.arg(format)
+  if (format == "matrix" && !is.matrix(wins)) {
+    stop("`format = 'matrix'` requires a square win-count matrix.", call. = FALSE)
+  }
+  if (format %in% c("edgelist", "matches") && !is.data.frame(wins)) {
+    stop("`format = '", format, "'` requires a data frame.", call. = FALSE)
+  }
+  if (format == "edgelist" && is.null(count)) count <- "count"
+  if (format == "matches" && !is.null(count)) {
+    stop("`format = 'matches'` records one outcome per row; omit `count`.", call. = FALSE)
+  }
   if (is.data.frame(wins)) {
     return(.bt_data_from_edges(wins, item_labels, winner, loser, count))
   }
