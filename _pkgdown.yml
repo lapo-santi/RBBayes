@@ -7,6 +7,14 @@ authors:
   Nial Friel:
     href: https://maths.ucd.ie/~nial/
 url: https://lapo-santi.github.io/RBBayes/
+navbar:
+  structure:
+    left: [intro, tutorial, reference, articles, tutorials, news]
+    right: [search, github, lightswitch]
+  components:
+    tutorial:
+      text: Tutorial
+      href: tutorial.html
 template:
   bootstrap: 5
   math-rendering: mathjax

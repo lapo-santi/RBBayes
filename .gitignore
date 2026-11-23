@@ -21,3 +21,4 @@ src/*.a
 *.tar.gz
 *.Rcheck/
 /tutorial-rendered
+/pkgdown/assets/tutorial/

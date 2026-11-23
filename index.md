@@ -34,6 +34,9 @@ Applications include, among the others, **sports analytics**, **psychometrics**,
 
 ### Quick Links
 
+Start with the [Tutorial](tutorial.html) for downloadable course code,
+R/RStudio setup, build tools, package installation and the working directory.
+
 For a complete overview of all functions, see the 👉 [Function Reference](https://lapo-santi.github.io/RBBayes/reference/index.html)
 For a step-by-step example using tennis data, visit the 👉 [Getting Started Vignette](https://lapo-santi.github.io/RBBayes/articles/getting-started.html)
 

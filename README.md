@@ -102,8 +102,30 @@ matrix and the remaining PLuce-porting work.
 
 ## Documentation
 
-- Hands-on tutorial (R Markdown, knit it locally):
-  `file.copy(system.file("tutorial", "RBBayes-tutorial.Rmd", package = "RBBayes"), ".")`
+Start with the [Tutorial page](https://lapo-santi.github.io/RBBayes/tutorial.html)
+for the course files, worked examples and step-by-step R/RStudio setup.
+It includes build tools, package installation and working-directory instructions.
+
+- The hands-on tutorial is installed inside the package's `tutorial/` folder.
+  Installation does not open it or copy it into your project, and this file
+  is separate from the registered package vignettes. Read the finished HTML:
+
+  ```r
+  browseURL(system.file("tutorial", "RBBayes-tutorial.html",
+                        package = "RBBayes", mustWork = TRUE))
+  ```
+
+  To work through the code in RStudio, copy the source into the folder shown
+  by `getwd()` and open it. An existing student copy is preserved:
+
+  ```r
+  source_file <- system.file("tutorial", "RBBayes-tutorial.Rmd",
+                             package = "RBBayes", mustWork = TRUE)
+  if (!file.exists("RBBayes-tutorial.Rmd")) {
+    stopifnot(file.copy(source_file, "RBBayes-tutorial.Rmd"))
+  }
+  file.edit("RBBayes-tutorial.Rmd")
+  ```
 
 - Package website: https://lapo-santi.github.io/RBBayes
 - Function reference: https://lapo-santi.github.io/RBBayes/reference/index.html

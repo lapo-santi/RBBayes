@@ -33,8 +33,11 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown, local::.
+          extra-packages: any::pkgdown, any::rmarkdown, any::knitr, any::coda, any::bayesplot, any::salso, local::.
           needs: website
+
+      - name: Prepare tutorial page and student downloads
+        run: Rscript pkgdown/build-tutorial.R
 
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
