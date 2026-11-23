@@ -1,6 +1,6 @@
 # Posterior summaries for latent partitions and strengths.
 #
-# Notation follows the tutorial: z_i is the block of item i, lambda_k the
+# Notation follows the tutorial: x_i is the block of item i, lambda_k the
 # strength of block k (lambda_i in the unclustered model), and K the number of
 # occupied blocks.
 
@@ -42,7 +42,7 @@ btsbm_block_palette <- function(K, palette = NULL) .block_palette(K, palette)
 .require_item_partition <- function(fit) {
   if (!inherits(fit, "btsbm_fit")) stop("`fit` must be a `btsbm_fit` object.", call. = FALSE)
   if (is.null(fit$draws$item_cluster)) {
-    stop("This fit has no sampled item partition z; use a block model such as ",
+    stop("This fit has no sampled item partition x; use a block model such as ",
          "bt_sbm_model().", call. = FALSE)
   }
   invisible(fit)
@@ -273,7 +273,7 @@ credible_ball <- function(fit, z_hat = NULL, credible_mass = 0.95,
 
 #' @export
 print.btsbm_credible_ball <- function(x, ...) {
-  cat("<credible ball for the item partition z>\n")
+  cat("<credible ball for the item partition x>\n")
   cat(sprintf("  %g%% ball, VI radius %.3f (contains %.1f%% of draws; method: %s)\n",
               100 * x$credible_mass, x$radius, 100 * x$prob_inside, x$method))
   cat("  Number of blocks K:\n")

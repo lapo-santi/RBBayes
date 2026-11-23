@@ -54,8 +54,9 @@ plot_strength_summary <- function(fit, credible_mass = 0.9) {
 
 #' Plot the posterior similarity of items or rankings
 #'
-#' Cell \eqn{(i, j)} shows \eqn{\Pr(z_i = z_j \mid y)}, the proportion of
-#' draws in which the two entities share a latent group. The plot is
+#' Cell \eqn{(i, j)} shows \eqn{\Pr(x_i = x_j \mid y)}, the proportion of
+#' all retained draws in which the two entities share a latent group. Draws
+#' are not filtered by their number of occupied groups. The plot is
 #' label-invariant, which makes it safer to interpret than raw MCMC labels.
 #'
 #' For item partitions, rows are ordered by the point estimate of the partition
@@ -70,6 +71,7 @@ plot_strength_summary <- function(fit, credible_mass = 0.9) {
 #' @param show_blocks Outline the blocks of the point estimate (items only).
 #' @param show_values Print probabilities in cells; defaults to `TRUE` for at
 #'   most 20 entities.
+#' @param digits Number of decimal places for cell labels, from 0 to 6.
 #'
 #' @return A ggplot object.
 #' @export
@@ -81,12 +83,16 @@ plot_strength_summary <- function(fit, credible_mass = 0.9) {
 #' plot_posterior_similarity(fit)
 plot_posterior_similarity <- function(fit, target = c("item", "ranking"),
                                       order_rows = TRUE, show_blocks = TRUE,
-                                      show_values = NULL) {
+                                      show_values = NULL, digits = 2L) {
   .require_ggplot2()
   if (!inherits(fit, "btsbm_fit")) {
     stop("'fit' must be a btsbm_fit object.", call. = FALSE)
   }
   target <- match.arg(target)
+  if (length(digits) != 1L || !is.numeric(digits) || !is.finite(digits) ||
+      digits != floor(digits) || digits < 0 || digits > 6) {
+    stop("`digits` must be an integer from 0 to 6.", call. = FALSE)
+  }
   similarity <- posterior_similarity(fit, target = target)
   labels <- if (target == "item") fit$data$item_labels else fit$data$ranking_labels
   display_order <- seq_along(labels)
@@ -138,10 +144,12 @@ plot_posterior_similarity <- function(fit, target = c("item", "ranking"),
       panel.grid = ggplot2::element_blank()
     )
   if (isTRUE(show_values)) {
+    # Longer labels need smaller text in a dense matrix.
+    text_size <- if (n >= 15L) 2.3 * min(1, 4 / (digits + 2)) else 2.3
     p <- p + ggplot2::geom_text(
-      ggplot2::aes(label = sprintf("%.2f", .data$probability),
+      ggplot2::aes(label = sprintf(paste0("%.", digits, "f"), .data$probability),
                    colour = .data$probability > 0.6),
-      size = 2.3, show.legend = FALSE
+      size = text_size, show.legend = FALSE
     ) + ggplot2::scale_colour_manual(values = c(`FALSE` = "grey20", `TRUE` = "white"))
   }
   if (!is.null(z_hat) && isTRUE(show_blocks) && isTRUE(order_rows)) {

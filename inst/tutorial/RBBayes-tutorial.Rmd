@@ -525,14 +525,20 @@ label-invariant summaries below separate these effects.
 
 ### Which players belong together?
 
+The full co-clustering matrix averages over every retained draw, including all
+observed values of K. No K condition or probability threshold is applied.
+Four decimal places retain the resolution of these 5,000 retained draws.
+
 The posterior similarity matrix does not condition on $K$: cell $(i, j)$ is
 $\Pr(x_i = x_j \mid y)$, the proportion of all draws in which the two players
 share a block. Outlines show the estimated partition.
 
 ```{r psm, fig.height = 7.5, fig.width = 8.5}
-set.seed(100)                               # Reproduce the plotted outlines.
-plot_posterior_similarity(sbm_fit)
-similarity <- posterior_similarity(sbm_fit)
+similarity <- posterior_similarity(sbm_fit, target = "item") # All retained draws.
+set.seed(100)                               # Reproduce the block outlines.
+plot_posterior_similarity(sbm_fit, show_values = TRUE, digits = 4) +
+  labs(title = NULL, subtitle = paste("All", nrow(sbm_fit$draws$item_cluster),
+       "retained draws; includes every sampled K"))
 within_estimate <- outer(x_hat, x_hat, `==`) # Pairs in the same estimated block.
 within_similarity <- range(similarity[within_estimate & row(similarity) != col(similarity)])
 outside_similarity <- range(similarity[!within_estimate]) # Between-block pairs.
