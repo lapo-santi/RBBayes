@@ -234,7 +234,7 @@ gamma_ability <- function(shape = 1, rate = 1) {
 #' @param family One of `"gnedin"`, `"dirichlet_process"`, `"pitman_yor"`,
 #'   or `"finite_dirichlet"`.
 #' @param gnedin_hyper Gnedin hyperparameter \eqn{\gamma} in `(0, 1)`.
-#'   Larger values favour more occupied groups a priori.
+#'   Larger values favour fewer occupied groups a priori.
 #' @param gnedin_hyperparameter Deprecated alias for `gnedin_hyper`.
 #' @param concentration Concentration for the Dirichlet-process, Pitman--Yor,
 #'   or finite-Dirichlet prior.

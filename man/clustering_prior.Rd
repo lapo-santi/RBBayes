@@ -18,7 +18,7 @@ clustering_prior(
 or \code{"finite_dirichlet"}.}
 
 \item{gnedin_hyper}{Gnedin hyperparameter \eqn{\gamma} in \verb{(0, 1)}.
-Larger values favour more occupied groups a priori.}
+Larger values favour fewer occupied groups a priori.}
 
 \item{concentration}{Concentration for the Dirichlet-process, Pitman--Yor,
 or finite-Dirichlet prior.}
