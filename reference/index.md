@@ -39,6 +39,10 @@
 - [`credible_ball()`](https://lapo-santi.github.io/RBBayes/reference/credible_ball.md)
   : Credible ball for the item partition
 
+- [`as.data.frame(`*`<btsbm_pairwise_data>`*`)`](https://lapo-santi.github.io/RBBayes/reference/data_tables.md)
+  [`as.data.frame(`*`<btsbm_ranking_data>`*`)`](https://lapo-santi.github.io/RBBayes/reference/data_tables.md)
+  : Convert validated comparison or ranking data to a long table
+
 - [`dirichlet_multinomial_prior()`](https://lapo-santi.github.io/RBBayes/reference/dirichlet_multinomial_prior.md)
   : Dirichlet–multinomial prior for a latent partition
 
@@ -125,6 +129,9 @@
 
 - [`orthodontics_excerpt_2009()`](https://lapo-santi.github.io/RBBayes/reference/orthodontics_excerpt_2009.md)
   : Orthodontics ranking-and-covariate excerpt
+
+- [`pairwise_summary()`](https://lapo-santi.github.io/RBBayes/reference/pairwise_summary.md)
+  : Summarise observed outcomes for each item
 
 - [`partition_moves()`](https://lapo-santi.github.io/RBBayes/reference/partition_moves.md)
   : Set partition-move controls

@@ -157,5 +157,6 @@ Check that the installed package has the teaching interface:
 
 library(RBBayes)
 packageVersion("RBBayes")
-stopifnot("simulate_data" %in% getNamespaceExports("RBBayes"))
+stopifnot(all(c("simulate_data", "pairwise_summary") %in%
+              getNamespaceExports("RBBayes")))
 ```

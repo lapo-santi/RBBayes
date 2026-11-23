@@ -29,7 +29,7 @@ clustering_prior(
 - gnedin_hyper:
 
   Gnedin hyperparameter \\\gamma\\ in `(0, 1)`. Larger values favour
-  more occupied groups a priori.
+  fewer occupied groups a priori.
 
 - concentration:
 
