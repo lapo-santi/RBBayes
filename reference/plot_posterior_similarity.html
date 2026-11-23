@@ -5,10 +5,12 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Plot the posterior similarity of items or rankings — plot_posterior_similarity"><meta name="description" content="Cell \((i, j)\) shows \(\Pr(z_i = z_j \mid y)\), the proportion of
-draws in which the two entities share a latent group. The plot is
-label-invariant, which makes it safer to interpret than raw MCMC labels."><meta property="og:description" content="Cell \((i, j)\) shows \(\Pr(z_i = z_j \mid y)\), the proportion of
-draws in which the two entities share a latent group. The plot is
+</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Plot the posterior similarity of items or rankings — plot_posterior_similarity"><meta name="description" content="Cell \((i, j)\) shows \(\Pr(x_i = x_j \mid y)\), the proportion of
+all retained draws in which the two entities share a latent group. Draws
+are not filtered by their number of occupied groups. The plot is
+label-invariant, which makes it safer to interpret than raw MCMC labels."><meta property="og:description" content="Cell \((i, j)\) shows \(\Pr(x_i = x_j \mid y)\), the proportion of
+all retained draws in which the two entities share a latent group. Draws
+are not filtered by their number of occupied groups. The plot is
 label-invariant, which makes it safer to interpret than raw MCMC labels."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -52,8 +54,9 @@ label-invariant, which makes it safer to interpret than raw MCMC labels."></head
     </div>
 
     <div class="ref-description section level2">
-    <p>Cell \((i, j)\) shows \(\Pr(z_i = z_j \mid y)\), the proportion of
-draws in which the two entities share a latent group. The plot is
+    <p>Cell \((i, j)\) shows \(\Pr(x_i = x_j \mid y)\), the proportion of
+all retained draws in which the two entities share a latent group. Draws
+are not filtered by their number of occupied groups. The plot is
 label-invariant, which makes it safer to interpret than raw MCMC labels.</p>
     </div>
 
@@ -64,7 +67,8 @@ label-invariant, which makes it safer to interpret than raw MCMC labels.</p>
 <span>  target <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"item"</span>, <span class="st">"ranking"</span><span class="op">)</span>,</span>
 <span>  order_rows <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  show_blocks <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  show_values <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  show_values <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  digits <span class="op">=</span> <span class="fl">2L</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -91,6 +95,10 @@ label-invariant, which makes it safer to interpret than raw MCMC labels.</p>
 <dt id="arg-show-values">show_values<a class="anchor" aria-label="anchor" href="#arg-show-values"></a></dt>
 <dd><p>Print probabilities in cells; defaults to <code>TRUE</code> for at
 most 20 entities.</p></dd>
+
+
+<dt id="arg-digits">digits<a class="anchor" aria-label="anchor" href="#arg-digits"></a></dt>
+<dd><p>Number of decimal places for cell labels, from 0 to 6.</p></dd>
 
 </dl></div>
     <div class="section level2">

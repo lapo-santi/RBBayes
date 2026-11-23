@@ -80,7 +80,7 @@ fit <- fit_model(data, bt_sbm_model(),
                  mcmc_control(iter = 60, warmup = 30, seed = 1))
 credible_ball(fit)
 #> Warning: The number of clusters equals the default maximum possible number of clusters.
-#> <credible ball for the item partition z>
+#> <credible ball for the item partition x>
 #>   95% ball, VI radius -0.000 (contains 100.0% of draws; method: native)
 #>   Number of blocks K:
 #>     point estimate        1

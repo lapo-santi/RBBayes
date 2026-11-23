@@ -163,9 +163,11 @@ recovery_given_K4 <- mean(recovers_truth[sbm_fit$draws$n_item_clusters == 4])
 plot_assignment_probabilities(sbm_fit, k_show = 5, clean_fun = NULL)
 
 # ---- psm ----
-set.seed(100)                               # Reproduce the plotted outlines.
-plot_posterior_similarity(sbm_fit)
-similarity <- posterior_similarity(sbm_fit)
+similarity <- posterior_similarity(sbm_fit, target = "item") # All retained draws.
+set.seed(100)                               # Reproduce the block outlines.
+plot_posterior_similarity(sbm_fit, show_values = TRUE, digits = 4) +
+  labs(title = NULL, subtitle = paste("All", nrow(sbm_fit$draws$item_cluster),
+       "retained draws; includes every sampled K"))
 within_estimate <- outer(x_hat, x_hat, `==`) # Pairs in the same estimated block.
 within_similarity <- range(similarity[within_estimate & row(similarity) != col(similarity)])
 outside_similarity <- range(similarity[!within_estimate]) # Between-block pairs.

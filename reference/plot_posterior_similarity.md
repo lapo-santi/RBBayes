@@ -1,7 +1,8 @@
 # Plot the posterior similarity of items or rankings
 
-Cell \\(i, j)\\ shows \\\Pr(z_i = z_j \mid y)\\, the proportion of draws
-in which the two entities share a latent group. The plot is
+Cell \\(i, j)\\ shows \\\Pr(x_i = x_j \mid y)\\, the proportion of all
+retained draws in which the two entities share a latent group. Draws are
+not filtered by their number of occupied groups. The plot is
 label-invariant, which makes it safer to interpret than raw MCMC labels.
 
 ## Usage
@@ -12,7 +13,8 @@ plot_posterior_similarity(
   target = c("item", "ranking"),
   order_rows = TRUE,
   show_blocks = TRUE,
-  show_values = NULL
+  show_values = NULL,
+  digits = 2L
 )
 ```
 
@@ -38,6 +40,10 @@ plot_posterior_similarity(
 
   Print probabilities in cells; defaults to `TRUE` for at most 20
   entities.
+
+- digits:
+
+  Number of decimal places for cell labels, from 0 to 6.
 
 ## Value
 
