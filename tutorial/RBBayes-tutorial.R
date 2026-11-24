@@ -107,19 +107,48 @@ tibble(
 ) |> knitr::kable(digits = 2) # NA: variance not implemented for PY/DM.
 
 # ---- exercise-prior ----
-prior_grid <- tibble(
-  prior = rep(c("Gnedin gamma", "DP concentration"), each = 3),
-  parameter = c(0.2, 0.5, 0.8, 0.5, 1, 3)
-) |>
-  rowwise() |>                              # Compute each prior mean separately.
-  mutate(mean_K = prior_mean_K(20,
-    if (prior == "Gnedin gamma") gnedin_prior(gnedin_hyper = parameter)
-    else dirichlet_process_prior(concentration = parameter))) |>
-  ungroup()
-ggplot(prior_grid, aes(parameter, mean_K)) +
-  geom_line(colour = "#0072B2") + geom_point(size = 3) +
-  facet_wrap(~ prior, scales = "free_x", nrow = 1) + # Side-by-side sensitivity curves.
-  labs(x = "Hyperparameter value", y = "Prior expected occupied blocks") +
+prior_n <- 20L                             # Number of items, before observing outcomes.
+prior_B <- 50000L                          # Independent simulations per prior.
+prior_comparison <- list(
+  Gnedin = gnedin_prior(gnedin_hyper = 0.5),
+  DP = dirichlet_process_prior(concentration = 1.2)) # Nearly equal expected K.
+prior_draws <- bind_rows(lapply(seq_along(prior_comparison), function(i) {
+  tibble(prior = names(prior_comparison)[i],
+    K = prior_sample_K(prior_n, prior_comparison[[i]],
+                       draws = prior_B, seed = 30 + i))
+})) |> mutate(prior = factor(prior, levels = names(prior_comparison)))
+prior_expectation <- tibble(
+  prior = factor(names(prior_comparison), levels = names(prior_comparison)),
+  expected_K = vapply(prior_comparison,
+    function(p) prior_mean_K(prior_n, p), numeric(1))) # Exact, not a sample mean.
+
+# ---- exercise-prior-plot ----
+prior_mass <- prior_draws |>
+  count(prior, K, name = "draws") |>          # Counts across independent simulations.
+  complete(prior, K = seq_len(prior_n), fill = list(draws = 0L)) |>
+  mutate(probability = draws / prior_B,      # Keep the complete finite support.
+         prior = factor(prior, levels = names(prior_comparison)))
+prior_tails <- prior_draws |>
+  group_by(prior) |>
+  summarise(tail_probability = mean(K >= 10), .groups = "drop") |>
+  mutate(label = sprintf("Pr(K >= 10): %.2f%%", 100 * tail_probability))
+ggplot(prior_mass, aes(K, probability)) +
+  annotate("rect", xmin = 9.5, xmax = prior_n + 0.5,
+           ymin = 0, ymax = Inf, fill = "grey90", alpha = 0.7) + # Upper tail.
+  geom_col(fill = "#0072B2", width = 0.8) +
+  geom_vline(data = prior_expectation, aes(xintercept = expected_K),
+             colour = "#b35806", linetype = "dashed", linewidth = 0.8) +
+  geom_text(data = prior_expectation,
+    aes(x = expected_K + 0.5, y = 0.36, label = sprintf("E[K] = %.2f", expected_K)),
+    inherit.aes = FALSE, hjust = 0, colour = "#b35806", size = 3.6) +
+  geom_text(data = prior_tails, aes(x = 10, y = 0.47, label = label),
+             inherit.aes = FALSE, hjust = 0, size = 3.5) +
+  facet_wrap(~ prior, nrow = 1) +             # Identical axes in both panels.
+  scale_x_continuous(breaks = c(1, 5, 10, 15, 20), limits = c(0.5, prior_n + 0.5)) +
+  labs(x = paste0("Occupied blocks K (", prior_n, " items)"),
+       y = "Simulated prior probability",
+       subtitle = paste(format(prior_B, big.mark = ","),
+         "prior simulations; orange dashed lines: exact expected K")) +
   theme_minimal()
 
 # ---- fit-sbm ----

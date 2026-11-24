@@ -413,6 +413,9 @@ model.* *The Annals of Applied Statistics*, 20(2), 1766–1787.
 - [`prior_mean_K()`](https://lapo-santi.github.io/RBBayes/reference/prior_mean_K.md)
   : Prior expected number of occupied groups
 
+- [`prior_sample_K()`](https://lapo-santi.github.io/RBBayes/reference/prior_sample_K.md)
+  : Simulate the prior number of occupied groups
+
 - [`prior_variance_K()`](https://lapo-santi.github.io/RBBayes/reference/prior_variance_K.md)
   : Prior variance of the number of occupied groups
 
