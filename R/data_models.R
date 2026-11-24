@@ -377,17 +377,20 @@ partition_prior <- function(type = c("gnedin", "dp", "py", "dm"),
 #' Set the reporting scale for Plackett--Luce strengths
 #'
 #' A Plackett--Luce likelihood only identifies strength ratios. By default each
-#' saved strength vector is divided by its sum (`"sum"`), so reported strengths
-#' are shares that add to one, exactly like the normalised Bradley--Terry
-#' strengths. `"logmean0"` (geometric mean one) is kept for compatibility.
+#' saved strength vector is divided by its arithmetic mean (`"mean"`), so
+#' strength is relative to the average item, as for Bradley--Terry summaries.
+#' In an item-block model the mean is over items, weighting blocks by size.
+#' `"sum"` (shares adding to one), `"none"` and `"logmean0"` (geometric mean
+#' one) remain available. Posterior summaries use arithmetic mean one unless
+#' another reporting scale is requested explicitly.
 #'
-#' @param method One of `"sum"` (default), `"none"` or `"logmean0"`.
+#' @param method One of `"mean"` (default), `"sum"`, `"none"` or `"logmean0"`.
 #'
 #' @return An object of class `btsbm_pl_identifiability`.
 #' @export
 #' @examples
 #' pl_identifiability()
-pl_identifiability <- function(method = c("sum", "none", "logmean0")) {
+pl_identifiability <- function(method = c("mean", "sum", "none", "logmean0")) {
   structure(list(method = match.arg(method)), class = "btsbm_pl_identifiability")
 }
 
@@ -573,8 +576,8 @@ bt_sbm_model <- function(shape_lambda = 4, rate_lambda = exp(digamma(shape_lambd
 #' Define a simple Plackett--Luce model
 #'
 #' Item strengths are i.i.d. \eqn{\mathrm{Gamma}(\mathrm{shape\_lambda},
-#' \mathrm{rate\_lambda})}. By default reported strengths are divided by their sum in
-#' every draw, so they are shares that add to one.
+#' \mathrm{rate\_lambda})}. By default reported strengths are divided by their
+#' arithmetic mean in every draw, giving strengths relative to the average item.
 #'
 #' @inheritParams bt_model
 #' @param identifiability PL reporting constraint, see [pl_identifiability()].

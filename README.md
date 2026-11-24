@@ -148,9 +148,11 @@ bayesplot::mcmc_trace(as_draws_array(list(fit, fit2)),
                      pars = colnames(as.matrix(fit))[1:2])
 ```
 
-By default, `rel_strength[<item>]` is that item's share of total strength
-within each draw, named after the item. Use `as.matrix(fit, normalise = FALSE)`
-for strengths on the stored scale (`lambda[<item>]`). Occupied-group counts are included when
+By default, `rel_strength[<item>]` is that item's strength divided by the
+arithmetic mean across items in each draw. The mean is one: a value of 2
+means twice the mean strength. Normalisation precedes posterior averaging.
+`posterior_strength(fit, scale = "share")` retains the sum-to-one convention.
+Use `as.matrix(fit, normalise = FALSE)` for strengths on the stored scale (`lambda[<item>]`). Occupied-group counts are included when
 available. Mixtures and joint latent block models currently export group-count
 traces only. Variable-length block strengths and arbitrary allocation labels
 are excluded. Arrays retain separate iteration, chain and parameter dimensions.

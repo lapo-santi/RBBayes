@@ -31,21 +31,20 @@ plot_strength_summary <- function(fit, credible_mass = 0.9) {
   .require_ggplot2()
   summary_data <- strength_summary(fit, credible_mass = credible_mass)
   summary_data$item <- factor(summary_data$item, levels = rev(summary_data$item))
-  equal_share <- 1 / nrow(summary_data)
 
   ggplot2::ggplot(summary_data, ggplot2::aes(x = .data$mean, y = .data$item)) +
-    ggplot2::geom_vline(xintercept = equal_share, linetype = "dashed", colour = "#7F7F7F") +
+    ggplot2::geom_vline(xintercept = 1, linetype = "dashed", colour = "#7F7F7F") +
     ggplot2::geom_errorbar(
       ggplot2::aes(xmin = .data$lower, xmax = .data$upper),
       width = 0, linewidth = 0.5, colour = "#4D4D4D"
     ) +
     ggplot2::geom_point(size = 2.2, colour = "#0072B2") +
     ggplot2::labs(
-      x = "Relative strength (share of total strength)",
+      x = "Relative strength (arithmetic mean = 1)",
       y = NULL,
       title = "Posterior item strengths",
       subtitle = paste0("Posterior means and ", round(credible_mass * 100),
-                        "% credible intervals; dashed line = equal strengths (1/n)"),
+                        "% credible intervals; dashed line = average strength (1)"),
       caption = "A larger strength indicates a more preferred item (PL) or a stronger competitor (BT)."
     ) +
     ggplot2::theme_minimal(base_size = 12) +

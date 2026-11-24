@@ -194,9 +194,10 @@ print.btsbm_fit <- function(x, ...) {
 #' Collects the main features of a fit under self-explanatory names: the
 #' model, the data size, the priors, the MCMC run and the key posterior
 #' results. For models with item-specific strengths, the strength table uses
-#' relative strengths (each strength divided by the sum of all strengths in a
-#' draw). For block models, it reports the posterior distribution of the number
-#' of blocks \eqn{K} and the point estimate of the partition \eqn{z} instead,
+#' relative strengths (each strength divided by the arithmetic mean of all
+#' item strengths in a draw). For block models, it reports the posterior
+#' distribution of the number
+#' of blocks \eqn{K} and the point estimate of the partition \eqn{x} instead,
 #' because individual strengths are not the natural summary there.
 #'
 #' @param object A `btsbm_fit` object.
@@ -277,7 +278,7 @@ print.summary.btsbm_fit <- function(x, ...) {
         x$ranking_length, "\n", sep = "")
   }
   cat("Priors:  ", x$strength_prior, "\n", sep = "")
-  if (!is.null(x$item_partition_prior)) cat("         item partition z ~ ", x$item_partition_prior, "\n", sep = "")
+  if (!is.null(x$item_partition_prior)) cat("         item partition x ~ ", x$item_partition_prior, "\n", sep = "")
   if (!is.null(x$ranking_partition_prior)) cat("         ranking partition ~ ", x$ranking_partition_prior, "\n", sep = "")
   cat(sprintf("MCMC:    %d iterations, %d warm-up, %d retained draws (%.1f s)\n",
               x$mcmc_iterations, x$mcmc_warmup, x$retained_draws, x$run_time_seconds))
@@ -292,7 +293,7 @@ print.summary.btsbm_fit <- function(x, ...) {
     }
   }
   if (!is.null(x$relative_strengths)) {
-    cat(sprintf("\nRelative strengths (share of total strength), %g%% credible intervals:\n",
+    cat(sprintf("\nRelative strengths (arithmetic mean = 1), %g%% credible intervals:\n",
                 100 * x$credible_mass))
     tab <- x$relative_strengths
     show <- utils::head(tab, 10L)
@@ -400,8 +401,18 @@ posterior_similarity <- function(fit, target = c("item", "ranking")) {
 
 #' Summarise posterior item strengths
 #'
+#' Normalisation is applied separately to each retained draw before any
+#' posterior averaging. With the default reporting scale, a value of 2 means
+#' twice the arithmetic mean item strength in that draw. In a block model
+#' the mean is over items, so block sizes are respected. The BT win probability
+#' against a hypothetical item of mean strength is \eqn{\theta_i/(1+\theta_i)};
+#' thus \eqn{\theta_i} is the odds against that reference item in a draw.
+#' This is not an average win probability over the observed opponents.
+#'
 #' @param fit A simple BT/PL or item-SBM fit.
 #' @param summary Either `"draws"` or `"mean"`.
+#' @param scale `"relative"` (default, arithmetic mean one), `"share"`
+#'   (sum one), or `"raw"` (the strengths as stored by the sampler).
 #'
 #' @return A draws matrix or named posterior mean vector.
 #' @export
@@ -411,29 +422,40 @@ posterior_similarity <- function(fit, target = c("item", "ranking")) {
 #' fit <- fit_model(data, bt_sbm_model(),
 #'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
 #' posterior_strength(fit)
-posterior_strength <- function(fit, summary = c("draws", "mean")) {
+posterior_strength <- function(fit, summary = c("draws", "mean"),
+                               scale = c("relative", "share", "raw")) {
   if (!inherits(fit, "btsbm_fit")) stop("`fit` must be a `btsbm_fit` object.", call. = FALSE)
   summary <- match.arg(summary)
+  scale <- match.arg(scale)
   draws <- fit$draws$item_strength
   if (is.null(draws)) {
     stop("Item strengths are not available until mixture/LBM post-processing is implemented.", call. = FALSE)
   }
+  draws <- .rescale_strength_draws(draws, scale)
   if (summary == "draws") return(draws)
   stats::setNames(colMeans(draws), fit$data$item_labels)
+}
+
+# Rescale each item-strength draw before computing posterior summaries.
+.rescale_strength_draws <- function(draws, scale) {
+  switch(scale,
+    relative = draws / rowMeans(draws),
+    share = draws / rowSums(draws),
+    raw = draws)
 }
 
 #' Summarise posterior item strengths with credible intervals
 #'
 #' This is a compact numerical companion to [plot_strength_summary()]. By
 #' default strengths are reported as relative strengths: in every draw each
-#' \eqn{\lambda_i} is divided by \eqn{\sum_j \lambda_j}, so they are shares that
-#' add to one and do not depend on the arbitrary overall scale. A larger value
+#' \eqn{\lambda_i} is divided by the arithmetic mean of all item strengths.
+#' Their arithmetic mean is one in every draw, independently of the arbitrary
+#' overall scale. A value of 2 means twice the mean strength. A larger value
 #' means a higher chance of beating (BT) or being preferred to (PL) others.
 #'
 #' @param fit A simple BT/PL or item-SBM btsbm_fit object.
 #' @param credible_mass Width of the central posterior interval, in (0, 1).
-#' @param scale `"relative"` (default, shares adding to one) or `"raw"`
-#'   (the strengths as stored by the sampler).
+#' @inheritParams posterior_strength
 #'
 #' @return A data frame with one row per item, ordered from larger to smaller
 #'   posterior mean strength.
@@ -444,7 +466,7 @@ posterior_strength <- function(fit, summary = c("draws", "mean")) {
 #' fit <- fit_model(data, bt_sbm_model(),
 #'                  mcmc_control(iter = 60, warmup = 30, seed = 1))
 #' strength_summary(fit)
-strength_summary <- function(fit, credible_mass = 0.9, scale = c("relative", "raw")) {
+strength_summary <- function(fit, credible_mass = 0.9, scale = c("relative", "share", "raw")) {
   if (!inherits(fit, "btsbm_fit")) {
     stop("'fit' must be a btsbm_fit object.", call. = FALSE)
   }
@@ -453,8 +475,7 @@ strength_summary <- function(fit, credible_mass = 0.9, scale = c("relative", "ra
       credible_mass <= 0 || credible_mass >= 1) {
     stop("'credible_mass' must lie strictly between zero and one.", call. = FALSE)
   }
-  draws <- posterior_strength(fit, summary = "draws")
-  if (scale == "relative") draws <- draws / rowSums(draws)
+  draws <- posterior_strength(fit, summary = "draws", scale = scale)
   tail_probability <- (1 - credible_mass) / 2
   result <- data.frame(
     item = fit$data$item_labels,

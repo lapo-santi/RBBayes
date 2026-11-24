@@ -152,10 +152,10 @@
   out
 }
 
-.normalise_strength_rows <- function(latent_strength, method) {
+.normalise_strength_rows <- function(latent_strength, method, weights = NULL) {
   t(vapply(
     seq_len(nrow(latent_strength)),
-    function(group_index) .normalise_strength(latent_strength[group_index, ], method),
+    function(group_index) .normalise_strength(latent_strength[group_index, ], method, weights),
     numeric(ncol(latent_strength))
   ))
 }
@@ -380,7 +380,8 @@
       item_cluster_count_trace[saved_index] <- length(unique(item_cluster))
       latent_strength_draws[[saved_index]] <- latent_strength
       reported_strength_draws[[saved_index]] <- .normalise_strength_rows(
-        latent_strength, model$identifiability$method
+        latent_strength, model$identifiability$method,
+        weights = tabulate(item_cluster, nbins = ncol(latent_strength))
       )
       log_likelihood_trace[saved_index] <- sum(.pl_lbm_log_likelihood(
         rankings, ranking_cluster, item_cluster, latent_strength

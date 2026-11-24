@@ -4,19 +4,22 @@
 \alias{pl_identifiability}
 \title{Set the reporting scale for Plackett--Luce strengths}
 \usage{
-pl_identifiability(method = c("sum", "none", "logmean0"))
+pl_identifiability(method = c("mean", "sum", "none", "logmean0"))
 }
 \arguments{
-\item{method}{One of \code{"sum"} (default), \code{"none"} or \code{"logmean0"}.}
+\item{method}{One of \code{"mean"} (default), \code{"sum"}, \code{"none"} or \code{"logmean0"}.}
 }
 \value{
 An object of class \code{btsbm_pl_identifiability}.
 }
 \description{
 A Plackett--Luce likelihood only identifies strength ratios. By default each
-saved strength vector is divided by its sum (\code{"sum"}), so reported strengths
-are shares that add to one, exactly like the normalised Bradley--Terry
-strengths. \code{"logmean0"} (geometric mean one) is kept for compatibility.
+saved strength vector is divided by its arithmetic mean (\code{"mean"}), so
+strength is relative to the average item, as for Bradley--Terry summaries.
+In an item-block model the mean is over items, weighting blocks by size.
+\code{"sum"} (shares adding to one), \code{"none"} and \code{"logmean0"} (geometric mean
+one) remain available. Posterior summaries use arithmetic mean one unless
+another reporting scale is requested explicitly.
 }
 \examples{
 pl_identifiability()

@@ -4,15 +4,19 @@
 \alias{strength_summary}
 \title{Summarise posterior item strengths with credible intervals}
 \usage{
-strength_summary(fit, credible_mass = 0.9, scale = c("relative", "raw"))
+strength_summary(
+  fit,
+  credible_mass = 0.9,
+  scale = c("relative", "share", "raw")
+)
 }
 \arguments{
 \item{fit}{A simple BT/PL or item-SBM btsbm_fit object.}
 
 \item{credible_mass}{Width of the central posterior interval, in (0, 1).}
 
-\item{scale}{\code{"relative"} (default, shares adding to one) or \code{"raw"}
-(the strengths as stored by the sampler).}
+\item{scale}{\code{"relative"} (default, arithmetic mean one), \code{"share"}
+(sum one), or \code{"raw"} (the strengths as stored by the sampler).}
 }
 \value{
 A data frame with one row per item, ordered from larger to smaller
@@ -21,8 +25,9 @@ posterior mean strength.
 \description{
 This is a compact numerical companion to \code{\link[=plot_strength_summary]{plot_strength_summary()}}. By
 default strengths are reported as relative strengths: in every draw each
-\eqn{\lambda_i} is divided by \eqn{\sum_j \lambda_j}, so they are shares that
-add to one and do not depend on the arbitrary overall scale. A larger value
+\eqn{\lambda_i} is divided by the arithmetic mean of all item strengths.
+Their arithmetic mean is one in every draw, independently of the arbitrary
+overall scale. A value of 2 means twice the mean strength. A larger value
 means a higher chance of beating (BT) or being preferred to (PL) others.
 }
 \examples{

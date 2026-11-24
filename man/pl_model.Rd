@@ -26,8 +26,8 @@ A \code{btsbm_model}.
 }
 \description{
 Item strengths are i.i.d. \eqn{\mathrm{Gamma}(\mathrm{shape\_lambda},
-\mathrm{rate\_lambda})}. By default reported strengths are divided by their sum in
-every draw, so they are shares that add to one.
+\mathrm{rate\_lambda})}. By default reported strengths are divided by their
+arithmetic mean in every draw, giving strengths relative to the average item.
 }
 \examples{
 pl_model()

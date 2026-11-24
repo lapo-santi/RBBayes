@@ -60,8 +60,8 @@ test_that("the block palette returns K distinct colours for any K", {
   expect_length(pal, 5)
 })
 
-test_that("PL strengths are reported as shares by default", {
+test_that("PL strengths have arithmetic mean one by default", {
   data <- sushi_toy(n_rankings = 10, rank_length = 3, seed = 1)
   fit <- fit_model(data, pl_model(), mcmc_control(iter = 40, warmup = 20, seed = 2))
-  expect_equal(unname(rowSums(fit$draws$item_strength)), rep(1, 20))
+  expect_equal(unname(rowMeans(fit$draws$item_strength)), rep(1, 20))
 })

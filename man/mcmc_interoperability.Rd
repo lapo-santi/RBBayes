@@ -26,7 +26,7 @@ as_mcmc_chains(x, normalise = TRUE, pars = NULL)
 
 \item{...}{Reserved for generic compatibility.}
 
-\item{normalise}{Logical; report sum-to-one item strengths by default.}
+\item{normalise}{Logical; report item strengths with arithmetic mean one by default.}
 
 \item{pars}{Optional parameter names, as in as.matrix.btsbm_fit().}
 }
@@ -44,9 +44,11 @@ A coda mcmc object. Its first iteration is warmup + 1 and thin is 1.
 }
 \description{
 Columns are named after the items. \verb{rel_strength[<item>]} is the item's
-strength divided by the sum of all strengths in each saved draw (its share
-of total strength). With \code{normalise = FALSE}, \verb{lambda[<item>]} are the
-stored, unnormalised strengths. \code{n_item_blocks} and \code{n_ranking_groups}
+strength divided by the arithmetic mean of all item strengths in each
+retained draw. The mean across items is one; a value of 2 means twice that
+mean strength. With \code{normalise = FALSE}, \verb{lambda[<item>]} are the
+strengths on the stored scale (already normalised for default PL fits).
+\code{n_item_blocks} and \code{n_ranking_groups}
 contain occupied-group counts when available. Only retained draws are
 returned. Older names (\code{q[i]}, \code{theta[i]}, \code{K_item}, \code{K_ranking}) are still
 accepted in \code{pars}.
@@ -60,7 +62,7 @@ initialisations; these converters cannot establish independence.
 Variable-length block-strength vectors and arbitrary allocation labels are
 deliberately excluded. Mixture and LBM fits currently expose group counts
 only, because a single profile-independent item-strength vector is absent.
-For coda::gelman.diag(), use multivariate = FALSE: sum-to-one strengths
+For coda::gelman.diag(), use multivariate = FALSE: mean-one strengths
 have a singular joint covariance. A constant group-count trace can also
 have undefined convergence diagnostics. coda and bayesplot are optional.
 }

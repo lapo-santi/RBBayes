@@ -4,18 +4,31 @@
 \alias{posterior_strength}
 \title{Summarise posterior item strengths}
 \usage{
-posterior_strength(fit, summary = c("draws", "mean"))
+posterior_strength(
+  fit,
+  summary = c("draws", "mean"),
+  scale = c("relative", "share", "raw")
+)
 }
 \arguments{
 \item{fit}{A simple BT/PL or item-SBM fit.}
 
 \item{summary}{Either \code{"draws"} or \code{"mean"}.}
+
+\item{scale}{\code{"relative"} (default, arithmetic mean one), \code{"share"}
+(sum one), or \code{"raw"} (the strengths as stored by the sampler).}
 }
 \value{
 A draws matrix or named posterior mean vector.
 }
 \description{
-Summarise posterior item strengths
+Normalisation is applied separately to each retained draw before any
+posterior averaging. With the default reporting scale, a value of 2 means
+twice the arithmetic mean item strength in that draw. In a block model
+the mean is over items, so block sizes are respected. The BT win probability
+against a hypothetical item of mean strength is \eqn{\theta_i/(1+\theta_i)};
+thus \eqn{\theta_i} is the odds against that reference item in a draw.
+This is not an average win probability over the observed opponents.
 }
 \examples{
 data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))

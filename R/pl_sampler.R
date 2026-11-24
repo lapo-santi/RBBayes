@@ -42,9 +42,13 @@
 
 .pl_win_counts <- function(rankings, n_items) tabulate(as.integer(rankings), nbins = n_items)
 
-.normalise_strength <- function(strength, method) {
+.normalise_strength <- function(strength, method, weights = NULL) {
   strength <- pmax(as.numeric(strength), .Machine$double.eps)
   if (identical(method, "none")) return(strength)
+  if (identical(method, "mean")) {
+    centre <- if (is.null(weights)) mean(strength) else stats::weighted.mean(strength, weights)
+    return(strength / centre)
+  }
   if (identical(method, "logmean0")) return(strength / exp(mean(log(strength))))
   strength / sum(strength)
 }

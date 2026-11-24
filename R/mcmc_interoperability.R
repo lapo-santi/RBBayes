@@ -1,9 +1,11 @@
 #' Convert a preference fit to a matrix of saved posterior draws
 #'
 #' Columns are named after the items. `rel_strength[<item>]` is the item's
-#' strength divided by the sum of all strengths in each saved draw (its share
-#' of total strength). With `normalise = FALSE`, `lambda[<item>]` are the
-#' stored, unnormalised strengths. `n_item_blocks` and `n_ranking_groups`
+#' strength divided by the arithmetic mean of all item strengths in each
+#' retained draw. The mean across items is one; a value of 2 means twice that
+#' mean strength. With `normalise = FALSE`, `lambda[<item>]` are the
+#' strengths on the stored scale (already normalised for default PL fits).
+#' `n_item_blocks` and `n_ranking_groups`
 #' contain occupied-group counts when available. Only retained draws are
 #' returned. Older names (`q[i]`, `theta[i]`, `K_item`, `K_ranking`) are still
 #' accepted in `pars`.
@@ -11,12 +13,12 @@
 #' Variable-length block-strength vectors and arbitrary allocation labels are
 #' deliberately excluded. Mixture and LBM fits currently expose group counts
 #' only, because a single profile-independent item-strength vector is absent.
-#' For coda::gelman.diag(), use multivariate = FALSE: sum-to-one strengths
+#' For coda::gelman.diag(), use multivariate = FALSE: mean-one strengths
 #' have a singular joint covariance. A constant group-count trace can also
 #' have undefined convergence diagnostics. coda and bayesplot are optional.
 #' @param x A btsbm_fit object.
 #' @param ... Reserved for generic compatibility.
-#' @param normalise Logical; report sum-to-one item strengths by default.
+#' @param normalise Logical; report item strengths with arithmetic mean one by default.
 #' @param pars Optional character vector selecting and ordering columns.
 #' @return A numeric matrix with saved draws in rows and quantities in columns.
 #' @examples
@@ -44,7 +46,7 @@ as.matrix.btsbm_fit <- function(x, ..., normalise = TRUE, pars = NULL) {
     if (nrow(strength) != n_draws || any(!is.finite(strength)) || any(strength <= 0)) {
       stop("Item-strength draws must be finite, positive and match the saved draws.", call. = FALSE)
     }
-    if (normalise) strength <- strength / rowSums(strength)
+    if (normalise) strength <- .rescale_strength_draws(strength, "relative")
     colnames(strength) <- paste0(if (normalise) "rel_strength[" else "lambda[",
                                  x$data$item_labels, "]")
     result <- cbind(result, strength)
@@ -89,7 +91,7 @@ as.array.btsbm_fit <- function(x, ..., normalise = TRUE, pars = NULL) {
 #' supply independently run chains, preferably with different seeds and
 #' initialisations; these converters cannot establish independence.
 #' @param x One btsbm_fit, or a non-empty list of fits from independent runs.
-#' @param normalise Logical; report sum-to-one item strengths by default.
+#' @param normalise Logical; report item strengths with arithmetic mean one by default.
 #' @param pars Optional parameter names, as in as.matrix.btsbm_fit().
 #' @return as_draws_array returns an iteration by chain by parameter array.
 #'   as_mcmc_chains returns a coda mcmc.list, retaining original iteration

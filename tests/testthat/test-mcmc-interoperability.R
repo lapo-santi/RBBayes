@@ -16,7 +16,7 @@ test_that("fit_model is the canonical fitter and earlier names remain compatible
 test_that("matrix and array conversions preserve draw values and dimensions", {
   fit <- make_interop_fit()
   draws <- as.matrix(fit)
-  expect_equal(unname(rowSums(draws)), rep(1, 20))
+  expect_equal(unname(rowMeans(draws)), rep(1, 20))
   expect_identical(colnames(draws), paste0("rel_strength[", c("A", "B", "C"), "]"))
   expect_identical(colnames(as.matrix(fit, normalise = FALSE)), paste0("lambda[", c("A", "B", "C"), "]"))
   expect_identical(colnames(as.matrix(fit, pars = "q[2]")), "rel_strength[B]")
