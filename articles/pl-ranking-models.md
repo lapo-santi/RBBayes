@@ -72,8 +72,9 @@ simple_pl
 ```
 
 This plot is usually the main analysis result. The point is the
-posterior mean relative strength; the interval displays posterior
-uncertainty.
+posterior mean relative strength, with arithmetic mean one across items
+in every draw; the interval displays posterior uncertainty. A value of 2
+means twice the mean item strength.
 
 ``` r
 

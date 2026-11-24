@@ -133,8 +133,9 @@ illustration; use longer, multiple chains in a real analysis.</p>
 <span><span class="co">#&gt; &lt;btsbm_fit&gt; Plackett-Luce (PL), one strength per item </span></span>
 <span><span class="co">#&gt;   10 items; 300 retained posterior draws. Use summary() for results.</span></span></code></pre></div>
 <p>This plot is usually the main analysis result. The point is the
-posterior mean relative strength; the interval displays posterior
-uncertainty.</p>
+posterior mean relative strength, with arithmetic mean one across items
+in every draw; the interval displays posterior uncertainty. A value of 2
+means twice the mean item strength.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_strength_summary.html">plot_strength_summary</a></span><span class="op">(</span><span class="va">simple_pl</span><span class="op">)</span></span></code></pre></div>
 <p><img src="pl-ranking-models_files/figure-html/simple-pl-strengths-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>

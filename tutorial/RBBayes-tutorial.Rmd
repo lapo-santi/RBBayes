@@ -244,19 +244,52 @@ The likelihood identifies strength ratios: multiplying every $\lambda_i$ by
 the same positive constant changes no win probability. A proper Gamma prior
 supplies the posterior raw scale, which the likelihood itself does not identify.
 
-For retained draw $s$, the package reports the normalised share
+For retained draw $s$, let $\bar\lambda^{(s)}=n^{-1}\sum_{j=1}^{n}\lambda_j^{(s)}$
+be the arithmetic mean strength across the $n$ players. The package reports
 $$
-q_i^{(s)}=\frac{\lambda_i^{(s)}}{\sum_{j=1}^{n}\lambda_j^{(s)}}.
+\theta_i^{(s)}=\frac{\lambda_i^{(s)}}{\bar\lambda^{(s)}},
+\qquad \frac{1}{n}\sum_{i=1}^{n}\theta_i^{(s)}=1.
 $$
+Thus a strength of 2 means twice the mean player strength in that draw.
+The independent Gamma priors remain on the raw $\lambda_i$; the derived
+$\theta_i$ have a fixed mean and are not independent Gamma variables.
+For comparison with the earlier sum-to-one shares, $\theta_i^{(s)}=nq_i^{(s)}$.
 If $S$ is the number of retained draws, the plotted dot is
-$\bar q_i=S^{-1}\sum_{s=1}^{S}q_i^{(s)}$, an estimate of $E(q_i\mid y)$.
+$S^{-1}\sum_{s=1}^{S}\theta_i^{(s)}$, estimating $E(\theta_i\mid y)$.
 Normalise **each draw before averaging**; this is generally different from
-normalising the vector of raw posterior means.
+normalising the vector of raw posterior means. Posterior mean relative
+strengths also have arithmetic mean one across players. The dashed line at 1
+marks this reference, not each player's posterior mean.
 
-Shares sum to one in every draw, so posterior mean shares also sum to one.
-Their average **across players** is always $1/n$ (0.05 for twenty players),
-although individual posterior means differ. The dashed line marks that
-reference, not each player's posterior mean.
+The BT likelihood is unchanged, since
+$$
+\frac{\lambda_i}{\lambda_i+\lambda_j}
+=\frac{\theta_i}{\theta_i+\theta_j}.
+$$
+
+A hypothetical reference player with strength $\lambda_\star^{(s)}=\bar\lambda^{(s)}$
+gives a useful interpretation in each draw:
+$$
+p_{i\star}^{(s)}=\frac{\theta_i^{(s)}}{1+\theta_i^{(s)}},
+\qquad \theta_i^{(s)}=\frac{p_{i\star}^{(s)}}{1-p_{i\star}^{(s)}}.
+$$
+The relative strength is exactly the odds of beating that reference player.
+This is not the probability of beating a randomly chosen actual opponent.
+
+| Sum-to-one share $q_i$ ($n=20$) | Relative strength $\theta_i$ | Interpretation | $p_{i\star}$ |
+|---:|---:|:---|---:|
+| 0.0125 | 0.25 | Quarter of the mean strength | 20% |
+| 0.0250 | 0.50 | Half the mean strength | 33.3% |
+| 0.0500 | 1.00 | Mean strength | 50% |
+| 0.1000 | 2.00 | Twice the mean strength | 66.7% |
+| 0.2000 | 4.00 | Four times the mean strength | 80% |
+
+These identities hold **draw by draw**. A posterior predictive probability
+against this reference is $S^{-1}\sum_s p_{i\star}^{(s)}$; generally it is not
+$E(\theta_i\mid y)/(1+E(\theta_i\mid y))$. Similarly, the posterior mean
+strength is not the odds of that averaged probability. Use
+`posterior_strength(fit, scale = "share")` for the earlier sum-to-one
+convention, or `scale = "raw"` for the strengths as stored by the sampler.
 
 ```{r bt-strength, fig.height = 6}
 bt_strength <- strength_summary(bt_fit)
@@ -292,7 +325,7 @@ the posterior draws.
 
 ### Checking the MCMC
 
-Convergence checks use the normalised strength shares. Exported columns are
+Convergence checks use the relative strengths with arithmetic mean one. Exported columns are
 named after the players, such as `rel_strength[Player 1]`.
 
 ```{r bt-coda, eval = has_coda}
@@ -321,7 +354,7 @@ coda::gelman.diag(chains[, top_players], autoburnin = FALSE, multivariate = FALS
 Values of the potential scale reduction factor close to 1 are reassuring,
 but are not proof of convergence. `autoburnin = FALSE` prevents coda from
 discarding a second burn-in. We use `multivariate = FALSE` because the full
-vector of normalised strengths sums to one and has singular covariance.
+vector of relative strengths sums to $n$ in every draw and has singular covariance.
 These short teaching runs need longer, independently checked chains for a
 substantive analysis.
 
@@ -334,7 +367,11 @@ The BT--SBM introduces the following quantities:
 | $K$ | number of occupied item blocks |
 | $x_i \in \{1,\ldots,K\}$ | block membership of player $i$ |
 | $\lambda_k > 0$ | strength shared by players in block $k$ |
-| $\theta_i=\lambda_{x_i}$ | implied strength of player $i$ |
+| $\theta_i=\lambda_{x_i}/\bar\lambda$ | relative strength of player $i$ |
+
+Here $\bar\lambda=n^{-1}\sum_{j=1}^{n}\lambda_{x_j}$. The mean is over players,
+so blocks are weighted by their sizes; it is not the unweighted mean of the
+$K$ block strengths.
 
 Given the partition, occupied-block strengths have independent
 Gamma priors with shape `shape_lambda` and the package-default rate. The partition $x$ receives a
@@ -366,7 +403,8 @@ sizes are allowed: `players_per_block = c(3, 4, 5, 8)` gives those four sizes,
 with twenty players in total. If omitted, `n_blocks` is inferred from the
 number of generating strengths. The function randomly assigns memberships to
 player names subject to these sizes, then simulates all pair counts using
-the implied player strengths $\theta_i=\lambda_{x_i}$.
+the implied raw player strengths $\lambda_{x_i}$. Reporting then divides by
+their arithmetic mean to obtain $\theta_i$.
 
 The `truth` attribute records the generating blocks and strengths. We use it
 to assess recovery; it is not supplied to `fit_model()`.
@@ -938,7 +976,8 @@ pl_fit <- fit_model(sushi, pl_model(shape_lambda = 2), # Gamma shape, as for BT.
 summary(pl_fit)
 ```
 
-As for BT, reported strengths are shares of total strength in each draw.
+As for BT, reported relative strengths have arithmetic mean one across items
+in each draw. A value of 2 means twice the mean item strength.
 
 ```{r pl-strength, fig.height = 5}
 plot_strength_summary(pl_fit)

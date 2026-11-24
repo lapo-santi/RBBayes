@@ -1,11 +1,22 @@
 # Summarise posterior item strengths
 
-Summarise posterior item strengths
+Normalisation is applied separately to each retained draw before any
+posterior averaging. With the default reporting scale, a value of 2
+means twice the arithmetic mean item strength in that draw. In a block
+model the mean is over items, so block sizes are respected. The BT win
+probability against a hypothetical item of mean strength is
+\\\theta_i/(1+\theta_i)\\; thus \\\theta_i\\ is the odds against that
+reference item in a draw. This is not an average win probability over
+the observed opponents.
 
 ## Usage
 
 ``` r
-posterior_strength(fit, summary = c("draws", "mean"))
+posterior_strength(
+  fit,
+  summary = c("draws", "mean"),
+  scale = c("relative", "share", "raw")
+)
 ```
 
 ## Arguments
@@ -17,6 +28,11 @@ posterior_strength(fit, summary = c("draws", "mean"))
 - summary:
 
   Either `"draws"` or `"mean"`.
+
+- scale:
+
+  `"relative"` (default, arithmetic mean one), `"share"` (sum one), or
+  `"raw"` (the strengths as stored by the sampler).
 
 ## Value
 

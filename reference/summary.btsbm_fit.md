@@ -3,11 +3,11 @@
 Collects the main features of a fit under self-explanatory names: the
 model, the data size, the priors, the MCMC run and the key posterior
 results. For models with item-specific strengths, the strength table
-uses relative strengths (each strength divided by the sum of all
-strengths in a draw). For block models, it reports the posterior
-distribution of the number of blocks \\K\\ and the point estimate of the
-partition \\z\\ instead, because individual strengths are not the
-natural summary there.
+uses relative strengths (each strength divided by the arithmetic mean of
+all item strengths in a draw). For block models, it reports the
+posterior distribution of the number of blocks \\K\\ and the point
+estimate of the partition \\x\\ instead, because individual strengths
+are not the natural summary there.
 
 ## Usage
 
@@ -46,7 +46,7 @@ summary(fit)
 #> Model:   Bradley-Terry stochastic block model (BT-SBM), items share block strengths
 #> Data:    2 items, 1 compared pairs, 5 comparisons
 #> Priors:  lambda_k ~ iid Gamma(shape_lambda = 4, rate_lambda = 3.512)
-#>          item partition z ~ Gnedin(gnedin_hyper = 0.5)
+#>          item partition x ~ Gnedin(gnedin_hyper = 0.5)
 #> MCMC:    60 iterations, 30 warm-up, 30 retained draws (0.0 s)
 #> 
 #> Posterior number of blocks, Pr(K = k | y):

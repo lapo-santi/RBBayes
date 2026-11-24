@@ -2,7 +2,8 @@
 
 Item strengths are i.i.d. \\\mathrm{Gamma}(\mathrm{shape\\lambda},
 \mathrm{rate\\lambda})\\. By default reported strengths are divided by
-their sum in every draw, so they are shares that add to one.
+their arithmetic mean in every draw, giving strengths relative to the
+average item.
 
 ## Usage
 

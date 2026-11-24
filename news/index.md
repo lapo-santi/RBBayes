@@ -51,17 +51,21 @@
   [`plot_ordered_adjacency()`](https://lapo-santi.github.io/RBBayes/reference/plot_ordered_adjacency.md)
   (wraps
   [`plot_block_adjacency()`](https://lapo-santi.github.io/RBBayes/reference/plot_block_adjacency.md)).
-- MCMC parameters are named after items: `rel_strength[<item>]` (share
-  of total strength), `lambda[<item>]`, `n_item_blocks`,
+- MCMC parameters are named after items: `rel_strength[<item>]`
+  (arithmetic mean strength = 1), `lambda[<item>]`, `n_item_blocks`,
   `n_ranking_groups`. Old names `q[i]`, `theta[i]`, `K_item`,
   `K_ranking` are still accepted in `pars`.
 - [`summary()`](https://rdrr.io/r/base/summary.html) returns a
   `summary.btsbm_fit` with descriptive field names and a readable print
   method (data size, priors, MCMC run, posterior K and partition for
   block models, relative strengths otherwise).
-- Plackett–Luce strengths are reported as shares summing to one by
-  default (`pl_identifiability("sum")`), replacing the geometric-mean
-  scale.
+- Strengths are reported relative to their arithmetic mean (one) by
+  default in BT/PL summaries, plots and coda/bayesplot exports.
+  Sum-to-one shares remain available with `scale = "share"`; PL storage
+  also supports `pl_identifiability("sum")`.
+- Plackett–Luce strengths use arithmetic-mean-one reporting by default
+  (`pl_identifiability("mean")`). The earlier `"sum"` and geometric-mean
+  scales remain available.
   [`strength_summary()`](https://lapo-santi.github.io/RBBayes/reference/strength_summary.md)
   and
   [`plot_strength_summary()`](https://lapo-santi.github.io/RBBayes/reference/plot_strength_summary.md)

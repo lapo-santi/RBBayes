@@ -3,15 +3,20 @@
 This is a compact numerical companion to
 [`plot_strength_summary()`](https://lapo-santi.github.io/RBBayes/reference/plot_strength_summary.md).
 By default strengths are reported as relative strengths: in every draw
-each \\\lambda_i\\ is divided by \\\sum_j \lambda_j\\, so they are
-shares that add to one and do not depend on the arbitrary overall scale.
+each \\\lambda_i\\ is divided by the arithmetic mean of all item
+strengths. Their arithmetic mean is one in every draw, independently of
+the arbitrary overall scale. A value of 2 means twice the mean strength.
 A larger value means a higher chance of beating (BT) or being preferred
 to (PL) others.
 
 ## Usage
 
 ``` r
-strength_summary(fit, credible_mass = 0.9, scale = c("relative", "raw"))
+strength_summary(
+  fit,
+  credible_mass = 0.9,
+  scale = c("relative", "share", "raw")
+)
 ```
 
 ## Arguments
@@ -26,8 +31,8 @@ strength_summary(fit, credible_mass = 0.9, scale = c("relative", "raw"))
 
 - scale:
 
-  `"relative"` (default, shares adding to one) or `"raw"` (the strengths
-  as stored by the sampler).
+  `"relative"` (default, arithmetic mean one), `"share"` (sum one), or
+  `"raw"` (the strengths as stored by the sampler).
 
 ## Value
 
@@ -43,6 +48,6 @@ fit <- fit_model(data, bt_sbm_model(),
                  mcmc_control(iter = 60, warmup = 30, seed = 1))
 strength_summary(fit)
 #>     item mean median lower upper
-#> 1 Item_1  0.5    0.5   0.5   0.5
-#> 2 Item_2  0.5    0.5   0.5   0.5
+#> 1 Item_1    1      1     1     1
+#> 2 Item_2    1      1     1     1
 ```
