@@ -60,9 +60,13 @@
   method (data size, priors, MCMC run, posterior K and partition for
   block models, relative strengths otherwise).
 - Strengths are reported relative to their arithmetic mean (one) by
-  default in BT/PL summaries, plots and coda/bayesplot exports.
-  Sum-to-one shares remain available with `scale = "share"`; PL storage
-  also supports `pl_identifiability("sum")`.
+  default in BT/PL summaries, plots and coda/bayesplot exports. BT–SBM
+  uses the mean across occupied blocks, giving each block one
+  contribution irrespective of its size, before mapping strengths to
+  players. The normalised block vectors are stored in
+  `draws$block_strength`; raw Gamma draws are preserved. Sum-to-one
+  shares remain available with `scale = "share"`; PL storage also
+  supports `pl_identifiability("sum")`.
 - Plackett–Luce strengths use arithmetic-mean-one reporting by default
   (`pl_identifiability("mean")`). The earlier `"sum"` and geometric-mean
   scales remain available.

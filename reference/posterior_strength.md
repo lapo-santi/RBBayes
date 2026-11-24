@@ -2,9 +2,14 @@
 
 Normalisation is applied separately to each retained draw before any
 posterior averaging. With the default reporting scale, a value of 2
-means twice the arithmetic mean item strength in that draw. In a block
-model the mean is over items, so block sizes are respected. The BT win
-probability against a hypothetical item of mean strength is
+means twice the arithmetic mean item strength in that draw for a
+standard BT/PL model. For BT–SBM the reference is instead the arithmetic
+mean of the occupied block strengths: normalise the block vector first,
+then map it to players. Every occupied block contributes once,
+irrespective of its size; unused label slots are excluded. The average
+over players need not be one. Write \\\theta_i\\ for the resulting
+relative item strength. The BT win probability against a hypothetical
+item whose strength is the chosen reference mean is
 \\\theta_i/(1+\theta_i)\\; thus \\\theta_i\\ is the odds against that
 reference item in a draw. This is not an average win probability over
 the observed opponents.
@@ -31,8 +36,9 @@ posterior_strength(
 
 - scale:
 
-  `"relative"` (default, arithmetic mean one), `"share"` (sum one), or
-  `"raw"` (the strengths as stored by the sampler).
+  `"relative"` (default, arithmetic mean one), `"share"` (item shares
+  summing to one), or `"raw"` (the strengths as stored by the sampler).
+  For BT–SBM, `"relative"` uses the occupied-block mean.
 
 ## Value
 

@@ -3,11 +3,14 @@
 Columns are named after the items. `rel_strength[<item>]` is the item's
 strength divided by the arithmetic mean of all item strengths in each
 retained draw. The mean across items is one; a value of 2 means twice
-that mean strength. With `normalise = FALSE`, `lambda[<item>]` are the
-strengths on the stored scale (already normalised for default PL fits).
-`n_item_blocks` and `n_ranking_groups` contain occupied-group counts
-when available. Only retained draws are returned. Older names (`q[i]`,
-`theta[i]`, `K_item`, `K_ranking`) are still accepted in `pars`.
+that mean strength. BT–SBM instead uses the mean across occupied blocks,
+then assigns the normalised block strength to each item. Every occupied
+block contributes once; unequal block sizes do not weight this mean.
+With `normalise = FALSE`, `lambda[<item>]` are the strengths on the
+stored scale (already normalised for default PL fits). `n_item_blocks`
+and `n_ranking_groups` contain occupied-group counts when available.
+Only retained draws are returned. Older names (`q[i]`, `theta[i]`,
+`K_item`, `K_ranking`) are still accepted in `pars`.
 
 All fits must use identical data (including item order) and model
 specification, and have the same number of retained draws. The caller
@@ -46,7 +49,8 @@ as_mcmc_chains(x, normalise = TRUE, pars = NULL)
 
 - normalise:
 
-  Logical; report item strengths with arithmetic mean one by default.
+  Logical; normalise by the item mean (occupied-block mean for BT–SBM)
+  by default.
 
 - pars:
 
@@ -70,10 +74,11 @@ A coda mcmc object. Its first iteration is warmup + 1 and thin is 1.
 Variable-length block-strength vectors and arbitrary allocation labels
 are deliberately excluded. Mixture and LBM fits currently expose group
 counts only, because a single profile-independent item-strength vector
-is absent. For coda::gelman.diag(), use multivariate = FALSE: mean-one
-strengths have a singular joint covariance. A constant group-count trace
-can also have undefined convergence diagnostics. coda and bayesplot are
-optional.
+is absent. For coda::gelman.diag(), use multivariate = FALSE: a full
+strength vector with a fixed item mean has singular joint covariance.
+BT–SBM has a fixed block mean in each draw; its item mean can vary as
+the partition changes. A constant group-count trace can also have
+undefined convergence diagnostics. coda and bayesplot are optional.
 
 ## Examples
 

@@ -33,6 +33,16 @@ fit_model(data, model, control = mcmc_control())
 
 An object of class `btsbm_fit`.
 
+## Details
+
+BT–SBM reporting normalises the occupied block strengths to arithmetic
+mean one in each retained draw, then maps these strengths to players.
+Each occupied block contributes once, irrespective of its size. The fit
+stores these vectors in `draws$block_strength`; `draws$latent_strength`
+retains the raw Gamma-scale draws used by the sampler. Unused label
+slots are `NA` in `draws$block_strength` and excluded from its
+arithmetic mean.
+
 ## References
 
 Caron, F. and Doucet, A. (2012). Efficient Bayesian inference for

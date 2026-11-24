@@ -4,10 +4,12 @@ This is a compact numerical companion to
 [`plot_strength_summary()`](https://lapo-santi.github.io/RBBayes/reference/plot_strength_summary.md).
 By default strengths are reported as relative strengths: in every draw
 each \\\lambda_i\\ is divided by the arithmetic mean of all item
-strengths. Their arithmetic mean is one in every draw, independently of
-the arbitrary overall scale. A value of 2 means twice the mean strength.
-A larger value means a higher chance of beating (BT) or being preferred
-to (PL) others.
+strengths, except for BT–SBM, which uses the mean across occupied blocks
+before mapping block strengths to items. Thus a value of 2 means twice
+the mean item strength for standard BT/PL, or twice the mean
+occupied-block strength for BT–SBM. The reporting scale does not depend
+on the arbitrary raw scale. A larger value means a higher chance of
+beating (BT) or being preferred to (PL) others.
 
 ## Usage
 
@@ -31,8 +33,9 @@ strength_summary(
 
 - scale:
 
-  `"relative"` (default, arithmetic mean one), `"share"` (sum one), or
-  `"raw"` (the strengths as stored by the sampler).
+  `"relative"` (default, arithmetic mean one), `"share"` (item shares
+  summing to one), or `"raw"` (the strengths as stored by the sampler).
+  For BT–SBM, `"relative"` uses the occupied-block mean.
 
 ## Value
 

@@ -8,7 +8,10 @@
 </script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Convert a preference fit to a matrix of saved posterior draws — as.matrix.btsbm_fit"><meta name="description" content="Columns are named after the items. rel_strength[&amp;lt;item&amp;gt;] is the item's
 strength divided by the arithmetic mean of all item strengths in each
 retained draw. The mean across items is one; a value of 2 means twice that
-mean strength. With normalise = FALSE, lambda[&amp;lt;item&amp;gt;] are the
+mean strength. BT–SBM instead uses the mean across occupied blocks, then
+assigns the normalised block strength to each item. Every occupied block
+contributes once; unequal block sizes do not weight this mean.
+With normalise = FALSE, lambda[&amp;lt;item&amp;gt;] are the
 strengths on the stored scale (already normalised for default PL fits).
 n_item_blocks and n_ranking_groups
 contain occupied-group counts when available. Only retained draws are
@@ -20,7 +23,10 @@ supply independently run chains, preferably with different seeds and
 initialisations; these converters cannot establish independence."><meta property="og:description" content="Columns are named after the items. rel_strength[&amp;lt;item&amp;gt;] is the item's
 strength divided by the arithmetic mean of all item strengths in each
 retained draw. The mean across items is one; a value of 2 means twice that
-mean strength. With normalise = FALSE, lambda[&amp;lt;item&amp;gt;] are the
+mean strength. BT–SBM instead uses the mean across occupied blocks, then
+assigns the normalised block strength to each item. Every occupied block
+contributes once; unequal block sizes do not weight this mean.
+With normalise = FALSE, lambda[&amp;lt;item&amp;gt;] are the
 strengths on the stored scale (already normalised for default PL fits).
 n_item_blocks and n_ranking_groups
 contain occupied-group counts when available. Only retained draws are
@@ -75,7 +81,10 @@ initialisations; these converters cannot establish independence."></head><body>
     <p>Columns are named after the items. <code>rel_strength[&lt;item&gt;]</code> is the item's
 strength divided by the arithmetic mean of all item strengths in each
 retained draw. The mean across items is one; a value of 2 means twice that
-mean strength. With <code>normalise = FALSE</code>, <code>lambda[&lt;item&gt;]</code> are the
+mean strength. BT–SBM instead uses the mean across occupied blocks, then
+assigns the normalised block strength to each item. Every occupied block
+contributes once; unequal block sizes do not weight this mean.
+With <code>normalise = FALSE</code>, <code>lambda[&lt;item&gt;]</code> are the
 strengths on the stored scale (already normalised for default PL fits).
 <code>n_item_blocks</code> and <code>n_ranking_groups</code>
 contain occupied-group counts when available. Only retained draws are
@@ -119,7 +128,7 @@ initialisations; these converters cannot establish independence.</p>
 
 
 <dt id="arg-normalise">normalise<a class="anchor" aria-label="anchor" href="#arg-normalise"></a></dt>
-<dd><p>Logical; report item strengths with arithmetic mean one by default.</p></dd>
+<dd><p>Logical; normalise by the item mean (occupied-block mean for BT–SBM) by default.</p></dd>
 
 
 <dt id="arg-pars">pars<a class="anchor" aria-label="anchor" href="#arg-pars"></a></dt>
@@ -141,8 +150,10 @@ numbering. Its chains must also have equal warm-up lengths.</p>
     <p>Variable-length block-strength vectors and arbitrary allocation labels are
 deliberately excluded. Mixture and LBM fits currently expose group counts
 only, because a single profile-independent item-strength vector is absent.
-For coda::gelman.diag(), use multivariate = FALSE: mean-one strengths
-have a singular joint covariance. A constant group-count trace can also
+For coda::gelman.diag(), use multivariate = FALSE: a full strength vector
+with a fixed item mean has singular joint covariance. BT–SBM has a fixed
+block mean in each draw; its item mean can vary as the partition changes.
+A constant group-count trace can also
 have undefined convergence diagnostics. coda and bayesplot are optional.</p>
     </div>
 

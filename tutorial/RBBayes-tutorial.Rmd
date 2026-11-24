@@ -367,11 +367,30 @@ The BT--SBM introduces the following quantities:
 | $K$ | number of occupied item blocks |
 | $x_i \in \{1,\ldots,K\}$ | block membership of player $i$ |
 | $\lambda_k > 0$ | strength shared by players in block $k$ |
-| $\theta_i=\lambda_{x_i}/\bar\lambda$ | relative strength of player $i$ |
+| $\theta_i=\widetilde\lambda_{x_i}$ | relative strength of player $i$ |
 
-Here $\bar\lambda=n^{-1}\sum_{j=1}^{n}\lambda_{x_j}$. The mean is over players,
-so blocks are weighted by their sizes; it is not the unweighted mean of the
-$K$ block strengths.
+For BT--SBM, the reference is the mean across **occupied blocks**.
+For retained draw $s$, let $K^{(s)}$ be its occupied-block count, and define
+$$
+\bar\lambda_B^{(s)}=\frac{1}{K^{(s)}}\sum_{k=1}^{K^{(s)}}\lambda_k^{(s)},
+\qquad
+\widetilde\lambda_k^{(s)}=\frac{\lambda_k^{(s)}}{\bar\lambda_B^{(s)}}.
+$$
+Normalisation therefore happens at block level, before assigning
+$\theta_i^{(s)}=\widetilde\lambda_{x_i^{(s)}}^{(s)}$ to players. In each draw,
+$$
+\frac{1}{K^{(s)}}\sum_{k=1}^{K^{(s)}}\widetilde\lambda_k^{(s)}=1.
+$$
+Each occupied block contributes once, regardless of how many players it
+contains. Empty label slots do not contribute. The mean strength across
+players need not equal 1. For example, blocks with raw strengths 1 and 4
+normalise to 0.4 and 1.6; if their sizes are two and one, the player mean is
+$(0.4+0.4+1.6)/3=0.8$.
+
+The independent Gamma priors remain on the raw $\lambda_k$. The fitter stores
+the normalised vectors in `draws$block_strength` and preserves the raw vectors
+in `draws$latent_strength`. The reported strength is the odds against a
+hypothetical player with the **mean occupied-block strength**, draw by draw.
 
 Given the partition, occupied-block strengths have independent
 Gamma priors with shape `shape_lambda` and the package-default rate. The partition $x$ receives a
@@ -404,7 +423,7 @@ with twenty players in total. If omitted, `n_blocks` is inferred from the
 number of generating strengths. The function randomly assigns memberships to
 player names subject to these sizes, then simulates all pair counts using
 the implied raw player strengths $\lambda_{x_i}$. Reporting then divides by
-their arithmetic mean to obtain $\theta_i$.
+the occupied-block mean to obtain $\theta_i$.
 
 The `truth` attribute records the generating blocks and strengths. We use it
 to assess recovery; it is not supplied to `fit_model()`.
@@ -516,7 +535,8 @@ summary(sbm_fit)
 `summary()` reports the number of blocks and an estimated partition for a
 block model. Player-level implied strengths remain well defined, so
 `strength_summary(sbm_fit)` and `as.matrix(sbm_fit)` are also available;
-they do not require matching arbitrary block labels between draws.
+they use the occupied-block mean in each draw and do not require matching
+arbitrary block labels between draws.
 
 ### How many blocks?
 
@@ -542,7 +562,7 @@ otherwise a built-in candidate search; neither guarantees a global minimum.
 The built-in VI search evaluates a shortlist against at most 1,000 evenly
 spaced retained draws. The centre may therefore depend on the search method.
 Blocks are labelled in decreasing order of the average posterior mean
-normalised player strength within the estimated block. Compare with the truth:
+player strength relative to the occupied-block mean within each draw. Compare with the truth:
 
 ```{r x-hat}
 set.seed(100)                               # Reproduce the partition search.

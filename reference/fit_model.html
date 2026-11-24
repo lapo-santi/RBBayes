@@ -90,6 +90,15 @@ by <code><a href="as_bt_data.html">as_bt_data()</a></code> or <code><a href="as_
     <p>An object of class <code>btsbm_fit</code>.</p>
     </div>
     <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>BT–SBM reporting normalises the occupied block strengths to arithmetic
+mean one in each retained draw, then maps these strengths to players.
+Each occupied block contributes once, irrespective of its size. The fit
+stores these vectors in <code>draws$block_strength</code>; <code>draws$latent_strength</code>
+retains the raw Gamma-scale draws used by the sampler. Unused label slots
+are <code>NA</code> in <code>draws$block_strength</code> and excluded from its arithmetic mean.</p>
+    </div>
+    <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Caron, F. and Doucet, A. (2012). Efficient Bayesian inference
 for generalized Bradley–Terry models. <em>Journal of Computational and
