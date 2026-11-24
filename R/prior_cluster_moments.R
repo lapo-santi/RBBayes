@@ -43,6 +43,45 @@ prior_variance_K <- function(n, prior) {
   NA_real_
 }
 
+#' Simulate the prior number of occupied groups
+#'
+#' Generate independent draws of `K_n` before observing outcomes. Starting
+#' with one occupied group, each further item either joins an existing group
+#' or creates a new one, using the specified partition prior's predictive
+#' probability. Only the count is simulated, not the complete partition.
+#' Every draw lies between 1 and `n`; a Dirichlet--multinomial prior also
+#' respects its maximum number of groups.
+#'
+#' @inheritParams prior_mean_K
+#' @param draws Positive integer number of independent simulations.
+#' @param seed Optional integer seed. If supplied, calls [set.seed()].
+#' @return An integer vector of length `draws`.
+#' @references Gnedin, A. (2010). A species sampling model with finitely many
+#'   types. Electronic Communications in Probability, 15, 79--88.
+#'   \doi{10.1214/ECP.v15-1532}
+#' @export
+#' @examples
+#' K <- prior_sample_K(20, gnedin_prior(0.5), draws = 1000, seed = 31)
+#' c(simulated = mean(K), exact = prior_mean_K(20, gnedin_prior(0.5)))
+prior_sample_K <- function(n, prior, draws = 10000L, seed = NULL) {
+  .check_prior_moment_inputs(n, prior)
+  if (!is.numeric(draws) || length(draws) != 1L || !is.finite(draws) ||
+      draws < 1 || draws != floor(draws)) {
+    stop("`draws` must be one positive integer.", call. = FALSE)
+  }
+  if (!is.null(seed)) set.seed(seed)
+  K <- rep.int(1L, draws)
+  for (m in seq_len(n - 1L)) {
+    new_group <- switch(prior$type,
+      gnedin = K * (K - prior$gamma) / (m * (m + prior$gamma)),
+      dp = rep(prior$alpha / (m + prior$alpha), draws),
+      py = (prior$alpha + K * prior$sigma) / (m + prior$alpha),
+      dm = prior$beta * (prior$K - K) / (m + prior$K * prior$beta))
+    K <- K + stats::rbinom(draws, size = 1L, prob = new_group)
+  }
+  as.integer(K)
+}
+
 .check_prior_moment_inputs <- function(n, prior) {
   if (!is.numeric(n) || length(n) != 1L || !is.finite(n) ||
       n < 1 || n != floor(n)) {
