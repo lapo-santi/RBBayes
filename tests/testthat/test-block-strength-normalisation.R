@@ -75,3 +75,26 @@ test_that('new BT-SBM fits store mean-one block strengths alongside raw Gamma dr
   fit$draws$block_strength <- NULL
   expect_equal(posterior_strength(fit), mapped)
 })
+
+test_that('BT-SBM reporting preserves the raw chain and random-number state', {
+  data <- simulate_data('bt-sbm', n_blocks = 2, latent_strength = c(4, 1),
+                        players_per_block = c(4, 2), matches_per_pair = 3, seed = 5)
+  priors <- list(gnedin_prior(.5), dirichlet_process_prior(1),
+                 pitman_yor_prior(1, .2), dirichlet_multinomial_prior(4, 1))
+  for (i in seq_along(priors)) {
+    control <- mcmc_control(iter = 80, warmup = 40, seed = 100 + i, store = 'augmented')
+    fit <- fit_model(data, bt_sbm_model(shape_lambda = 2, item_clustering = priors[[i]]),
+                     control)
+    after_fit <- .Random.seed
+    arguments <- RBBayes:::.legacy_partition_arguments(priors[[i]])
+    set.seed(control$seed)
+    raw <- do.call(gibbs_bt_sbm, c(list(
+      w_ij = data$wins, a = 2, b = exp(digamma(2)), T_iter = control$iter,
+      T_burn = control$warmup, store_z = TRUE, verbose = FALSE), arguments))
+    expect_identical(fit$draws$latent_strength, raw$lambda_samples)
+    expect_identical(fit$draws$item_cluster, raw$x_samples)
+    expect_identical(fit$draws$n_item_clusters, raw$K_per_iter)
+    expect_identical(fit$draws$augmented, raw$z_samples)
+    expect_identical(.Random.seed, after_fit)
+  }
+})
