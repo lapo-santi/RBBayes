@@ -16,7 +16,8 @@ posterior_strength(
 \item{summary}{Either \code{"draws"} or \code{"mean"}.}
 
 \item{scale}{\code{"relative"} (default, arithmetic mean one), \code{"share"}
-(sum one), or \code{"raw"} (the strengths as stored by the sampler).}
+(item shares summing to one), or \code{"raw"} (the strengths as stored by
+the sampler). For BT--SBM, \code{"relative"} uses the occupied-block mean.}
 }
 \value{
 A draws matrix or named posterior mean vector.
@@ -24,9 +25,14 @@ A draws matrix or named posterior mean vector.
 \description{
 Normalisation is applied separately to each retained draw before any
 posterior averaging. With the default reporting scale, a value of 2 means
-twice the arithmetic mean item strength in that draw. In a block model
-the mean is over items, so block sizes are respected. The BT win probability
-against a hypothetical item of mean strength is \eqn{\theta_i/(1+\theta_i)};
+twice the arithmetic mean item strength in that draw for a standard BT/PL
+model. For BT--SBM the reference is instead the arithmetic mean of the
+occupied block strengths: normalise the block vector first, then map it
+to players. Every occupied block contributes once, irrespective of its
+size; unused label slots are excluded. The average over players need not
+be one. Write \eqn{\theta_i} for the resulting relative item strength.
+The BT win probability against a hypothetical item whose strength is the
+chosen reference mean is \eqn{\theta_i/(1+\theta_i)};
 thus \eqn{\theta_i} is the odds against that reference item in a draw.
 This is not an average win probability over the observed opponents.
 }

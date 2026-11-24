@@ -95,7 +95,7 @@ btsbm_block_palette <- function(K, palette = NULL) .block_palette(K, palette)
 .item_strength_mean <- function(fit) {
   draws <- fit$draws$item_strength
   if (is.null(draws)) return(rep(0, fit$data$n_items))
-  colMeans(draws / rowSums(draws))
+  colMeans(posterior_strength(fit, summary = "draws"))
 }
 
 .native_point_estimate <- function(draws, loss = c("VI", "binder"), max_candidates = 2000L) {
@@ -375,7 +375,7 @@ prob_stronger <- function(fit) {
     equal[, j] <- colMeans(draws == draws[, j])
   }
   dimnames(greater) <- dimnames(equal) <- list(labels, labels)
-  ord <- order(colMeans(draws / rowSums(draws)), decreasing = TRUE)
+  ord <- order(colMeans(draws), decreasing = TRUE)
   greater <- greater[ord, ord, drop = FALSE]
   equal <- equal[ord, ord, drop = FALSE]
   diag(greater) <- NA_real_

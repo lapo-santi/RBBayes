@@ -6,6 +6,13 @@
 #' PLuce exponential-race architecture; their high-performance C++ kernels are
 #' a later parity-tested optimisation.
 #'
+#' BT--SBM reporting normalises the occupied block strengths to arithmetic
+#' mean one in each retained draw, then maps these strengths to players.
+#' Each occupied block contributes once, irrespective of its size. The fit
+#' stores these vectors in `draws$block_strength`; `draws$latent_strength`
+#' retains the raw Gamma-scale draws used by the sampler. Unused label slots
+#' are `NA` in `draws$block_strength` and excluded from its arithmetic mean.
+#'
 #' @param data A `btsbm_pairwise_data` or `btsbm_ranking_data` object created
 #'   by [as_bt_data()] or [as_rankings()].
 #' @param model A `btsbm_model` object.
@@ -106,11 +113,13 @@ fit_model <- function(data, model, control = mcmc_control()) {
     verbose = control$verbose
   )
   implied <- .implied_ability_from_blocks(raw$x_samples, raw$lambda_samples)
+  relative_blocks <- .normalise_occupied_block_strengths(raw$x_samples, raw$lambda_samples)
   .new_fit(
     draws = list(
       item_cluster = raw$x_samples,
       n_item_clusters = raw$K_per_iter,
       latent_strength = raw$lambda_samples,
+      block_strength = relative_blocks,
       item_strength = implied,
       ability = raw$lambda_samples,
       item_ability = implied,
@@ -403,16 +412,22 @@ posterior_similarity <- function(fit, target = c("item", "ranking")) {
 #'
 #' Normalisation is applied separately to each retained draw before any
 #' posterior averaging. With the default reporting scale, a value of 2 means
-#' twice the arithmetic mean item strength in that draw. In a block model
-#' the mean is over items, so block sizes are respected. The BT win probability
-#' against a hypothetical item of mean strength is \eqn{\theta_i/(1+\theta_i)};
+#' twice the arithmetic mean item strength in that draw for a standard BT/PL
+#' model. For BT--SBM the reference is instead the arithmetic mean of the
+#' occupied block strengths: normalise the block vector first, then map it
+#' to players. Every occupied block contributes once, irrespective of its
+#' size; unused label slots are excluded. The average over players need not
+#' be one. Write \eqn{\theta_i} for the resulting relative item strength.
+#' The BT win probability against a hypothetical item whose strength is the
+#' chosen reference mean is \eqn{\theta_i/(1+\theta_i)};
 #' thus \eqn{\theta_i} is the odds against that reference item in a draw.
 #' This is not an average win probability over the observed opponents.
 #'
 #' @param fit A simple BT/PL or item-SBM fit.
 #' @param summary Either `"draws"` or `"mean"`.
 #' @param scale `"relative"` (default, arithmetic mean one), `"share"`
-#'   (sum one), or `"raw"` (the strengths as stored by the sampler).
+#'   (item shares summing to one), or `"raw"` (the strengths as stored by
+#'   the sampler). For BT--SBM, `"relative"` uses the occupied-block mean.
 #'
 #' @return A draws matrix or named posterior mean vector.
 #' @export
@@ -431,9 +446,35 @@ posterior_strength <- function(fit, summary = c("draws", "mean"),
   if (is.null(draws)) {
     stop("Item strengths are not available until mixture/LBM post-processing is implemented.", call. = FALSE)
   }
-  draws <- .rescale_strength_draws(draws, scale)
+  if (scale == "relative" && .uses_block_mean(fit)) {
+    blocks <- .normalise_occupied_block_strengths(fit$draws$item_cluster,
+                                                 fit$draws$latent_strength)
+    draws <- .implied_ability_from_blocks(fit$draws$item_cluster, blocks)
+  } else {
+    draws <- .rescale_strength_draws(draws, scale)
+  }
   if (summary == "draws") return(draws)
   stats::setNames(colMeans(draws), fit$data$item_labels)
+}
+
+.uses_block_mean <- function(fit) {
+  identical(fit$model$likelihood, "bt") && identical(fit$model$structure, "item_sbm")
+}
+
+# Normalise the occupied block vector before expanding it to player strengths.
+# Keep unused label slots as NA, including any finite but unoccupied entries.
+.normalise_occupied_block_strengths <- function(cluster_draws, strength_draws) {
+  lapply(seq_len(nrow(cluster_draws)), function(s) {
+    occupied <- sort(unique(cluster_draws[s, ]))
+    lambda <- strength_draws[[s]]
+    values <- lambda[occupied]
+    if (any(!is.finite(values)) || any(values <= 0)) {
+      stop("Occupied block strengths must be finite and positive.", call. = FALSE)
+    }
+    result <- rep(NA_real_, length(lambda))
+    result[occupied] <- values / mean(values)
+    result
+  })
 }
 
 # Rescale each item-strength draw before computing posterior summaries.
@@ -448,9 +489,11 @@ posterior_strength <- function(fit, summary = c("draws", "mean"),
 #'
 #' This is a compact numerical companion to [plot_strength_summary()]. By
 #' default strengths are reported as relative strengths: in every draw each
-#' \eqn{\lambda_i} is divided by the arithmetic mean of all item strengths.
-#' Their arithmetic mean is one in every draw, independently of the arbitrary
-#' overall scale. A value of 2 means twice the mean strength. A larger value
+#' \eqn{\lambda_i} is divided by the arithmetic mean of all item strengths,
+#' except for BT--SBM, which uses the mean across occupied blocks before mapping
+#' block strengths to items. Thus a value of 2 means twice the mean item strength
+#' for standard BT/PL, or twice the mean occupied-block strength for BT--SBM.
+#' The reporting scale does not depend on the arbitrary raw scale. A larger value
 #' means a higher chance of beating (BT) or being preferred to (PL) others.
 #'
 #' @param fit A simple BT/PL or item-SBM btsbm_fit object.

@@ -149,8 +149,12 @@ bayesplot::mcmc_trace(as_draws_array(list(fit, fit2)),
 ```
 
 By default, `rel_strength[<item>]` is that item's strength divided by the
-arithmetic mean across items in each draw. The mean is one: a value of 2
-means twice the mean strength. Normalisation precedes posterior averaging.
+arithmetic mean across items in each draw, except for BT–SBM: there, divide
+by the mean across occupied blocks before assigning strengths to players.
+Each block contributes once, regardless of size; the player mean can differ
+from one. Normalisation precedes posterior averaging. BT–SBM fits also retain
+normalised block vectors in `draws$block_strength`, alongside the raw
+Gamma-scale vectors in `draws$latent_strength`.
 `posterior_strength(fit, scale = "share")` retains the sum-to-one convention.
 Use `as.matrix(fit, normalise = FALSE)` for strengths on the stored scale (`lambda[<item>]`). Occupied-group counts are included when
 available. Mixtures and joint latent block models currently export group-count

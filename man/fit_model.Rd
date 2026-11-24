@@ -24,6 +24,14 @@ PL--LBM. The latter two start with readable R Gibbs kernels derived from the
 PLuce exponential-race architecture; their high-performance C++ kernels are
 a later parity-tested optimisation.
 }
+\details{
+BT--SBM reporting normalises the occupied block strengths to arithmetic
+mean one in each retained draw, then maps these strengths to players.
+Each occupied block contributes once, irrespective of its size. The fit
+stores these vectors in \code{draws$block_strength}; \code{draws$latent_strength}
+retains the raw Gamma-scale draws used by the sampler. Unused label slots
+are \code{NA} in \code{draws$block_strength} and excluded from its arithmetic mean.
+}
 \examples{
 data <- as_bt_data(matrix(c(0, 3, 2, 0), 2, 2))
 # A short run illustrates the interface; use longer runs for inference.

@@ -16,7 +16,8 @@ strength_summary(
 \item{credible_mass}{Width of the central posterior interval, in (0, 1).}
 
 \item{scale}{\code{"relative"} (default, arithmetic mean one), \code{"share"}
-(sum one), or \code{"raw"} (the strengths as stored by the sampler).}
+(item shares summing to one), or \code{"raw"} (the strengths as stored by
+the sampler). For BT--SBM, \code{"relative"} uses the occupied-block mean.}
 }
 \value{
 A data frame with one row per item, ordered from larger to smaller
@@ -25,9 +26,11 @@ posterior mean strength.
 \description{
 This is a compact numerical companion to \code{\link[=plot_strength_summary]{plot_strength_summary()}}. By
 default strengths are reported as relative strengths: in every draw each
-\eqn{\lambda_i} is divided by the arithmetic mean of all item strengths.
-Their arithmetic mean is one in every draw, independently of the arbitrary
-overall scale. A value of 2 means twice the mean strength. A larger value
+\eqn{\lambda_i} is divided by the arithmetic mean of all item strengths,
+except for BT--SBM, which uses the mean across occupied blocks before mapping
+block strengths to items. Thus a value of 2 means twice the mean item strength
+for standard BT/PL, or twice the mean occupied-block strength for BT--SBM.
+The reporting scale does not depend on the arbitrary raw scale. A larger value
 means a higher chance of beating (BT) or being preferred to (PL) others.
 }
 \examples{

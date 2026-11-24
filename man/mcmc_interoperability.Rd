@@ -26,7 +26,7 @@ as_mcmc_chains(x, normalise = TRUE, pars = NULL)
 
 \item{...}{Reserved for generic compatibility.}
 
-\item{normalise}{Logical; report item strengths with arithmetic mean one by default.}
+\item{normalise}{Logical; normalise by the item mean (occupied-block mean for BT--SBM) by default.}
 
 \item{pars}{Optional parameter names, as in as.matrix.btsbm_fit().}
 }
@@ -46,7 +46,10 @@ A coda mcmc object. Its first iteration is warmup + 1 and thin is 1.
 Columns are named after the items. \verb{rel_strength[<item>]} is the item's
 strength divided by the arithmetic mean of all item strengths in each
 retained draw. The mean across items is one; a value of 2 means twice that
-mean strength. With \code{normalise = FALSE}, \verb{lambda[<item>]} are the
+mean strength. BT--SBM instead uses the mean across occupied blocks, then
+assigns the normalised block strength to each item. Every occupied block
+contributes once; unequal block sizes do not weight this mean.
+With \code{normalise = FALSE}, \verb{lambda[<item>]} are the
 strengths on the stored scale (already normalised for default PL fits).
 \code{n_item_blocks} and \code{n_ranking_groups}
 contain occupied-group counts when available. Only retained draws are
@@ -62,8 +65,10 @@ initialisations; these converters cannot establish independence.
 Variable-length block-strength vectors and arbitrary allocation labels are
 deliberately excluded. Mixture and LBM fits currently expose group counts
 only, because a single profile-independent item-strength vector is absent.
-For coda::gelman.diag(), use multivariate = FALSE: mean-one strengths
-have a singular joint covariance. A constant group-count trace can also
+For coda::gelman.diag(), use multivariate = FALSE: a full strength vector
+with a fixed item mean has singular joint covariance. BT--SBM has a fixed
+block mean in each draw; its item mean can vary as the partition changes.
+A constant group-count trace can also
 have undefined convergence diagnostics. coda and bayesplot are optional.
 }
 \examples{
